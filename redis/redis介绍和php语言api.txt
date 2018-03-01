@@ -1,0 +1,191 @@
+redis基本了解：
+    1：redis是基于c开发的一个分布式缓存系统；
+    2：redis数据存储在内存中，允许按照指定条件持久化到磁盘上；
+    3：支持数据类型更多：string(string/bool/number)，set，zset，hash，list;
+    4：redis支持主从同步。数据支持从主服务器向任意数量的从服务器同步，并且完全实现了发布订阅模式；
+redis基本数据类型及php接口：
+    1：string
+        @结构简介：
+            @1：基本结构：key---value;
+            @2：value：可以使string/bool/number;
+            @3：各个键值对互相独立；
+        @操作：
+            @1：增加数据：
+                $redis->set("key",value);添加数据
+                $redis->setex("key",2s,value);设置数据有效期，以s为单位
+                $redis->psetex("key",2ms,value);设置数据有效期，以ms为单位
+                $redis->setnx("key",value);该方法会自动检测键名是否存在，如果存在则返回false,不存在则添加指定键值；该操作是原子性的；
+                $redis->mset(array('key0' => 'value0', 'key1' => 'value1'));批量设置数据；
+            @2：获取数据：
+                $redis->get("key");获取单个数据
+                $redis->mget(array("key1","key2","key3"));批量获取数据
+            @3：删除数据：
+                $redis->delete("key");删除单个数据
+                $redis->delete(array('key0','key1'))；//批量删除
+            @4：检测键值：
+                $redis->exists("key");检测键是否存在；
+            @5：其他操作：
+                $redis->incrby("key",+-5);指定键值加减5
+                $redis->decrby("key",5)；指定键值减5
+                $redis->append("key","value");向指定键值追加指定的内容
+                $redis->getRange("key",0,5);获取指定键值某个索引区间的字符
+                $redis->strlen("key");获取指定键值的长度；
+    2：set
+        @结构简介：
+            @1：基本结构：key---set集合
+            @2：各个集合之间互相独立
+            @3：集合特点：
+                1：集合中的内容不允许重复，集合具备自动去重功能
+                2：集合只能存储值；
+                3：集合中的值是无序的；
+        @操作：
+            @添加数据
+                $redis->sAdd("key","value");
+            @删除数据 
+                $redis->sRem("key","value");
+            @其他操作
+                $redis->sMermbers("key");获取集合中的所有元素
+                $redis->IsMember("key","value");检测集合中是否有指定的成员；
+                $redis->sCard("key");获取集合的成员个数
+
+                $redis->sPop('key'); 随机返回容器中一个元素，并移除该元素
+                $redis->sRandMember('key');随机返回容器中一个元素，不移除该元素
+
+                $redis->sMove("key1","key2","value");
+                $redis->sInter("key1","key2");返回两个集合的交集，没有交集将返回一个空数组
+                $redis->sUnion("key1","key2");返回两个集合的并集
+                $redis->sDiff('key','key1','key2'); 返回数组，该数组元素是存在于key集合而不存在于集合key1 key2
+
+                $redis->sInterStore('store','key','key1'); 将集合key和集合key1的交集 存入容器store 成功返回1
+                $redis->sUnionStore('store','key','key1'); 集合key和集合key1的并集保存在集合store中,  注意即使多个集合有相同元素 只保留一个
+    3:zset
+        @结构简介：
+            @1：基本结构：key---zset集合
+            @2：各个集合之间互相独立
+            @3：集合特点：
+                1：集合中的内容不允许重复，集合具备自动去重功能
+                2：集合只能存储值和值的评分；
+                3：集合中的值是有序的，顺序根据每个值的评分而来；
+        @操作：   
+            @添加数据：
+                $redis->zAdd("key",int score,"value");
+            @删除数据：
+                $redis->zDelete("key","value");
+            @评分值操作：
+                $redis->zScore("key","value");
+                $redis->zIncrBy("key",int score,"value");
+
+                $redis->zRange("key",0,n);
+                对指定区间按评分值进行升序排序，0位置的评分制是最小的；该种方式排序也是zset默认的排序；返回索引数组
+                $redis->zRange("key",0,n,true);
+                对指定区间按评分值进行升序排序，0位置的评分制是最小的；该种方式排序也是zset默认的排序；并返回关联数组；
+                $redis->zRevRange("key",0,n);
+                对指定区间按评分值进行降序排序，0位置的评分制是最大的；该种方式排序只会影响返回的结果的顺序；返回索引数组
+                $redis->zRevRange("key",0,n,true);
+                对指定区间按评分值进行降序排序，0位置的评分制是最大的；该种方式排序只会影响返回的结果的顺序；并返回关联数组；
+            注意：0,n指的是数据的索引位置，返回的是对指定位置区间的元素按照评分以指定方式排序的结果；这两个函数并不会影响实际的zset排序，只影响返回的结果的顺序；
+
+                $redis->zCount("tkey",n,m);
+                获取评分在[n,m]之间的元素个数；
+
+            @其余操作
+                $redis->zRemRangeByScore("key",0,n)
+                移除key中评分在[0,n]之间的元素；该移除是永久性的；
+                $redis->zRemRangeByRank("key",0,n)
+                移除索引位置在[0,1]之间的元素，该移除是永久性的；
+                $redis->zSzie('tkey');
+                返回集合中元素的个数
+                $redis->zRank('tkey，"value");
+                返回对应值的索引位置
+    4：hash
+        @结构简介：
+            @1：基本结构：key---hash表
+            @2：各个hash表之间互相独立
+            @3：集合特点：
+                1：表中head项不能有重复值；
+                2：hash可以存储关联性的一组数据；
+                3：hash表中的各项数据互相独立
+                4：各个hash表互相独立
+        @操作：    
+            @添加一项数据
+                $redis->hSet('h', 'name', 'TK'); 
+                    在h表中添加name字段 value为TK；
+                $redis->hSetNx('h', 'name', 'TK');
+                    在h表中 添加name字段 value为TK 如果字段name的value存在返回false 否则添加成功返回 true；
+                $redis->hMset('h', array('score' => '80', 'salary' => 2000));
+                    批量添加数据
+            @获取数据 
+                $redis->hGet('h', 'name');
+                    获取h表中name字段value
+                $redis->hMGet('h', array('score','salary'));
+                    表h 批量获取字段的value
+            @其余操作
+                $redis->hExists('h', 'email'); 
+                    判断email 字段是否存在与表h 不存在返回false
+                $redis->hKeys('h'); 
+                    获取h表中所有字段
+                $redis->hVals('h');
+                    获取h表中所有字段value
+                $redis->hGetAll('h');
+                    获取h表中所有字段和value 返回一个关联数组(字段为键值)    
+    5：list
+        @结构简介：
+            @1：基本结构：key---list
+            @2：各个list之间互相独立
+            @3：集合特点：
+                1：list列表中的数据均有序；索引从0开始；
+                2：list列表可以当做栈，队列，有限集合来使用
+        @操作：    
+            @插入数据：
+                $redis->lPush("key",value);			//在链表左侧插入数据
+                $redis->rPush("key",value);			//在链表右侧插入数据 
+                这两个方法如果链表不存在将会创建链表，并返回长度
+                
+                $redis->lPushx("key",value);		//在链表左侧插入数据
+                $redis->rPushx("key",value);		//在链表左侧插入数据 
+                这两个方法如果链表不存在将返回false，成功返回长度
+            @获取链表两头的数据： 	
+                $redis->lPop("key");//删除链表左侧值，并返回
+                $redis->rPop("key"); //删除链表右侧值，并返回
+            @获取链表长度
+                $redis->lSize("key");//返回链表长度
+            @删除链表
+                $redis->delete("key");删除链表
+            @根据索引操作数据
+                $redis->lGet("key",s);				//获取指定索引位置的值，s代表索引
+                $redis->lSet("key",s,v);			//设置指定索引位置的值，s代表索引
+                $redis->lRange("key",2,5); //截取指定索引之间的值，并返回截取的结果，但是不影响元数据；
+            @其余操作：
+                $redis->lInsert('list-key', Redis::BEFORE, 'C', 'X'); 
+                    // 在C元素前面插入X  , Redis::AfTER(表示后面插入) 
+                    //链表不存在则插入失败 返回0 若元素不存在返回-1
+
+	            $redis->rpoplpush('list-key', 'list-key2'); 
+                    //从源LIST的最后弹出一个元素
+                    //并且把这个元素从目标LIST的顶部（左侧）压入目标LIST。
+	
+	            $redis->lTrim('list-key', 0, 1); 
+                    // 截取链表(不可逆) 从0索引开始 1索引结束 ，是针对链表本身操作的；
+
+	            $redis->lRem('list-key', 'C', 2); //链表从左开始删除元素2个C
+                $redis->lBrpop(移除并返回列表最后一个内容，如果没有元素可返回将会阻塞至有元素可返回为止)
+            @常见搭配用法
+                lPush+lPop/rPush+rPop   栈
+                lPush_rPop/rPush+lPop   普通队列
+                lPush+lTrim             有限集合
+                lPush+lBrpop            阻塞式消息队列
+php使用redis：
+    1:$redis = new Redis();
+    2:$redis->connect('120.78.67.67',7701);或：$redis->pconnect('120.78.67.67',7701);
+    3:pconnect说明：
+        1：如果使用了pconnect来连接redis服务器则：
+            1：php与redis的链接声明周期和php-fpm的生命周期一致，即当前脚本结束，php与redis的链接也不会断开；
+            2：显式调用close将只会使得当前脚本无法再与redis通信；但php与redis的连接仍然不会断开
+            3：重新启动或者关闭php-fpm则php与redis的连接将会断开；
+                
+                
+
+
+
+            
+         
