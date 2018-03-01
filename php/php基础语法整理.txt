@@ -6,19 +6,19 @@
     与swoole扩展通用可以进行异步网络编程
 2：php标记
         1：<?php code... ?>
-		2：<script language="php">code... </script>
-		3：<% code... %>
+	2：<script language="php">code... </script>
+	3：<% code... %>
         4：<? code... ?>
         其中：
             第1,2种是可以直接使用的；第3,4中必须在php.ini配置文件中进行配置之后才可使用；
-		    默认并推荐使用第一种，并且在php代码嵌入其他语言中的时候标记必须前后封闭
+	    默认并推荐使用第一种，并且在php代码嵌入其他语言中的时候标记必须前后封闭
             在纯php代码中，后面的标记推荐省略；
 3：注释：
         1：#或者//单行注释
-		2：/* 多行注释 */  
+	2：/* 多行注释 */  
 4：php中的数据类型
     1：Boolean 布尔类型
-		1：简写bool
+	    1：简写bool
 		--数据类型转换：--
             2：自动进行转换：除过"false",FALSE,0,0.0,null,'',"",array();NAN,undfined以外，其余均为true;
             3：手动转换：settype("bool",$type);settype("boolean",$type);
@@ -28,18 +28,18 @@
 		3：如果运算结果或者数字本身超出了int型的表示范围，将会以float来表示；
 		4：php是不支持无符号整数的；
 		--类型转换--
-            5：数字类型的字符串在参与运算时是默认可以自动转换为int型数字的，
-            6：也可以使用intval($var)函数进行转换；
-            7：settype("int",$var);settype("integer",$var);
+            		5：数字类型的字符串在参与运算时是默认可以自动转换为int型数字的，
+            		6：也可以使用intval($var)函数进行转换；
+            		7：settype("int",$var);settype("integer",$var);
     3：Float 浮点型
 		1：浮点数精度有限，误差较大，无法比较两个看起来一样的浮点数是否相等；
 		2：如果需要使用更高精度的数字，应该使用任意精度数学函数（BC数学函数扩展）或者gmp函数（数学扩展函数）
 		3：switch里面不支持使用浮点数；
 		类型转换
-            4：小数类型的字符串在参与运算时会自动转换成浮点型
-            5：int型数值超出范围也将自动转换为浮点型；
-            6：settype("float",$var);settype("double",$var);
-            7：也可使用floatval($var);进行转换
+            		4：小数类型的字符串在参与运算时会自动转换成浮点型
+            		5：int型数值超出范围也将自动转换为浮点型；
+            		6：settype("float",$var);settype("double",$var);
+           		7：也可使用floatval($var);进行转换
     4：String 字符串
 		1：代表符号：''/"";需要表识单双引号自身则使用\"；
 		2：单引号效率更高；没有特殊需求是推荐使用单引号；
