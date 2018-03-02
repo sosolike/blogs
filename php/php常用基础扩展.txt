@@ -102,5 +102,80 @@
     4：输出json字符串：
         header("Content-type:application/json;charset=utf-8");
         exit(json_encode($arr/$obj));
-5：
-    
+5：php操作http响应头信息：
+    1：函数原型：
+        header(string str,bool replace,int code);
+            str:要发送的报头字符串
+            replace:设置是否用当前的报头替换之前的报头
+            code:强制改写响应码
+    2：http响应列表：
+        Allow：
+            指定服务器支持的request方法
+        Cache-Control：
+            指定响应文档能够被安全缓存的情况，   
+            通常取值为public,private,或者no-cache;
+        Connection
+            指定浏览器是否需要使用持久的http连接，若为close:则不使用；若为keep-alive则意味着使用持久化连接；
+        Content-Disposition
+            指定浏览器要求用户将响应一给定的名称存储在磁盘中；
+        Content-Encoding 
+            指定传输时页面的编码规则，而不是字符编码集；
+        Content-Language
+            指定文档所使用的语言：比如：en,en-us等；
+        Content-Length 
+            指定响应的字节数，只有在持久化连接的时候才有用
+        Content-type
+            指定文档的mime类型
+        Expires
+            指定文档何时过期，并从缓存中移除；
+        Last-Modified
+            指定文档最后修改时间，
+        Location
+            设置浏览器转向请求新的地址；
+        Refresh
+            指定浏览器每隔多久请求更新一次页面
+        Set-Cookie
+            指明当前页面对应的cookie;
+    3:header函数的常见使用方式：
+        1：设置文档的mime类型：
+            header('Content-Type:text/html')
+            //设置css类型
+            header('Content-Type:text/css')
+            //Javascript
+            header('Content-type: text/javascript');
+
+            //XML
+            header('Content-type: text/xml');
+
+            //Text (Plain)
+            header('Content-type: text/plain');
+
+            //JPEG Image
+            header('Content-type: image/jpeg(png)');
+
+            //JSON
+            header('Content-type: application/json');
+
+            //PDF
+            header('Content-type: application/pdf');
+
+            // ZIP文件
+            header('Content-Type: application/zip');
+
+            //Flash动画
+            header('Content-Type: application/x-shockw**e-flash');
+
+            // 音视频文件
+            header('Content-Type: audio/mpeg');
+        
+        2：实现页面跳转：
+            header("Location:h2.php");
+        3：实现页面刷新
+            header("Refresh:10;url=http://www.baidu.com")
+        4：设置响应内容长度
+            header("Content-Length:1234");以字节为单位；
+        5：设置一个下载类型：
+            header('Content-Type；application/octet-stream');
+            header('Content-Disposition:attachement;filename="example.zip"')
+            readfile("/data/example.txt");
+        
