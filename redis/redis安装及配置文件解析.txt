@@ -1,0 +1,70 @@
+redis安装：
+    linux: 
+        $ wget http://download.redis.io/releases/redis-3.2.11.tar.gz
+        $ tar xzf redis-3.2.11.tar.gz
+        $ cd redis-3.2.11
+        $ make
+    关键文件：
+        1：配置文件是目录redis-3.2.11下面redis.conf
+        2：启动文件是目录redis-3.2.11/src下面的redis-server
+    启动redis:
+        使用默认的配置文件：  执行：./redis-server即可；
+        使用指定的配置文件：  执行：./redis-server ../redis.conf；
+redis配置文件详解：
+    daemonize no
+        redis默认不是以守护进程执行的，如果该项设置为on，则redis进程将会以守护进程执行；并且在启动守护进程以后，Redis会把pid写到一个pidfile里面，该文件位置在：/var/run/redis.pid
+    pidfile /var/run/redis.pid
+        redis以守护进程执行时，默认会把pid写入/var/run/redis.pid文件,可以通过该项更改pid写入文件的位置；
+    port 6379
+        redis进程默认使用的端口号；
+    bind 127.0.0.1
+        设置bind项之后，该redis服务器只能被bind绑定的项来连接；
+    timeout 0
+        设置客户端闲置多长时间以后关闭连接，如果指定为0，表示关闭该功能；
+    loglevel verbose
+        设置redis的日志级别；包括：debug、verbose、notice、warning；默认为verbose
+    logfile stdout
+        设置redis日志的日志输出方式，默认是标准输出；如果redis以守护进程的方式执行，这里又是标准输出，则日志将会发送给/dev/null；
+    database 16
+        设置数据库的数目
+    
+    save <seconds> <changes>
+        指定在所长时间内有多少次更新操作就将数据同步到数据文件，可以多个条件配合；
+        如： save 900 1
+            save 300 10
+            save 60 10000
+        改行注释掉之后将会取消同步；即无法通过快照的方式持久化数据到文件；
+    rdbcompression yes
+        设置是否压缩rdb数据文件，默认为压缩，压缩之后cpu时间会增长，但是节省空间，如果不压缩文件将会变得巨大；
+    dbfilename dump.rdb
+        设置rdb文件名；
+    dir 
+        设置rdb文件保存目录；
+    
+    主从复制相关配置：
+    slaveof masterip masterport
+        设置当本机为从服务器时需要连接的主服务器ip和端口，改配置项配置后，启动redis时会自动从master进行数据同步；
+    masterauth <主服务器密码>
+        如果设置了主服务器密码，并填写了该配置项，则从服务器连接主服务器时会自动拉去该密码；
+    redis安全选项
+    requirepass pass
+        设置redis连接密码
+    其余设置：
+        maxclients 128
+            设置同一时间最大客户端连接数，默认是无限制的，redis可以同时打开的客户端连接数为redis进程可以打开的最大文件描述符数；
+        该选项如果设置为0；则表示不做任何限制；当客户端连接数达到限制时，redis会关闭新的连接；
+        maxmemory <bytes>
+            设置redis最大内存限制；redis在启动时会把数据加载到内存中，到达最大内存后，redis会先尝试清楚已到期或者即将到期的key;
+            # 当此方法处理后，仍然到达最大内存设置，将无法再进行写入操作，但仍然可以进行读取操作。
+            # Redis新的vm机制，会把Key存放内存，Value会存放在swap区
+    AOF持久化方式的配置：
+        appendonly no 指定是否在每次更新操作之后进行日志记录；默认是no
+        appendfsync everysec 指定日志更新条件；共三个值可选：no,always，everysec；
+        appendfilename appendonly.aof   指定日志文件名；（aof持久化时的文件名）
+    redis慢日志
+        slowlog-log-slower-than 10000（微秒）   查询时间大于该项设置的时间将会定义为慢查询，单位是微秒；   
+        slowlog-max-len 128  设置慢查询最大条数，当slowlog超过设定的最大值后会将最早的slowlog删除；
+    include /path/to/local.conf  设置包含指定的配置文件；
+        
+
+    
