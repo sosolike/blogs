@@ -178,4 +178,82 @@
             header('Content-Type；application/octet-stream');
             header('Content-Disposition:attachement;filename="example.zip"')
             readfile("/data/example.txt");
+6：php操作ftp扩展
+    1：连接和登录ftp服务器
+        $link = ftp_connect(ip,port,timeout);        连接ftp服务器
+        ftp_close($link);                            关闭ftp服务器连接
+        ftp_quit($link);                             关闭ftp服务器连接
+        ftp_login($link,$username,$password);
+
+    2:操作ftp服务器上面的dir:
+        ftp_chdir($link,$new_name);                 为ftp服务器指定目录更名
+        ftp_mkdir($link,$dir);                      在ftp服务器创建一个目录
+        ftp_nlist($link,$dir);                      返回指定目录的文件列表；
+        ftp_pwd($link);                             返回当前目录名称；
+        ftp_rename($link,$from_name,$to_name)       为指定目录更名
+        ftp_rmdir($link,$dir)                       删除ftp服务器上面的目录
+
+    3：操作ftp服务器上的文件：
+        ftp_chmod($link,$mode,$file)                更改服务器上文件的权限
+        ftp_rename($link,$from,$to)                 为ftp服务器上面的文件更名
+        ftp_size($link,$file)                       返回指定文件的大小
+
+        ftp_put($link,$ftp_file,$local_file,$mode,$startpos);
+        ftp_get($link,$local_file,$ftp_file,$mode,$startpos);
+
+        ftp_fput($link,$svn_file,$local_file,$mode,$startpos);
+        ftp_fget($link,$local_file,$ftp_file,$mode,$sttartpos);
+
+        ftp_nb_fput($link,$svn_file,$local_file,$mode,$startpos);
+        ftp_nb_fget($link,$local_file,$ftp_file,$mode,$sttartpos);
+
+        ftp_nb_put($link,$ftp_file,$local_file,$mode,$startpos);
+        ftp_nb_get($link,$local_file,$ftp_file,$mode,$startpos);
+
+        ftp_mdtm($link,$ftp_file)                   获取ftp服务器上指定文件的最后修改时间；
+        ftp_delete($link,$path)                     删除ftp服务器上面的指定文件；
+        ftp_exec($link,$command);                   在ftp服务器上执行命令
+7：php操作文件扩展
+    1：php包含文件：
+        include "$path";
+        require "$path";
+        include_once    "$path";
+        require_once    "$path";
+        @1：区别：
+            @1：require导入文件：如果文件不存在，或者导入文件出错，程序将终止运行；
+            @2：include导入文件：如果文件不存在，则报警告错误，程序将继续执行；
+            @3：include会有返回值；require没有返回值；
+            @4：xxxx_once将只导入文件一次，每次导入文件的时候都会检测是否已经导入过该文件；
+        @2：其他：
+            @1：include和require在引入文件的时候，如果文件有return，则返回文件的return值；
+    2：目录操作扩展：
+        @1：获取当前文件的目录信息的方式：
+            a：通过常量：__DIR__来获取当前文件所处的 目录 路径（绝对路径）
+            b：通过常量：__FILE__来获取当前文件所处的 文件 路径（绝对路径）
+            c：通过getcdw()来获取当前文件所处的 目录 路径（绝对路径）
+        @2:检测目录是否存在：
+            file_exists($dir);
+        @3:获取文件路径的信息：
+            basename($file);
+            dirname($file);
+            pathinfo($file);
+            备注：
+                1：basename若无第二个参数，则返回完整的文件名和文件后缀；
+                            若第二个参数设置了文件后缀，则只返回文件名
+                2：pathinfo：返回一个关联数组；包括basename,dirname,extension,filename;
+        @3:查看目录所在磁盘空间：
+            disk_total_space($dir)；查看磁盘总空间；
+            disk_free_space($dir);查看磁盘可用空间；
+        @4：创建目录：
+            mkdir($dir);创建目录，不能递归创建；
+        @5：操作目录：
+            $dir_resource = opendir(__DIR__);创建文件指针；
+            $res = scandir(__DIR__);返回该目录文件及子目录名称（索引数组）；
+            $res = readdir($dir_resource);返回当前目录指针所指文件或者目录的名称；
+            rewinddir($dir_resource);重置当前目录指针
+            closedir($dir_resource);关闭当前目录；
+        @6：改变当前文件所处的目录：
+            chdir($url);
+
         
+    
