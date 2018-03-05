@@ -1,0 +1,59 @@
+redis的数据持久化：
+  redis数据持久化的方式：
+    1：通过创建快照文件来进行数据持久化；只记录进行持久化之前的所有数据；
+    2：通过追加aof文件的方式进行数据持久化；按条件执行，记录写操作日志；
+  通过快照的方式进行redis持久化：
+    1：配置持久化相关选项：
+        save <seconds> <changes>
+            指定在所长时间内有多少次更新操作就将数据同步到数据文件，可以多个条件配合；
+            如： save 900 1
+                save 300 10
+                save 60 10000
+            改行注释掉之后将会取消同步；即无法通过快照的方式持久化数据到文件；
+        rdbcompression yes
+            设置是否压缩rdb数据文件，默认为压缩，压缩之后cpu时间会增长，但是节省空间，如果不压缩文件将会变得巨大；
+        dbfilename dump.rdb
+            设置rdb文件名；
+        dir 
+            设置rdb文件保存目录；
+    2：持久化的方式
+      快照原理：
+        通过客户端向服务器端发送BGSAVE命令（windows平台不支持这个命令）：此时redis会创建一个子进程来将内存中的数据写入磁盘；而redis父进程继续响应客户端的命令；
+      触发快照的方式：
+		|--通过客户端向服务器发送SAVE命令；此时redis服务器是通过父进程将数据写入磁盘的，因此在快照完毕之前将不会再响应任何命令；一般情况下在内存不够的时候才会使用这个命令；
+		|--可以在配置文件中设置save选项的条件，可以设置多个，则在最近一次快照之后满足设置的任意一个条件就会触发BGSAVE命令；如：save 60 10000；
+		|--在redis服务端收到SHUTDOWN命令时，会阻塞客户端的所有响应，然后执行SAVE操作；执行完成之后关闭服务器；
+		|--在redis服务器链接另一个redis服务器的时候，如果没有执行BGSAVE操作或者刚刚执行完BGSAVE操作，那么主服务器就会执行BGSAVE操作；
+      注意事项：
+            |--在快照期间，系统，redis，硬件任意一个崩溃，都会导致上次快照之后的所有数据丢失，而且本次快照期间的所有更新也将丢失；
+			|--在执行BGSAVE的时候，redis所占用内存每增加一个G，创建子进程的时候耗时会根据硬件情况增加；此时redis服务会有停顿；且停顿时间根据内存占用大小而定；
+			|--执行save的速度要比BGSAVE快，因为执行SAVE的时候并不需要创建子进程；但是执行save期间服务器会阻塞客户端的响应；
+			|--为改善执行快照造成的停顿最好是在空闲时间手动执行SAVE命令；
+			|--如果实在不能接受因系统、软件、或者硬件崩溃而造成的数据丢失，以及停顿造成数据的丢失则可以使用AOF：
+  redis持久化---AOF文件
+    1：执行原理：
+      |--AOF文件的持久化方式是将写命令追加到AOF文件的末尾，记录的是对redis服务器的操作；在redis重启恢复的时候会将这些顺序全部重新执行一遍；
+    2：相关配置：
+        appendonly no 指定是否在每次更新操作之后进行日志记录；默认是no
+        appendfsync everysec 指定日志更新条件；共三个值可选：no,always，everysec；
+        appendfilename appendonly.aof   指定日志文件名；（aof持久化时的文件名）
+        注意：always每写入一条命令都要同步一次，同步频率较高，严重影响redis性能；everysec每秒同步一次；no:由系统决定何时同步；
+    2：AOF方式进行数据持久化的缺陷
+      |--AOF的方式是不断给该文件追加内容的，如果这个文件过大，甚至会占满整个磁盘空间；造成服务器崩溃，文件过大在redis恢复数据的时候速度也会变慢；
+    3：aof文件的压缩：
+      配置项：
+        auto-aof-rewrite-percentage：设置当前aof文件比之前的aof文件大的百分比
+        auto-aof-rewrit：设置当前aof文件多大的时候开始进行压缩；
+      压缩命令：
+        客户端发送BGREWRITEAOF；
+      rewrite命令的触发机制：
+				1--1、Redis Server接收到客户端发送的BGREWRITEAOF指令请求，如果当前AOF/RDB数据持久化没有在执行，那么执行，反之，等当前AOF/RDB数据持久化结束后执行AOF rewrite
+				1--2、在Redis配置文件redis.conf中，用户设置了auto-aof-rewrite-percentage和auto-aof-rewrite-min-size参数，并且当前AOF文件大小server.aof_current_size大于auto-aof-rewrite-min-size(server.aof_rewrite_min_size)，同时AOF文件大小的增长率大于auto-aof-rewrite-percentage(server.aof_rewrite_perc)时，会自动触发AOF rewrite
+  数据安全：
+    1：数据持久化功能在redis作为主要存储的时候应该开启；
+    2：数据持久化应该根据数据安全级别设置持久化条件；避免频率过高的同时最大可能保证数据的安全性；
+    3：持久化文件也应该及时备份；
+      
+      
+      
+      
