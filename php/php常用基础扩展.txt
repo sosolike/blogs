@@ -254,6 +254,89 @@
             closedir($dir_resource);关闭当前目录；
         @6：改变当前文件所处的目录：
             chdir($url);
+    3：文件操作扩展：
+        @1：文件检测类操作：
+            file_exists($file_path):检测文件是否存在
+            is_dir($file_path):检测路径是否是目录
+            is_file($file_path):检测路径是否是文件
+            is_link($file_path):检测路径是否是链接
+            is_writeable($file_path):检测路径是否可写
+            is_readable($file_path):检测路径是否可读；
+            is_executable($file_path):检测路径是否可执行
+        @2：文件基本信息获取：
+            fileatime($file_path)：返回上次访问时间，如果出错返回false
+            filectime($file_path)：返回文件元信息最后一次被修改的时间
+            filemtime($file_path)：返回文件内容最后一次被修改的时间
+            filesize($file_path):获取文件大小
+            fileperms($file_path):返回文件权限
+            filetype($file_path):返回文件权限
+            stat($file_path);获取文件信息；返回关联数组；
+        @3：文件基本操作：
+            copy($from_path,$to_path);复制单个文件
+            unlink($file_path);删除文件； 
+            rename($from_name,$to_name);重命名文件
+            chown(file_path,own_name/own_id);更改文件所有者
+            chmod(file_path,new_mod);更改文件权限
+            chgrp(file_path,grp_name/grp_id);更改文件组别
+        @4：文件内容操作：
+            通过路径操作：
+                file_get_content($file_path);
+                可用于读出文件内容，以字符串返回；也可用于模拟get访问；
+
+                file($path)
+                将文件读取到一个数组中，一项是一行，默认是索引数组；
+
+                readfile($path)
+                读取文件内容，并直接写到输出缓冲区中；返回所读字符的个数；；
+
+            通过文件资源访问：
+                fread($file_resource,$length);
+                读取$length个字节并以字符串方式返回；读取失败返回false;
+
+                fgetc($file_resource)
+                一次返回一个字符
+
+                fgets($file_resource);
+                一次返回一行
+
+                fgetss($file_resource);
+                一次返回一行，并且过滤掉html和php标记；
+
+                fpassthru($file_resource)
+                读取文件内容知道EOF，并直接写到输出缓冲区中；
+        @5：文件其他操作：
+            1：文件指针操作：
+                fseek($file_path,$offset):将文件指针从当前位置向后移动n位；
+                fteel($file_resource):返回当前文件指针位置；
+                rewind($file_resource):将文件指针重置到首位；
+                feof($file_resource):检测文件指针是否已经到达文件末尾；
+                fopen($file_path,$mode);打开文件并返回文件资源，
+                fclose($file_resource);关闭文件;
+            2:文件写入：
+                1：file_put_contents($file_path,$content);
+                2：$resource = fopen($file_path,"ab+");
+                    fwrite($resource,$contents);
+        @6：文件锁：
+            bool flock ( int handle, int operation [, int &wouldblock] );
+            flock() 操作的 handle 必须是一个已经打开的文件指针。operation 可以是以下值之一：
+
+            要取得共享锁定（读取程序），将 operation 设为 LOCK_SH（PHP 4.0.1 以前的版本设置为 1）：该锁的意思是被读取的文件正在被写入将会返回false,如果是被读取则返回true;
+            要取得独占锁定（写入程序），将 operation 设为 LOCK_EX（PHP 4.0.1 以前的版本中设置为 2）:建议在对一个文件写入的时候加上该锁，避免同事有多个程序对该文件写入；
+            要释放锁定（无论共享或独占），将 operation 设为 LOCK_UN（PHP 4.0.1 以前的版本中设置为 3）
+            如果你不希望 flock() 在锁定时堵塞，则给 operation 加上 LOCK_NB（PHP 4.0.1 以前的版本中设置为 4）
+            如果不想出现dirty数据，那么最好使用lock_sh共享锁。可以考虑以下三种情况： 
+                1. 如果读的时候没有加共享锁，那么其他程序要写的话（不管这个写是加锁还是不加锁）都会立即写成功。如果正好读了一半，然后被其他程序给写了，那么读的后一半就有可能跟前一半对不上（前一半是修改前的，后一半是修改后的） 
+                2. 如果读的时候加上了共享锁（因为只是读，没有必要使用排他锁），这个时候，其他程序开始写，这个写程序没有使用锁，那么写程序会直接修改这个文件，也会导致前面一样的问题 
+                3. 最理想的情况是，读的时候加锁(lock_sh),写的时候也进行加锁(lock_ex),这样写程序会等着读程序完成之后才进行操作，而不会出现贸然操作的情况 
+
+            写的时候： 
+                如果多个写程序不加锁同时对文件进行操作，那么最后的数据有可能一部分是a程序写的，一部分是b程序写的 
+                如果写的时候加锁了，这个时候有其他的程序来读，那么他会读到什么东西呢？ 
+                    1. 如果读程序没有申请共享锁，那么他会读到dirty的数据。比如写程序要写a,b,c三部分，写完a,这时候读读到的是a，继续写b，这时候读读到的是ab，然后写c，这时候读到的是abc. 
+                    2. 如果读程序在之前申请了共享锁，那么读程序会等写程序将abc写完并释放锁之后才进行读。 
+
+所以推荐在读写文件的时候枷锁以保证文件时安全的；如果不想读阻塞：可以使用flock(lock_SH | LOCK_NB);
+
 
         
     
