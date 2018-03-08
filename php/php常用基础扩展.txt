@@ -451,6 +451,59 @@
             6：strip_tags():剥去字符串中的html，xml,以及php标签
             7：intval()；将数据转换为整形；
             8：floatval();
+10：数组操作扩展：：
+    1：数组的交并差：
+        //差集
+        array_diff($arr1,$arr2);返回$arr1存在但$arr2不存在的项；按值判断
+        array_diff_key();返回$arr1存在但$arr2不存在的项；按索引判断
+
+        //交集
+        array_intersect($array1, $array2);返回$array1和$array2中都存在的值；按照值判断；返回的是$array1中的值；
+        array_intersect_key($array1, $array2)；返回$array1和$array2中都存在的值；按照键判断；返回的是$array1中的值；
+
+        //并集
+        array_merge($array1，$array2);求$array1和$array2中的并值；如果键名相同，则$array2会覆盖$array1;
+        array_merge_recursive($array1);求$array1和$array2中的并值；递归求值；如果键名相同，则$array2和$array1的值会形成二维数组;
+
+    4：其他常用函数：
+        //数组的常用函数
+        array_combine($arr1,$arr2);将$arr1中的值作为键，将$arr2中的值作为值，返回一个组装后的数组，要求两个数组的长度保持一致；
+        array_unique();去掉数组中的重复值
+        in_array();检测具体的值在数组中是否存在
+        array_key_exists();检测指定的键在数组中是否存在
+        array_fill(index.number,value);用指定的值填充数组
+        array_pad(array,size,value)将数组补至指定长度;size代表最终长度，如果是负值，被插入项则从前面开始插入；
+        sort();数组进行顺序排序；按值进行；
+        rsort();数组进行逆序排序，按值进行
+        ksort();数组进行顺序排序，按键进行；
+        krsort();数组进行逆序排序，按键进行；
+        array_shift();删除数组第一项，并返回
+        array_unshift();向数组最前面中插入一项
+        array_pop();删除数组最后一项。并返回
+        array_push();向数组最后一位加一个值，
+        compact()；组装数组；
+        is_array();检测对应变量是否是数组；
+        count();检测数组的项数；另：count($arr) == count($arr,1) 则该数组为一维数组，否则为多维数组；
+        array_reverse();逆转array的项
+    5：数组的其他函数
+        array_replace($arr1,$arr2);使用后一个数组替换前一个数组的值
+        array_replace_recursive()
+        join();将数组转换为字符串
+        implode();通join()
+        array_keys();
+        array_values();
+        array_chunk(array,size,preserve_key);将数组按照size分割为块，preserve_key如果为true,则使用原来的键名，否则使用新的索引来代替原来的键名；
+        array_count_values();统计数组中各个值的出现次数；
+        array_column();返回多维数组中的某个键值；
+        array_change_key_case($input);改变数组键的大小写
+    6数组的遍历函数
+        array_map();		对数组中的每一项都应用某一个函数；返回一个新的map；
+        array_rand();		随机从数组中返回一个或者多个数组项；
+        array_walk();		对数组中的每一项都应用某一个函数，不能有return；
+        each();				返回数组的键值对；
+        list($a,$b,$c) = $arr; 把数组中的值返回给变量；
+11：php正则表达式：
+12：php处理错误异常的方式：
     
 
 
