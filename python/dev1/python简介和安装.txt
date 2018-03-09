@@ -1,0 +1,25 @@
+    语言特征：
+        1：解释执行的脚本编程语言；
+        2：面向对象式的编程语言；
+    python解释器：
+        python是解释执行的脚本编程语言，python代码需要通过python解释器解释执行；
+        python语言和解释器均为开源，常用的解释器为CPython;
+        python解释器众多，不同的解释器执行相同的python代码结果可能会不一样；
+    python安装：
+        python版本分为2.X和3.x，并且不向下兼容；
+        windows上安装：
+            下载地址：https://www.python.org/ftp/python/3.6.3/python-3.6.3-amd64.exe
+            安装时需要将python可执行文件的路径添加到系统的环境变量中去；
+
+        linux上安装：
+            访问http://www.python.org/download/
+            选择适用于Unix/Linux的源码压缩包。
+            下载及解压压缩包。
+            如果你需要自定义一些选项修改Modules/Setup
+            执行 ./configure 脚本
+            make
+            make install
+    python扩展名：
+        python以.py作为扩展名；
+
+    
