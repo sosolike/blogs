@@ -1,0 +1,61 @@
+python中的基本数据结构：
+    list---列表
+        1：声明：[arg1,arg2,arg3,...]
+        2：特征：
+                1：无需声明数据类型
+                2：可以存储不同数据类型的值；
+                3：索引从0开始，（仅支持数字索引，不支持字符串索引）
+        3：操作：
+            1：取值：list[index]
+            2：赋值：list[index] = value
+            3：删除：del list[index]
+            4：获取长度：len(list)
+            5：组合列表：list1+list2
+            6：检测是否存在指定元素：a in list
+            7：截取：list[2:]/list[2:4]/list[start:end:span]
+        4：其余操作：
+            list.sort();对列表进行排序
+            list.reverse(),反向列表中的元素
+            list.pop();删除列表中的一个元素（默认是最后一个）,并返回改元素
+            list.insert(index,obj);将对象插入列表；
+            list.index(item),返回某个元素的索引位置；
+            list.count(item),统计某个元素在列表中出现的次数；
+            list.append(item);在列表的末尾添加新元素；
+    元组：：
+        1：声明：(arg1,arg2,arg3,arg4,arg5)
+        2：特征：
+                1：根列表类似，但是元组里面的元素不能被更改，不能被删除；
+                2：元组的操作和列表完全一样；
+                3：额外的操作：
+                    max(t);取元组中的最大值
+                    min(t);取元祖中的最小值
+                    tuple(list);将序列转换为元祖；
+                4：如果元组只有一个元素，则元素后面一定要有,；否则()将被认为是运算符；
+    字典：
+        1：声明：{key1:val1,key2:val2,...}
+        2：特征：  
+                1：类似于php中的关联数组；
+                2：键必须是唯一的；
+                3：dict的查找速度非常快，而且不随着key增加而变慢；list的查找速度会随着元素的增加而变慢；
+        3：操作：
+                1：所有的基础操作和list一样
+                2：额外操作：
+                    1：str(dict)：以字符串的方式打印字典
+                    2：type(var)：返回输入变量的类型；
+                    3：dict.keys();dict.values();
+                    4：dict.items();
+                    5：dict.get(key);
+                    6：dict.clear();删除字典内的所有元素
+                    7：dict.pop(key)
+    集合：set
+        1：声明：set(arg1,arg2,arg3)
+        2：特征：   
+                1：set集合只能存储元素，没有索引
+                2：set集合中的值不能重复，具备自动去重功能；
+        3：操作：   
+                1：添加一个元素：s.add(val);
+                2：删除一个元素：s.remove(val);
+                3：允许求交并差：
+                    s1 | s2  :求并集
+                    s1 & s2  :求交集
+                    s1 not s2:求差集
