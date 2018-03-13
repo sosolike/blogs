@@ -504,6 +504,8 @@
         list($a,$b,$c) = $arr; 把数组中的值返回给变量；
 11：php正则表达式：
 12：php处理错误异常的方式：
+13：php操作session：
+14：php操作cookie：
     
 
 

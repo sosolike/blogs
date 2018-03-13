@@ -17,7 +17,7 @@ python中的基本数据结构：
             
         4：其余操作：
             截取：list[2:]/list[2:4]/list[start:end:span]
-            list.sort();对列表进行排序
+            list.sort();对列表进行排序；直接对列表本身进行排序，会更改原数据；
             list.reverse(),反向列表中的元素
             list.pop();删除列表中的一个元素（默认是最后一个）,并返回改元素
             list.insert(index,obj);将对象插入列表；
@@ -75,5 +75,8 @@ python中的基本数据结构：
                     s1 & s2  :求交集
                 4：获取长度：len(dict)
                 5：检测是否存在指定元素：a in dict、a not in dict
+<<<<<<< HEAD
                 6：浅copy：seta.copy();
                 7：seta.pop();
+=======
+>>>>>>> f555ad05573b7ae3abb72349e4111fd74343079b
