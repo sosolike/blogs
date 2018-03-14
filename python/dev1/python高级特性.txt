@@ -46,6 +46,45 @@
 列表生成式：
     目的：可以用来生成列表；
     使用：list(range(1,12))
+装饰器：
+    所谓装饰器只是一个函数，该函数接收一个函数作为参数，并返回一个函数；可以在不改变原有功能代码的基础上添加新的功能；
+
+    1：装饰器一定是在被装饰函数执行之前执行；
+    2：装饰器是一个闭包；
+    3：该闭包函数接收的参数就是被装饰的函数传入的实参；
+    4：该闭包函数返回的函数就是被装饰的函数
+    5：注意要把闭包函数接收到的参数传入返回的函数中；
+
+    @语法糖：
+        1：使用@方式调用装饰器：
+            @outer
+            fun()
+        2：eg:
+            def outer(some_func):
+                def inner(c):
+                    print(c)
+                    c+=1
+                    print("before some_func")
+                    ret = some_func(c)
+                return inner 
+            #本质
+            inner = outer(a)
+            inner(12)
+            #@语法糖
+            @outer
+            def a(b):
+                print("origin code",b)
+            a(123)
+偏函数：
+    所谓偏函数就是functools模块提供的一个功能函数，该函数可以把现有的函数的一些可变的参数固定，返回一个新的函数名，方便调用；
+    如：
+        import functools
+        int2 = functools.partial(int,base=2)
+        int2(n),会将二进制的字符串n转化为整数；
+        //类似于:
+        int(n,base=2)
+
+
             
 
 
