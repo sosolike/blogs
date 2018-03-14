@@ -8,6 +8,7 @@
         注意事项：python解释器众多，不同的解释器执行相同的python代码结果可能会不一样；
     python安装：
         python版本分为2.X和3.x，并且不向下兼容；
+        python文件以.py做为扩展名
         windows上安装：
             下载地址：https://www.python.org/ftp/python/3.6.3/python-3.6.3-amd64.exe
             安装时需要将python可执行文件的路径添加到系统的环境变量中去；
@@ -20,7 +21,5 @@
             执行 ./configure 脚本
             make
             make install
-    python扩展名：
-        python以.py作为扩展名；
 
     
