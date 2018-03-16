@@ -1,0 +1,30 @@
+1：python提供time模块、datetime模块和calendar模快操作日期时间信息
+2：python函数以元祖的形式组装日期时间信息：
+    按顺序：年，月，日，时，分，秒，周几，一年的第几日，夏令时
+3：time模块：
+    常用函数：
+        time.time()  :获取当前时间戳
+        time.strftime(format,time)  :格式化时间;
+            format:最常用："%Y-%m-%d %H:%M:%S"：2016-03-20 11:45:39；
+            time:要求必须是时间元祖；
+        time.clock()    :以浮点数计算的秒数返回当前cpu时间；
+                        （用来衡量不同程序的耗时，比time.time()更有用）；
+        time.localtime(time):返回时间元祖(无参数将会获取当前日期时间信息解析为元祖，也可以给一个时间戳，将会解析为元祖)
+
+    其他：
+    time.gmtime(time)   :接受时间戳，返回当地时间下的时间元祖
+    time.sleep(secs)    :推迟调用线程运行。secs指秒数；
+4：datetime模块：
+    datetime.year
+    datetime.month
+    datetime.day
+    datetime.hour
+    datetime.minute
+    datetime.second
+    datetime.microsecond
+
+
+
+
+
+    
