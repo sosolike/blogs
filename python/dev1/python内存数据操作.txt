@@ -1,0 +1,13 @@
+python也可以直接在内存中读写数据：
+StringIO：在内存中读写str
+    使用方式：
+        1：导入StringIO：from io import StringIO
+        2：创建句柄：f = StringIO()
+        3：向内存中写入字符串：f.write("str")
+        4：获取内存中的字符串：f.getvalue();
+BytesIO：在内存中读写二进制数据
+    使用方式：
+        1：导入StringIO：from io import BytesIO
+        2：创建句柄：f = BytesIO()
+        3：向内存中写入字符串：f.write("str".encode("utf-8"))
+        4：获取内存中的字符串：f.getvalue();
