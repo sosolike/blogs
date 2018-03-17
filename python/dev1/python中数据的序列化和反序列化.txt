@@ -1,0 +1,10 @@
+python中对数据序列化和反序列化使用pickle模块：
+操作：
+    1：导入pickle模块：import pickle;
+    2：序列化：
+        pickle.dump(obj,file)：将数据序列化到file这个文件中
+        pickle.dumps(obj)：将数据序列化并返回；
+
+    3：反序列化：
+        pickle.load(file)：将文件中的内容读取出来反序列化
+        pickle.loads(str)：将序列化的数据反序列化
