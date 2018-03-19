@@ -34,7 +34,7 @@
     time();
         功能：获取当前时间的unix时间戳；
     microtime();
-        功能：获取当前时间的微秒时间戳；以秒为单位的小数；、
+        功能：获取当前时间的微秒时间戳；以秒为单位的小数；
     getdate($time);
         功能：获取时间戳$time的时间信息；返回一个数组；
     mktime(int hour,int minutes,int seconds,int month,int day,int year);
@@ -87,9 +87,8 @@
     1：json_encode()
         功能：将数组或者对象转换为json字符串；
         备注：
-            1：对于数组：要求数组必须是关联数组，
-            2：对于对象：只能转换访问权限是public的示例属性；其他权限的属性以及静态属性均不能转换；
-            3：要避免转换索引数组；
+            1：对于数组：要求数组必须是关联数组，要避免转换索引数组或者转换索引关联数组；
+            2：对于对象：只能转换访问权限是public的实例属性；其他权限的属性以及静态属性均不能转换；
     2：拼装json字符串：
         '{"name":"value","age":age}'
             备注：外面一定要是用单引号，内部使用双引号；
@@ -471,7 +470,7 @@
         array_unique();去掉数组中的重复值
         in_array();检测具体的值在数组中是否存在
         array_key_exists();检测指定的键在数组中是否存在
-        array_fill(index.number,value);用指定的值填充数组
+        array_fill(index,number,value);用指定的值填充数组
         array_pad(array,size,value)将数组补至指定长度;size代表最终长度，如果是负值，被插入项则从前面开始插入；
         sort();数组进行顺序排序；按值进行；
         rsort();数组进行逆序排序，按值进行
