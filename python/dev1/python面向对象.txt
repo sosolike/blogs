@@ -82,4 +82,50 @@ python面向对象编程:
     2：以__命名的变量只能被类内部访问
     备注：
         以__命名的变量会被python解释器将变量名称改为_类名__属性名的形式；
+
+继承：
+    1：python中继承语法：class ClassName(ParentClass):
+    2：继承之后的结果：
+        子类继承父类之后拥有父类的所有属性和方法;
+    3：子类中访问父类属性和方法：
+        1：类属性：ParentClassName.abbrName;
+           实例属性：self.abbrName;
+        2：类方法/静态方法：ParentClassName.funName;
+            实例方法：self.funName
+
+    4：子类重写父类中的方法：
+    5：构造方法：
+        1：如果子类没有构造方法将会直接调用父类构造方法
+        2：如果子类有自己的构造方法则直接调用自己的构造方法，不再调用父类的构造方法
+        3：子类中调用父类构造方法：ParentClassName.__init__(self);
+高级特性：
+    __slots__：
+        1：在python中允许对象动态绑定属性或者方法；而__slots__则可以限制允许绑定的属性名；
+        2：__slots__必须传入一个tuple;
+    @property装饰器：
+        该装饰器可以把一个函数修饰成一个属性，
+        其使用是有限制的：用于set_xxx和get_xxx这种方法类型    
+        eg:
+            @property
+            def abbr(self):
+                return self.abbr
+            
+            #上面的方法用于向外提供abbr这个实例属性
+            @abbr.setter
+            def abbr(self,value):
+                self.abbr = value
+            #上面的方法用于向外提供操作abbr属性的
+    多重继承：
+        python支持多继承；
+    定制类：
+        __str__：该方法的返回值即为打印对象时的输出内容；
+        __repr__：和__str__方法一样，但是打印的效果更好；
+        __iter__：返回一个迭代器：一般直接返回实例即可；实例本身就是一个迭代器；
+        __getattr__：调用不存在的属性时，python会主动调用该方法；可以更好返回错误提示；
+        __
+
+
+    
+
+
     
