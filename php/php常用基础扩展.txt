@@ -501,10 +501,77 @@
         array_walk();		对数组中的每一项都应用某一个函数，不能有return；
         each();				返回数组的键值对；
         list($a,$b,$c) = $arr; 把数组中的值返回给变量；
-11：php正则表达式：
-12：php处理错误异常的方式：
-13：php操作session：
-14：php操作cookie：
+
+13：php操作session及cookie
+    cookie：
+        作用：
+            1：用来在浏览器端保存服务器写入的一些信息；
+            2：几个基本特征：
+                1：保存的信息是服务器端写入的；
+                2：保存的位置在浏览器客户端；
+                3：cookie是有有效期的；如果未设置则是会话cookie；会话结束cookie失效；
+                4：cookie区分浏览器/ 区分路径 /区分域名
+                5：cookie信息会在通过对应浏览器访问对应域名的对应路径且cookie信息未失效的情况下自动发送到服务器；
+            3：cookie是以明文的形式保存在浏览器本地的，所以有被盗取以及篡改的可能；因此不要再cookie中存放敏感信息；
+        php中操作cookie：
+            1：设置cookie:
+                setcookie(string $name,string $value,int $expire,$string path,string $domain,bool $secure);
+                备注：
+                    2：使用setcookie设置cookie之前不能有任何输出；
+                    3：如果未设置cookie的超时时间，该cookie将是会话cookie,会话结束cookie即结束；
+            2：获取cookie：
+                $_COOKIE：获取所有的cookie；$_COOKIE['name']：获取名称为name的cookie；
+            3：删除cookie：
+                setcookie("cookie_name");
+                setcookie("cookie_name",time()-1);
+    session：
+        作用： 
+            1：session用来记录服务器写入的信息；
+            2：几个基本特征：   
+                1：由服务器写入
+                2：保存在服务器中
+            3：原理：
+                1：在创建新的会话时，系统会创建一个session_id并保存在cookie中，该session_id是拿取该session的凭证；session_id是唯一的；
+                2：服务器拿到session_id之后会自动根据session_id获取session信息；
+                3：session信息是全局的，只要有session_id，在任何脚本中都可以拿取session信息；
+        php操作session：
+            1：开启session:
+                1：在php.ini中配置session.auto_start为true；即开启session；
+                2：在脚本文件中通过session_start()开启session；
+                备注：
+                    1：通过php.ini配置文件的时候，是无法将对象放入session中的，因为在类定义必须在启动session之前加载；所以不推荐使用使用配置文件来开启session;
+                    2：session_start()来开启session的时候不能有任何输出，因为生成的session_id要保存在cookie中，有头信息的设置过程，因此不能有任何输出；
+                    3：在每一个客户端连接服务端的时候只要开启了session,那么session_start()将会检查cookie是否有上传sessionid;如果有上传将会使用该sessionid去服务端获取对应信息；
+                    如果cookie未上传对应的sessionid,session_start()将会创建nsessionid,并将该sessionid在服务端和客户端个存放一份；上述两个过程是由session_start自动完成的
+            2：设置session信息：
+                $_SESSION['session_name] = 'value';
+            3：获取session选项：
+                $var = $_SESSION['Ssession_name’];
+            4：注销session：
+                1：删除用户在session中存放的某个选项：
+                    unset($_SESSION['session_name']);
+                    清空session信息中的一项
+                2:将当前会话中注册的变量全部删除；
+                    $_SESSION = array();
+                    该操作并不会删除以sessionid命名的文件，知识清空该文件；
+                3：销毁当前会话：
+                    session_destory();
+                    该操作会彻底销毁当前会话，包括当前的session文件，session_id也会一并删除；
+            5：session存储方式设置：
+                1：session默认是以文件的方式存储的；
+                2：将session信息保存到redis中：
+                    在php.ini中将session.save_handler = redis;
+                    在php.ini中将session.save_path = "tcp://ip:port"；
+                或者：
+                    通过ini_set()设置：
+                    ini_set("session.save_handler","redis");
+                    ini_set("session_save_path","tcp://ip:port");
+
+                
+
+
+
+
     
 
 
