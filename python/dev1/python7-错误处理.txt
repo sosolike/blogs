@@ -1,0 +1,64 @@
+python常见的两种错误：
+    程序运行错误异常：系统错误异常
+    根据运行逻辑需要，手动抛出异常：用户异常
+
+错误处理方式：
+    1：默认情况下如果没有任何捕获错误异常信息的设置，这些错误异常信息会被一直上抛至python解释器；解释器会将错误信息打印至控制台；
+    2：手动捕获错误异常信息：try...except
+使用try...except
+    基本语法：
+        try:
+            normal_code...
+        except error as e:
+            slave_error_code...
+    备注：
+        1：try语句块包含正常需要被执行的代码，如果发生错误异常并且被except捕获则进入except中执行错误异常处理代码，否则会一直上抛，直至python解释器；
+
+        2：try..except..可以带上else：
+            try:
+                normal_code...
+            except error as e:
+                slave_error_code...
+            else:
+                some_code...
+        如果未发生任何异常时，执行完try代码块将会进入else代码块继续执行：
+    
+        3：try..except还可以带上finally语句块，无论是否发生错误，try...except语句块执行完成后总会进入finally中执行；
+
+        4：python中的异常都是class，均直接或间接继承自BaseException;except捕获到的是一个错误对象；
+
+        5：由于错误异常种类较多，因此可以使用多层except来捕获不同的错误异常信息，由上至下，错误类型范围应该逐渐增大；否则错误范围较小的永远无法被捕获；
+
+        6：except可以跨越多层调用，只需要在需要处理的地方捕获并处理即可，无需在源头处理；
+
+        7：如果except捕获了错误，但是不知道如何处理，则可以使用raise把错误原样抛出给上层处理；也可以使用raise抛出一个新的异常对象；
+手动抛出错误异常：
+    1：python使用raise手动抛出异常，抛出的必须是一个异常的实例；
+    2：raise Exception(exception_info)
+    
+自定义异常类：
+    1：自定义异常类必须直接或者间接继承自BaseException
+    2：可以通过重写构造函数__init__方法来设置该异常类需要接收的参数；
+    3：通过raise抛出异常类：raise UserException("参数为空")
+    4：自定义异常类实例：
+
+        eg:
+            #错误异常处理:自定义一个参数类，专门用于抛出用户传入的参数异常
+                class ParamException(Exception):
+                    errorList = ("未知错误","参数为空","参数不合法","参数长度不正确")
+                    
+                    def __init__(self,errorCode=0):
+                        self.errorMsg = ParamException.errorList[errorCode]
+            #使用这个异常类：
+                a=None
+                try:
+                    if a==None:
+                        raise ParamException(3)
+                except ParamException as e:
+                    print(e.errorMsg)
+            通过这种方式处理可以让触发用户错误异常更加规范；易于维护；
+
+    
+
+    
+    
