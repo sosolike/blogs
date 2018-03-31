@@ -1,0 +1,120 @@
+python中日志的处理：
+    1：通过操作文件，向文件中写入日志：
+        自定义日志一般元素：
+            1：日志文件名：要能够显示出日志的作用，级别，日期等关键信息：日志文件名：日志一般名称+级别+日期+备注
+            2：日志的级别：debug/info/waring/error/exception/自定义 
+            3：日志信息的格式：确保日志信息格式清晰，完整，简单，易于分析
+            
+        如第一种方式：
+            import time
+            import os
+            from os import path
+            def halt(level='info',content=''):
+                #设置日志记录时间
+                log_time = time.strftime("%Y-%m-%d",time.localtime())
+                #设置日志级别
+                log_level = level
+                #设置日志文件名称
+                log_name = "log_"+log_level+"_"+log_time + ".txt"
+                #设置日志文件存放地址
+                log_dir = "D:\like_python\project\log"
+                #设置文件路径
+                file_path = log_dir+"\\"+log_name
+
+                #检测文件地址是否存在
+                if not path.exists(log_dir) :
+                    os.mkdir(log_dir)
+                #写入日志信息
+                f = open(file_path,"ab+")
+                f.write(content.encode("utf-8"))
+                f.close()
+
+            halt("debug","测试日志信息")
+    2：通过logging模块记录日志
+        1：logging由四部分组成：
+            logger：用于记录日志
+            handler：用于设置io流
+            formatter：用于格式化日志信息
+            filter：用于过滤日志
+        2：logging的特点：
+            1：记录日志时如果设置了日志级别，则日志只会输出对一个级别及其以上级别的日志信息；
+            2：logging模块会把所有级别的信息记录在同一个文件
+            3：logging的日志级别：
+                级别          代表值
+                # CRITICAL   50
+                # ERROR      40
+                # WARNING    30
+                # INFO       20
+                # DEBUG      10
+            4：日志格式化方式：
+                    %(asctime)s 字符串形式的当前时间。默认格式是 “2003-07-08 16:49:45,896”。逗号后面的是毫秒
+
+                    %(name)s Logger的名字，可以设置tag，根据tag区分不同的日志；
+
+                    %(levelname)s 文本形式的日志级别
+
+                    %(message)s 用户输出的消息
+
+                    [%(pathname)s 调用日志输出函数的模块的完整路径名，可能没有] 
+
+                    [%(filename)s 调用日志输出函数的模块的文件名]
+
+                    [%(funcName)s 调用日志输出函数的函数名]
+
+                    [%(lineno)d 调用日志输出函数的语句所在的代码行]
+
+                    [%(thread)d 线程ID。可能没有]
+
+                    [%(threadName)s 线程名。可能没有]
+                
+        2：logging的配置：
+            1：使用python代码显式的创建loggers.handlers和formatters并分别调用其配置函数
+            2：创建一个日志配置文件，使用fileConfig函数类读取该文件的内容；
+            3：创建一个包含配置信息的dict，然后传递给dictConfig()函数；
+        
+            a：通过python代码实现日志配置：
+                a1:
+                    #创建一个日志器logger并设置其日志级别为DEBUG
+                    logger = logging.getLogger('simple_logger)
+                    logger.setLevel(logging.DEBUG)
+
+                    #创建一个流处理器handler不管你设置其日志级别为DEBUG
+                    handler = logging.StreamHandler(sys.stdout)
+                    handler.setLevel(logging.DEBUG)
+
+                    #创建一个格式器formatter并将其添加到处理器handler:
+                    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+                    handler.setFormatter(formatter)
+
+                    #为日志器logger添加上面创建的处理器handler
+                    logger.addHandler(handler)
+
+                    logger对应的记录日志的方法：
+                        logger.debug(message);
+                        logger.info(message);
+                        logger.warn(message);
+                        logger.error(message);
+                        logger.critical(message);
+                    通过这种方式记录日志时如不清除调用io流，io流中上次的信息回合后面的信息一起写入造成重复记录日志；
+                    因此在记录完日志后要使用logger.removeHandler(handler)清除日志流；
+                -----------------------------------------------------------
+                a2:
+                    通过logging.basicConfig()设置；
+                    filename ：日志文件的保存路径。如果配置了些参数，将自动创建一个FileHandler作为Handler；默认是标准控制台；
+                    filemode ：日志文件的打开模式。 默认值为’a'，表示日志消息以追加的形式添加到日志文件中。如果设为’w', 那么每次程序启动的时候都会创建一个新的日志文件；
+                    format ：设置日志输出格式；
+                    datefmt ：定义日期格式；
+                    level ：设置日志的级别.对低于该级别的日志消息将被忽略；
+                    stream ：设置特定的流用于初始化StreamHandler；
+                    如：
+                        logging.basicConfig(filename=os.path.join(os.getcwd(),"pylog.txt"),level=logging.DEBUG,filemode="a+",format="%(asctime)s - %(levelname)s: %(message)s")
+                    通过logging记录日志的方式：
+                        logging.debug(message);
+                        logging.info(message);
+                        logging.warn(message);
+                        logging.error(message);
+                        logging.critical(message);
+            注意：logging.basicConfig()方法就是对上述logger,handler,formatter封装；
+
+
+
