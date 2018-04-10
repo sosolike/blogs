@@ -1,0 +1,56 @@
+1：python发起请求使用urllib模块
+2：发起请求的方式：
+    1：通过urlopen直接发起请求：
+        1：语法：urllib.request.urlopen(url,data=none,timeout)
+        2：使用方式：
+            1：导入request：from urllib import request
+            2：发起请求：request.urlopen(url,data,timeout)
+            3：参数：
+                1：url：需要被请求的url地址
+                2：data：需要发送到请求地址的数据
+                    1：如果data为空则是get请求，如果data不为空则是post请求
+                    2：python中该data只能是byte类型的数据；
+                    3：结合实际一般发送两种格式，但是都需要使用encode进行编码：
+                            1：查询字符串："a=a&b=b".encode("utf-8")即可；
+                            2：dict字典：parse.urlencode(dict).encode("utf-8")
+                    备注：对于字符串直接encode即可，对于dict字典则需要先使用parse模块的urlencode解析成查询字符串再使用encode进行编码；
+                3：timeout：超时时间；
+            4：返回值：返回一个responce对象；
+            5：响应对象提供的方法：
+                对数据操作：responce.read()/readline()/readlines()/fileno()
+                获取响应头信息：responce.info()
+                获取http状态码：responce.getcode()
+                获取发起请求的url：responce.geturl()
+                获取请求头信息：responce.getheader()、responce.getheaders()
+            6：对于数据操作的几个方法的区别：
+                对于读取json格式的数据:read()/readline()/readlines()/fileno()完全一样;
+                对于字符串： read()返回所有的字符串
+                            readline()一次返回一行字符串
+                            readlines()读取所有的字符串内容，存放在dect中，一个项存放一行；
+                            (上述三种方式获取到字符串内容以后还需要使用decode("utf-8")解码)
+                            fileno()返回响应字符串的个数
+                
+    2：先创建request对象，再使用urlopen发送请求：
+        1：使用方法：
+            1：req = urllib.request.Request(URL,data=None,headers={},method=None);
+            2：res = urllib.request.urlopen(req);
+        2：使用方式： 
+            1：引入urllib包中的request模块：from urllib import request;
+            2：创建各项参数：
+                url：需要被请求的url地址
+                data：需要发送的数据
+                headers：需要指定的header头信息
+                method：采用的发送方法
+        3：发送请求：req = request.Request(url,data,headers,method)
+                    res = request.urlopen(req)
+        4：获取结果：
+            content = res.read().decode("utf-8");
+total:
+    1：通过request.urlopen()直接发送请求
+    2：先创建请求对象：req = request.Request();
+       再发送具体请求：res = request.urlopen(req);
+    3：数据发送之前先encode()
+       获取到的数据要decode()
+    
+
+
