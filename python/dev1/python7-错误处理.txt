@@ -12,7 +12,7 @@ python常见的两种错误：
         except error as e:
             slave_error_code...
     备注：
-        1：try语句块包含正常需要被执行的代码，如果发生错误异常并且被except捕获则进入except中执行错误异常处理代码，否则会一直上抛，直至python解释器；
+        1：try语句块包含正常需要被执行的代码，如果发生错误异常并且被except捕获则进入except中执行错误异常处理代码，否则会一直上抛，直至被python解释器捕获；
 
         2：try..except..可以带上else：
             try:
@@ -25,21 +25,22 @@ python常见的两种错误：
     
         3：try..except还可以带上finally语句块，无论是否发生错误，try...except语句块执行完成后总会进入finally中执行；
 
-        4：python中的异常都是class，均直接或间接继承自BaseException;except捕获到的是一个错误对象；
+        4：python中的异常都是class，均直接或间接继承自BaseException;except捕获到的是一个错误异常类对象；
 
-        5：由于错误异常种类较多，因此可以使用多层except来捕获不同的错误异常信息，由上至下，错误类型范围应该逐渐增大；否则错误范围较小的永远无法被捕获；
+        5：由于错误异常种类较多，因此可以使用多层except来捕获不同的错误异常信息，由上至下，错误类型范围应该逐渐增大；否则错误范围较小的永远无法被捕获；也可使用Exception类来捕获任意可能的错误异常
 
         6：except可以跨越多层调用，只需要在需要处理的地方捕获并处理即可，无需在源头处理；
 
-        7：如果except捕获了错误，但是不知道如何处理，则可以使用raise把错误原样抛出给上层处理；也可以使用raise抛出一个新的异常对象；
+        7：如果except捕获了错误，但是不知道如何处理，则可以使用raise把错误原样抛出给上层处理；也可以使用raise抛出一个新的错误异常对象；
+        8：可以在except中通过捕获的错误异常对象来调用错误异常对象所属类的实例变量和实例方法；
 手动抛出错误异常：
     1：python使用raise手动抛出异常，抛出的必须是一个异常的实例；
     2：raise Exception(exception_info)
     
 自定义异常类：
-    1：自定义异常类必须直接或者间接继承自BaseException
-    2：可以通过重写构造函数__init__方法来设置该异常类需要接收的参数；
-    3：通过raise抛出异常类：raise UserException("参数为空")
+    1：自定义异常类必须直接或者间接继承自BaseException，一般直接继承Exception即可
+    2：自定义的异常类本质上就是一个类，可以向对待普通的类一样实现类中的内容；
+    3：通过raise抛出异常类实例的方式：raise UserException("参数为空")
     4：自定义异常类实例：
 
         eg:
