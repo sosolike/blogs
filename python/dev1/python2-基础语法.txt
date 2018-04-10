@@ -386,6 +386,17 @@
         1：偏函数是functools提供的一个功能，可以固定某些函数的默认参数，将结果返回个一个新的函数名，来减少调用函数时提供的参数个数
         2：使用方式：
             func_new_name = functools.partial(func_old_name,param=val)
+        3:eg：
+            import functools
+
+            def a(arg1,arg2):
+                if arg2==1:
+                    print("arg2 = 1;arg1-----",arg1)
+                else:
+                    print("arg2 != 1;arg1-----",arg1)
+
+            b = functools.partial(a,arg2=2)
+            b(1)
     
     
 
