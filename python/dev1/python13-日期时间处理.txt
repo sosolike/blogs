@@ -1,0 +1,93 @@
+python操作日期时间有三个模块：time,datetime,Calendar
+1:time模块：
+    1：time模块中可以获取三种格式的时间：
+             时间戳：time.time()
+        本地时间元祖：time.localtime()
+     世界标准时间元祖：time.gmtime()
+    注：1：一般常用时间戳和本地时间
+    2：解析时间戳
+        本地时间元祖：time.localtime(time_stamp)
+     世界标准时间元祖：time.gmtime(time_stamp)
+            localtime()和gmtime()可以解析时间戳
+    2:时间形式和字符串之间的转换
+        time.ctime(time_stamp)  ：时间戳转字符串（本地时间字符串）
+        time.asctime(localtime) :本地时间信息元祖转字符串
+        time.strftime("%Y-%m-%d, %H:%M:%S, %w", local_time)：本地时间信息元祖转字符串，并添加转换格式
+
+2:datetime模块：
+    1：datetime.date类：
+        创建date对象：datetime.date.today()/datetime.date.fromtimestamp(time_stamp)
+        date对象属性：datetime.date.day/datetime.date.month/datetime.date.year
+        date对象的方法：datetime.date.isoweekday():返回日期是星期几[1-7]
+                        datetime.date.isoformat()：返回‘YYYY-MM-DD'格式的日期字符串
+                        datetime.date.strftime(format,struct_time);格式化日期时间信息
+    
+    2：datetime.time类：    
+        time对象的创建：
+            datetime.time(hour, [minute[, second, [microsecond]]])   :小时是必须的，其余是可选参数
+        time对象的属性：
+            datetime.time.hour/datetime.time.minute/datetime.time.second/datetime.time.microsecond
+        time对象的方法
+            datetime.time.strftime(format,struct_time)：时间信息格式化
+            datetime.time.isoformat()：返回一个‘HH:MM:SS.%f'格式的时间字符串
+
+    3：datetime.datetime类:
+        datetime类对象的创建：
+            datetime.today()/datetime.now()/datetime.fromtimestamp(time_stamp)
+            datetime.combine(date,time)：将date对象和time对象整合成一个datetime对象
+        datetime属性：
+            year,month,day,hour,minute,second,microsecond
+        datetime方法：
+            date()：获取一个date对象
+            time()：获取一个time对象
+            timetuple()：返回一个tuple
+            isoweekday():返回星期几
+            dt.strftime(format)：格式化日期时间信息
+    4：timedelta：可以计算时间差值
+        使用方式：datetime_obj + datetime.timedelta(day=3/day=-3)
+        datetime_obj + datetime.timedelta(housr=3/hours=-3)
+        datetime_obj + datetime.timedelta(seconds=3/seconds=-3)
+        datetime_obj + datetime.timedelta(minutes=3/minutes=-3)
+        或者任意组合
+        仅支持：day/hours/minutes/seconds
+
+
+
+
+
+
+    
+
+
+    
+
+1：python提供time模块、datetime模块和calendar模快操作日期时间信息
+2：python函数以元祖的形式组装日期时间信息：
+    按顺序：年，月，日，时，分，秒，周几，一年的第几日，夏令时
+3：time模块：
+    常用函数：
+        time.time()  :获取当前时间戳
+        time.strftime(format,time)  :格式化时间;
+            format:最常用："%Y-%m-%d %H:%M:%S"：2016-03-20 11:45:39；
+            time:要求必须是时间元祖；
+        time.clock()    :以浮点数计算的秒数返回当前cpu时间；
+                        （用来衡量不同程序的耗时，比time.time()更有用）；
+        time.localtime(time):返回时间元祖(无参数将会获取当前日期时间信息解析为元祖，也可以给一个时间戳，将会解析为元祖)
+
+    其他：
+    time.gmtime(time)   :接受时间戳，返回当地时间下的时间元祖
+    time.sleep(secs)    :推迟调用线程运行。secs指秒数；
+4：datetime模块：
+    datetime.year
+    datetime.month
+    datetime.day
+    datetime.hour
+    datetime.minute
+    datetime.second
+    datetime.microsecond
+
+
+
+
+
+    
