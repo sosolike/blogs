@@ -1,0 +1,44 @@
+namedtuple函数：
+    namedtuple属于collections模块；
+    通过namedtuple可以创建一个自定义的tuple对象，创建时可以指定该对象的类名，tuple元素个数，，tuple元素键名；
+    如：
+        Point = namedtuple("Point",['x','y','z'])
+        point = Point(1,2,3)
+        print(point.x):1
+        print(point.y):2
+        print(point.z):3
+    为何使用namedtuple创建tuple:
+        使用namedtuple可以规定该tuple的元素格式，每个元素的键名，以及让该tuple有了语义；
+deque函数：
+    deque函数属于collections模块；
+    通过deque函数可以创建双向插入和双向删除元素性能很好的list；即：
+        1：提升插入和删除元素性能
+        2：将list可以封装为一个队列/栈的数据结构
+    提供的方法：
+        append():在右侧追加元素
+        appendlift()：在左侧追加元素
+        pop()：弹出右侧元素
+        popleft()：弹出左侧元素
+    如：
+        stuList = deque(['tom','jean','lili'])
+        print(stuList.popleft())
+orderdict函数：
+    orderdict函数属于collections模块；
+    通过orderdict可以让dict记住插入k-v的顺序；即：原本的dict是无序的，使用orderdict可以维持dict的元素插入顺序；
+
+base64：
+    base64：即通过64个字符来表示任意二进制数据的一种方式；
+    包含：base64.b64encode()  :将二进制进行编码
+         base64.b64decode()  :将编码后的字符串解码
+
+         base64.urlsafe_b64encode()   :+和/在url中不能直接作为参数，因此需要使用该函数；会将+ /转化为-和_
+         base64.urlsafe_b64decode()   :
+        
+md5：
+    1：md5属于hashlib模块：import hashlib
+    2：使用md5类创建对象：md5 = hashlib.md5()
+    3：计算摘要：md5.update('str')
+sha1：
+    1：sha1属于hashlib模块：import hashlib
+    2：使用sha1类创建对象：sha1 = hashlib.sha1()
+    3：计算摘要：sha1.update('str')
