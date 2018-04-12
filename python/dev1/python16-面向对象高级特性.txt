@@ -1,0 +1,62 @@
+高级特性：
+    __slots__：
+        1：在python中允许对象动态绑定属性或者方法；而__slots__则可以限制允许绑定的属性名；
+        2：__slots__必须传入一个tuple;
+    @property装饰器：
+        该装饰器可以把一个函数修饰成一个属性，
+        其使用是有限制的：用于set_xxx和get_xxx这种方法类型    
+        eg:
+            @property
+            def abbr(self):
+                return self.abbr
+            
+            #上面的方法用于向外提供abbr这个实例属性
+            @abbr.setter
+            def abbr(self,value):
+                self.abbr = value
+            #上面的方法用于向外提供操作abbr属性的
+    多重继承：
+        python支持多继承；
+    定制类：
+        __str__：该方法的返回值即为打印对象时的输出内容；
+        __repr__：和__str__方法一样，但是打印的效果更好；
+        __iter__：返回一个迭代器：一般直接返回实例即可；实例本身就是一个迭代器；
+        __getattr__：调用不存在的属性时，python会主动调用该方法；可以更好返回错误提示；
+    
+    枚举类：
+        0：枚举一般用来存放一些固定的常量；比如一周七天，颜色，但是又希望使用整数值；此时即可使用枚举；
+        1：声明：
+            直接通过Enum类声明：
+                1：导入Enum模块；
+                2：Month = Enum('Month',('Jan', 'Feb', 'Mar', 'Apr'));
+                备注： 
+                    1：Enum类中"Month"是枚举类的类型；
+                    2：Enum中后面括号中的则是枚举类的元素名称，元素值默认从0开始；
+            通过继承Enum声明自己的枚举类：
+                1：声明方式：
+                    form enum import Enum,unique
+
+                    @unique
+                    class Weekday(Enum):
+                        Sun = 0
+                        Mon = 1
+                        Tue = 2
+                        Wed = 3
+                2：备注：
+                    1：引入unique可以检测枚举类中是否声明了重复值；
+                    2：枚举类中元素的名称不允许出现重复值；
+                    3：枚举元素的值则可以重复，如果有重复，则默认之后重复的为第一个的别名；
+                    4：枚举值的获取：
+                        1：通过成员名称获取：Weekday['Sun']
+                        2：通过值来获取：Weekday[0]
+                        3：通过成员来获取他的名称和值：some = Weekday.Sun
+                                                    some.name
+                                                    some.number
+                    5：枚举元素的值可以不填，默认从0开始；
+        2：枚举值的引用：
+            枚举对象名.枚举值；如：Month.Jan;
+        3：列举枚举类的所有成员：
+            for name,member in Month.__members__.items();
+    元类：
+        1：py是动态语言，因此类以及函数都是运行时动态创建的；
+        
