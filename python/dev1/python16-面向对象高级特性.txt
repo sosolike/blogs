@@ -1,33 +1,51 @@
 高级特性：
-    __slots__：
-        1：在python中允许对象动态绑定属性或者方法；而__slots__则可以限制允许绑定的属性名；
-        2：__slots__必须传入一个tuple;
-    @property装饰器：
-        该装饰器可以把一个函数修饰成一个属性，
-        其使用是有限制的：用于set_xxx和get_xxx这种方法类型    
-        eg:
-            @property
-            def abbr(self):
-                return self.abbr
-            
-            #上面的方法用于向外提供abbr这个实例属性
-            @abbr.setter
-            def abbr(self,value):
-                self.abbr = value
-            #上面的方法用于向外提供操作abbr属性的
-    多重继承：
-        python支持多继承；
-    定制类：
-        __str__：该方法的返回值即为打印对象时的输出内容；
-        __repr__：和__str__方法一样，但是打印的效果更好；
-        __iter__：返回一个迭代器：一般直接返回实例即可；实例本身就是一个迭代器；
-        __getattr__：调用不存在的属性时，python会主动调用该方法；可以更好返回错误提示；
+    1:@property装饰器：
+        @property装饰器功能：
+            @property装饰器可以将一个方法修饰为实例属性，即：对于一个方法，如果使用@property来修饰，则通过对象可以向调用实例属性那样调用方法；
+        何时使用@property:
+            对于某个实例属性其赋值和取值都有筛选检测时需要定义一个setter方法，一个getter方法，测试对于实例属性的调用以及赋值将会通过调用这两个方法来进行；
+            @property装饰器可以改善上述情况：通过@property来修饰一个方法，该方法对外返回某个实例属性；还需要再定义一个同名的方法，使用@func_name.setter来修饰该方法，该方法逻辑为给该属性赋值；
+        
+        使用方式：如需要给属性score赋值：限制范围[0-100]
+                class StudentScore(object):
+                    def __init__(self):
+                        #实例属性声明以及初始化
+                        self.score = 0
+                    
+                    #使用@perporty修饰返回属性的方法
+                    @property
+                    def student_score(self):
+                        return self.score
+                    
+                    #使用func_name.setter修饰设置属性的方法，该方法要和返回属性的方法名保持一致；
+                    @student_score.setter
+                    def student_score(self,value):
+                        if value>100 or value<0:
+                            print("参数错误")
+                            return
+                        self.score = value
+                        print(self.score)
+
+    2：__slots__：
+        1：python允许实例在类外绑定任意属性，但是实例绑定的属性只对当前实例有效，其他实例时无效的
+        2：由于任意实例都可以给自己绑定实例属性，一面造成混乱可以通过__slots__限制允许实例绑定的属性列表
+        3：使用方式：__slots__ = ("attr1","attr2"),则该类的实例只能绑定名为attr1的属性和名为attr2的属性；
+
+    3：定制类：
+        1：__str__方法：
+            通过重写该方法，可以在打印实例时返回__str__中的return值；
+        2：__getattr__方法：
+            通过重写该方法：可以控制实例对属性的调用
     
-    枚举类：
-        0：枚举一般用来存放一些固定的常量；比如一周七天，颜色，但是又希望使用整数值；此时即可使用枚举；
-        1：声明：
+    4：枚举类：
+        python中定义的常量本周上仍是变量，仅仅是命名上区分常量而已，有以下几个缺陷：
+            1：本质仍是常量，值可以被更改；
+            2：一系列有内在联系的常量散落在代码各处，无法做到集中管理；如：一年四季，一周七天等；
+        python中的枚举类：
+            枚举类本质上就是一系列常量的集合，通过枚举类来管理这些常量，保证常量声明比较集中，常量值不可随意更改；
+        python中的枚举类的声明：
             直接通过Enum类声明：
-                1：导入Enum模块；
+                1：导入Enum模块：from enum import Enum
                 2：Month = Enum('Month',('Jan', 'Feb', 'Mar', 'Apr'));
                 备注： 
                     1：Enum类中"Month"是枚举类的类型；
@@ -42,21 +60,19 @@
                         Mon = 1
                         Tue = 2
                         Wed = 3
-                2：备注：
-                    1：引入unique可以检测枚举类中是否声明了重复值；
-                    2：枚举类中元素的名称不允许出现重复值；
-                    3：枚举元素的值则可以重复，如果有重复，则默认之后重复的为第一个的别名；
-                    4：枚举值的获取：
-                        1：通过成员名称获取：Weekday['Sun']
-                        2：通过值来获取：Weekday[0]
-                        3：通过成员来获取他的名称和值：some = Weekday.Sun
-                                                    some.name
-                                                    some.number
-                    5：枚举元素的值可以不填，默认从0开始；
-        2：枚举值的引用：
-            枚举对象名.枚举值；如：Month.Jan;
-        3：列举枚举类的所有成员：
-            for name,member in Month.__members__.items();
+                    备注：
+                        1：引入unique可以检测枚举类中是否声明了重复值；
+                        2：枚举类中元素的名称不允许出现重复值；
+                        3：枚举元素的值则可以重复，如果有重复，则默认之后重复的为第一个的别名；
+                        4：每一个枚举成员都有名称和值：Weekday.Sun的名称是Sun,值是0
+            获取枚举实例：
+                1：通过成员名来取值：sun = Weekday["Sun"]
+                2：通过成员值来取值：sun = Weekday(0)
+                3：通过枚举成员类取值：sun = Weekday.Sun
+            获取枚举成员实例的名称和值： 
+                sun.name
+                sun.value
+
     元类：
         1：py是动态语言，因此类以及函数都是运行时动态创建的；
         
