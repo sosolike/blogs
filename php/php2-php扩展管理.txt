@@ -1,0 +1,46 @@
+php扩展：
+    php允许通过c/c++添加扩展，可以让php具备更丰富的功能；
+    php添加扩展的方式有两种：
+        1：手动添加
+        2：通过composer依赖管理器添加
+手动添加php扩展
+    以添加mysql扩展为例：
+        1：手动查找符合php版本要求的mysqli扩展，并下载
+        2：解压进入mysqli扩展目录，手动执行phpize；(phpize用来扩展php模块的，可以通过phpize建立php外挂模块)
+        3：通过 ./configure -prefix = /usr/local/mysqli --with-php-config=/usr/local/php/bin/php-config --with-mysql=/usr/local/mysql/
+            1：-prefix = /usr/local/mysqli 设置mysqli扩展安装目录
+            2：--with-php-config=/usr/local/php/bin/php-config 指定该扩展所要使用的php配置
+            3：--with-mysql=/usr/local/mysql/ 指定该扩展所要使用的mysql客户端(一般为mysql的安装目录)
+            4：其他类型扩展一般只需要-prefix 和--with-php-config 这两个参数
+        4：执行make/make install编译并安装扩展
+        5：将mysqli扩展文件(linux中为mysqli.so)移动至php安装目录中的ext目录
+        6：更改php.ini配置文件，打开mysqli扩展
+    优缺点：
+        有点：可以自由指定需要使用到的php配置文件，以及mysql客户端，以及扩展的安装位置
+        缺点：过程繁琐复杂，需要手动寻找扩展版本，需要手动更改php.ini配置文件；如果遇到项目迁移，将又需要手动安装每一个依赖扩展；
+通过composer依赖管理器来管理项目中需要用到的php依赖扩展：
+    1：composer是一个依赖管理器，包含了众多php依赖扩展，也可以自行上传自己创建的扩展，通过composer来管理依赖的迭代发布；
+    2：通过composer来安装项目需要的php扩展有以下几个优势：
+        1：安装简单方便，只需指定依赖的包名，项目名，版本号即可安装；
+        2：composer和php直接绑定，安装完成后只需重启php-fpm即可，无需手动更改php.ini配置文件；
+        3：composer集中管理php项目所需要用到的所有依赖扩展；在项目迁移时也可以很方便的立即安装各个需要的扩展；
+        4：composer通过composer.json来管理composer安装的依赖扩展，结构简单清晰；
+    3：composer的安装：
+        1：composer需要phar扩展，因此在编译安装php的时候需要去掉--disable-phar ,并且需要安装--with-openssl
+        2：curl -sS https://getcomposer.org/installer | php -- --install-dir=bin 将composer安装在指定位置
+         或者：curl -sS https://getcomposer.org/installer | php
+              mv composer.phar /usr/local/bin/composer   全局安装
+
+    4：通过composer安装php项目所需要的扩展：
+        1:现在需要安装项目的目录中添加composer.json文件，并配置需要安装的项目及版本；
+        2:php composer.phar install
+        3：在php文件中引入vendor中的autoload.php文件
+        4：通过 use PackageName\ClassName来导入需要使用的扩展
+    
+
+
+
+    
+
+
+    
