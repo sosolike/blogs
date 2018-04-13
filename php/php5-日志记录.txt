@@ -1,0 +1,43 @@
+日志记录之monolog:
+    1:monolog由三部分组成：logger(用于创建日志容器)
+                         handler(用于创建日志流管道，以及设置该管道允许放行的日志级别)
+                         formater(用于格式化日志信息)
+    2：monolog的一些优势：
+        日志容器：logger:
+            1：logger是一个日志容器，本质上是一个栈；
+            2：logger支持添加多个日志管道流，日志管道流按照添加顺序排列；
+            3：日志信息添加至日志容器后会依次流经各个管道流，但是管道流是否允许日志流过则取决于管道限制的日志级别；
+            4：每个logger都会有一个tag,这个tag会体现在日志里面；
+        日志管道流：handler：
+            1：本质上是一个文件流；可以看做一个虚拟的管道；
+            2：管道流的末端支持文件，数据库，缓存，邮箱，短信等；
+            3：管道流可以设置允许流过的日志级别，只有日志级别符合要求才会流过
+            4：同一个管道流可以被多个looger使用；
+        日志信息格式化：formatter：
+            1：可以实现对日志信息的格式化；
+
+    3：使用方式：
+        1：创建logger日志容器：
+            $logger = new Logger('my_logger');
+        2：创建日志管道流，并设置该管道流允许的日志级别：
+            $streamHandler = new StreamHandler($file_path,Logger::DEBUG)
+        3：将日志管道流添加至日志容器：
+            $logger.pushHandler($streamHandler);
+        4：记录日志：
+            $logger.addWaring("loginfo")
+            $logger.addInfo("loginfo")
+            $logger.addError("loginfo")
+            $logger.addDebug("loginfo")
+            $logger.addNotice("loginfo")
+            $logger.addCritica("loginfo")
+
+    4：常用的管道流：
+        StreamHandler：把记录写进PHP流，主要用于日志文件。
+        RedisHandler：把记录写进Redis
+        SyslogHandler：把记录写进syslog。
+        ErrorLogHandler：把记录写进PHP错误日志。
+        NativeMailerHandler：使用PHP的mail()函数发送日志记录。
+        SocketHandler：通过socket写日志。
+        BrowserConsoleHandler：把日志记录写到浏览器的控制台
+    5：常用的格式化器：
+    
