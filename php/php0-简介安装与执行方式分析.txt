@@ -48,6 +48,22 @@ php----CGI运行模式分析
             2：php-cgi即是实现了CGI协议的CGI解释器，可以接收nginx发来的请求及数据进行处理，并将处理后的数据根据CGI协议转换成规定的格式返回给nginx；
 
             3：php-fpm就是实现了Fast-CGI协议的一个程序；用于管理php-cgi进程和接收nginx请求，以及分发nginx解析请求到php-cgi进程；
+    php-cgi模式下可以通过 echo phpinfo() 来查看php执行环境配置信息
+    
+cli执行模式分析：
+    php的cli模式是指通过命令行直接执行php脚本的一种模式；
+
+    cli模式需要有命令行解释器；一般在windows中php的命令行解释器是php.exe，在linux中则是php/bin/php这个可执行程序；
+
+    cli执行php脚本的方式：
+        1：通过命令行，直接执行指定的php脚本；
+        2：通过命令行，直接执行php代码；
+        3：在命令行中，通过标准输入（stdin）提供需要运行的 PHP 代码。
+    
+    cli模式下锁使用到的php.ini配置文件有可能和php-cgi模式下的不同；
+        cli模式下可以通过 php -i 来查看php的执行环境配置信息；
+
+
     
     
         
