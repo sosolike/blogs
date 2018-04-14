@@ -1,11 +1,60 @@
 php简介：
-    1：php是一个解释执行的脚本编程语言；
+    1：php是一个解释执行的脚本编程语言；需要解释器解释执行；
+        (php的解释器是php-cgi：实现了cgi协议的专用于解释执行php脚本的程序；)
     2：运行在服务器端；
     3：php底层由c开发，也支持使用c/c++增加php扩展
-    4：php运行模式：
-        1：cli模式：命令行模式
-        2：cgi通用网关接口模式执行
-        3：web模块模式执行
+
+php安装：
+    1：可以直接通过linux源进行安装
+    2：通过编译源码的方式安装：
+        1：安装流程：https://www.cnblogs.com/shangxia/p/7544977.html
+        2：编译参数详解：https://blog.csdn.net/bluestarf/article/details/46376407
+php程序的执行模式(sapi)：
+    cgi-fcgi、fpm-fastcgi、cli、apache2handler
+
+参考资料：
+    https://www.cnblogs.com/zhenbianshu/p/6958794.html
+    https://segmentfault.com/q/1010000000256516
+php----CGI运行模式分析
+    CGI:
+        CGI是通用网关接口，本质上一种协议，该协议目的在于规定：实现了CGI协议的服务器和实现了CGI协议的解释器之间进行数据互通的内容以及格式；（是一个协议，不是程序）
+
+        CGI协议规定了请求分发方(web server)：需要向CGI解释器发送的内容，以及数据格式；
+                                         ：接收并解析CGI解释器返回数据的方式
+        CGI协议规定了请求处理方(CGI解释器)：接收并解析请求分发方发送的数据的方式
+                                       ：向请求分发方返回处理结果的内容以及格式
+        CGI协议工作流程：
+            接收到解析请求->启动一个cgi解释进程->读取配置文件并初始化进程->处理请求->返回结果->销毁进程；
+            每接到一个解析请求都会走一边上述流程，消耗较大，性能较差；
+    Fast-CGI:
+        Fast-CGI是在基本CGI协议基础上的增强版本协议；本质上仍是一个协议，而非程序；
+
+        Fast-CGI协议要求先启动一个master,解析配置文件，初始化执行环境，然后根据配置文件再启动多个worker,当请求过来时master会传递一个请求给worker,然后立即接收下一个请求；这样可以避免每一个cgi进程都要去读配置文件并初始化，可以提升效率；
+        实现cgi解释进程的复用；并且只需要初始化一次，因此性能较好，并且可实现对cgi进程的管理；
+
+    PHP-PFM:
+        php-cgi：是一个实现了CGI协议的程序，用于执行php解析请求，并返回解析结果的一个程序； 
+        PHP-FPM：是一个实现了Fast-CGI协议的程序；用于接收php解析请求，管理php-cgi进程的一个程序；
+
+        PHP-FPM 启动之后会根据Fast-CGI协议创建一个master进程，读取配置文件，初始化执行环境，并根据php-fpm配置文件启动多个php-cgi进程；当有php解析请求时会将php解析请求分发给php-cgi进程；
+
+        最初的php版本内核并不包含php-fpm，需要使用时要查找和php版本对应的php-fpm程序对php内核打补丁；
+        之后的php版本则将php-fpm作为php内核的一部分；
+    
+
+    在php解释器和nginx协作中：
+            1：nginx服务器就是实现了CGI协议的服务器，主要作用在于接收客户端发送的请求及参数，并根据CGI协议要求将请求和数据转规定的数据格式，
+
+            2：php-cgi即是实现了CGI协议的CGI解释器，可以接收nginx发来的请求及数据进行处理，并将处理后的数据根据CGI协议转换成规定的格式返回给nginx；
+
+            3：php-fpm就是实现了Fast-CGI协议的一个程序；用于管理php-cgi进程和接收nginx请求，以及分发nginx解析请求到php-cgi进程；
+    
+    
+        
+        
+    
+
+
 
 
 
