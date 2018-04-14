@@ -47,6 +47,7 @@
     ceil()：向上取整；
     floor()：向下取整；
     round()：四舍五入；
+
     rand()：生成随机数（整数）
     mt_rand()：生成随机数（整数）和生成指定范围的随机数；
     lcg_value()：生成随机小数；
@@ -177,6 +178,8 @@
             header('Content-Type；application/octet-stream');
             header('Content-Disposition:attachement;filename="example.zip"')
             readfile("/data/example.txt");
+        6：设置文档字符编码：
+            heard("Content-type:text/html;charset=utf-8");
 6：php操作ftp扩展
     1：连接和登录ftp服务器
         $link = ftp_connect(ip,port,timeout);        连接ftp服务器
@@ -185,7 +188,7 @@
         ftp_login($link,$username,$password);
 
     2:操作ftp服务器上面的dir:
-        ftp_chdir($link,$new_name);                 为ftp服务器指定目录更名
+        ftp_chdir($link,$new_name);                 改变当前工作目录
         ftp_mkdir($link,$dir);                      在ftp服务器创建一个目录
         ftp_nlist($link,$dir);                      返回指定目录的文件列表；
         ftp_pwd($link);                             返回当前目录名称；
@@ -254,6 +257,7 @@
             设置基本的选项
         　　curl_setopt($ch, CURLOPT_URL, $url);
         　　curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
 
         　　  设置post模式
         　　curl_setopt($ch, CURLOPT_POST, 1);
@@ -270,6 +274,12 @@
             $info = curl_getinfo($ch);
         发送cookie信息：
             curl_setopt($ch,CURLOPT_COOKIE,'A=a;B=b;C=c;');  
+        备注： 
+            1：如果通过curl发起post请求的参数中带有文件，文件流需要通过new CURLFILE($path)来获取；
+            2：如果post发送的数据是json格式的：
+                $headers = array('Content-Type: application/json；charset=utf-8',);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                需要通过CURLOPT_HTTPHEADER设置此次请求的头信息；
 
 8：php操作文件扩展
     1：php包含文件：
