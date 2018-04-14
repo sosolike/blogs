@@ -273,7 +273,10 @@
         获取响应头信息：
             $info = curl_getinfo($ch);
         发送cookie信息：
-            curl_setopt($ch,CURLOPT_COOKIE,'A=a;B=b;C=c;');  
+            curl_setopt($ch,CURLOPT_COOKIE,'A=a;B=b;C=c;'); 
+        设置请求头：（可以自定义请求头信息）
+            $headers = array('Content-Type: application/json；charset=utf-8',);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);       
         备注： 
             1：如果通过curl发起post请求的参数中带有文件，文件流需要通过new CURLFILE($path)来获取；
             2：如果post发送的数据是json格式的：
@@ -313,7 +316,7 @@
             disk_total_space($dir)；查看磁盘总空间；
             disk_free_space($dir);查看磁盘可用空间；
         @4：创建目录：
-            mkdir($dir);创建目录，不能递归创建；
+            mkdir($dir);创建空目录，不能递归创建；
         @5：操作目录：
             $dir_resource = opendir(__DIR__);创建文件指针；
             $res = scandir(__DIR__);返回该目录文件及子目录名称（索引数组）；
@@ -321,7 +324,7 @@
             rewinddir($dir_resource);重置当前目录指针
             closedir($dir_resource);关闭当前目录；
         @6：改变当前文件所处的目录：
-            chdir($url);
+            chdir($newdir);
     3：文件操作扩展：
         @1：文件检测类操作：
             file_exists($file_path):检测文件是否存在
@@ -337,7 +340,7 @@
             filemtime($file_path)：返回文件内容最后一次被修改的时间
             filesize($file_path):获取文件大小
             fileperms($file_path):返回文件权限
-            filetype($file_path):返回文件权限
+            filetype($file_path):返回文件类型
             stat($file_path);获取文件信息；返回关联数组；
         @3：文件基本操作：
             copy($from_path,$to_path);复制单个文件
@@ -355,7 +358,7 @@
                 将文件读取到一个数组中，一项是一行，默认是索引数组；
 
                 readfile($path)
-                读取文件内容，并直接写到输出缓冲区中；返回所读字符的个数；；
+                读取文件内容，并直接写到输出缓冲区中；返回所读字符的个数；
 
             通过文件资源访问：
                 fread($file_resource,$length);
@@ -384,6 +387,7 @@
                 1：file_put_contents($file_path,$content);
                 2：$resource = fopen($file_path,"ab+");
                     fwrite($resource,$contents);
+                    fclose($resource);
         @6：文件锁：
             bool flock ( int handle, int operation [, int &wouldblock] );
             flock() 操作的 handle 必须是一个已经打开的文件指针。operation 可以是以下值之一：
@@ -403,7 +407,7 @@
                     1. 如果读程序没有申请共享锁，那么他会读到dirty的数据。比如写程序要写a,b,c三部分，写完a,这时候读读到的是a，继续写b，这时候读读到的是ab，然后写c，这时候读到的是abc. 
                     2. 如果读程序在之前申请了共享锁，那么读程序会等写程序将abc写完并释放锁之后才进行读。 
 
-所以推荐在读写文件的时候枷锁以保证文件时安全的；如果不想读阻塞：可以使用flock(lock_SH | LOCK_NB);
+所以推荐在读写文件的时候枷锁以保证文件时安全的；如果不想读阻塞：可以使用flock($handler,lock_SH | LOCK_NB);
 
 9：常用字符串操作：
     1：---确定子串在字符串中的位置函数：---
@@ -416,10 +420,10 @@
         
         strchr()：子字符串在字符串中的第一次出现；
         strrchr():子字符串在字符串中最后一次的出现；返回的是被查找字符串及其后面的字符串；
-    2：---对字符串进行分割---
 
-        str_split($str,$legth);	将字符串按照指定的子串字符个数分割到数组里面；
-        chunk_split(string,length,end);	将字符串按照指定的个数分割为更小的子串；但仍然是一个字符串；length设置每个子串的长度，end设置各个子串之间的连接符号；
+    2：---对字符串进行分割---
+        str_split($str,$legth);	 将字符串按照指定的子串字符个数分割到数组里面；
+        chunk_split(string,length,end);	 将字符串按照指定的个数分割为更小的子串；但仍然是一个字符串；length设置每个子串的长度，end设置各个子串之间的连接符号；
         strtok(string,split);		把字符串分割为更小的子串，每次调用带上分隔符参数，返回一个子串；
         explode(string,split);		根据分割符将字符串分割至数组；
     3：---对字符串进行局部替换---
@@ -474,7 +478,7 @@
         array_merge($array1，$array2);求$array1和$array2中的并值；如果键名相同，则$array2会覆盖$array1;
         array_merge_recursive($array1);求$array1和$array2中的并值；递归求值；如果键名相同，则$array2和$array1的值会形成二维数组;
 
-    4：其他常用函数：
+    2：其他常用函数：
         //数组的常用函数
         array_combine($arr1,$arr2);将$arr1中的值作为键，将$arr2中的值作为值，返回一个组装后的数组，要求两个数组的长度保持一致；
         array_unique();去掉数组中的重复值
@@ -494,7 +498,7 @@
         is_array();检测对应变量是否是数组；
         count();检测数组的项数；另：count($arr) == count($arr,1) 则该数组为一维数组，否则为多维数组；
         array_reverse();逆转array的项
-    5：数组的其他函数
+    3：数组的其他函数
         array_replace($arr1,$arr2);使用后一个数组替换前一个数组的值
         array_replace_recursive()
         join();将数组转换为字符串
@@ -505,7 +509,7 @@
         array_count_values();统计数组中各个值的出现次数；
         array_column();返回多维数组中的某个键值；
         array_change_key_case($input);改变数组键的大小写
-    6数组的遍历函数
+    4:数组的遍历函数
         array_map();		对数组中的每一项都应用某一个函数；返回一个新的map；
         array_rand();		随机从数组中返回一个或者多个数组项；
         array_walk();		对数组中的每一项都应用某一个函数，不能有return；
@@ -522,7 +526,7 @@
                 3：cookie是有有效期的；如果未设置则是会话cookie；会话结束cookie失效；
                 4：cookie区分浏览器/ 区分路径 /区分域名
                 5：cookie信息会在通过对应浏览器访问对应域名的对应路径且cookie信息未失效的情况下自动发送到服务器；
-            3：cookie是以明文的形式保存在浏览器本地的，所以有被盗取以及篡改的可能；因此不要再cookie中存放敏感信息；
+            3：cookie是以明文的形式保存在浏览器本地的，所以有被盗取以及篡改的可能；因此不要在cookie中存放敏感信息；
         php中操作cookie：
             1：设置cookie:
                 setcookie(string $name,string $value,int $expire,$string path,string $domain,bool $secure);
