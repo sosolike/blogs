@@ -1,0 +1,216 @@
+vue.js：
+    mvvm前端框架；
+    m：      模型，数据修改与操作的逻辑部分；
+    v:       视图，即html+css+js组成的前端组件
+    vm:      view model ，是一个联通view和model的通道；
+
+    mvvm架构特点：
+        1：View只管显示数据以及捕获用户输入的数据；Model只管处理数据；ViewModel则是Model和View之间的双向数据通道，View和Model之间的数据是通过ViewModel进行互通的；
+        2：ViewModel不仅仅是View和Model之间数据互通的一个通道，数据在View和Model之间是被双向绑定起来的，即View中数据的变化会立即同步到Model中，Model中数据的变化也会立即反应到View上；
+
+            View:                                    Model:
+                |--角色：数据显示中心                       |--角色：数据处理中心             
+                |--组成：html+css+js；                     |--组成：处理数据的js代码         
+                |--作用：显示数据/捕获用户数据               |--作用：请求数据/处理数据/发送数据
+
+
+                                        Vue:
+                                            |--角色：View和Model之间的连通者；
+                                            |--功能：1：提供View和Model之间的数据通道；
+                                                    2：根据数据名称绑定View和Model之间的数据；
+                                                    3：处理View和Model之间传递的数据；
+Vue.js基本
+    1：Vue：ViewModel只是一个抽象的概念，一种实现View和Model绑定的方案；
+    2：Vue.js就是ViewModel方案的实现；在代码上一个Vue实例对象就类似一个ViewModel,负责管理该Vue实例绑定的DOM和数据处理中心；
+    3：Vue实例的创建：
+        创建方式：    var vue = new Vue({});
+        参数：Vue实例的创建需要传入一个json对象；
+    4: Vue实例对象中的json对象内容：
+        var vueObj = new Vue({
+            el:"#dom_el",
+            data:{
+                message:"test_message",
+                message2:"test_message2",
+            }
+        })
+
+        el:'#dom_el' 
+        说明：      
+            1：el 用于声明该Vue实例所绑定的DOM元素
+            2：其值是根据元素属性或者id获取的dom元素；
+
+        data:{
+            attr_name:attr_value,
+        }
+        说明：
+            1：data 用于声明该vue实例的属性
+            2：其值是一个json对象；json对象中的键名即为属性名，键值即为属性值
+            3：data只负责用来声明vue实例的属性，vue初始化之后会将属性转换为对应的getter和setter；可以通过vue实例直接访问该属性：如：
+                var attr_val = vue_obj.message;      #attr_val为test_message
+                vue.obj.message = "message_test";    #message的值将被修改为message_test
+
+Vue基本语法：
+    1：模板语法：
+        1：绑定文本：<div>{{ attr_name }}</div>
+
+            a: 就是将vue中的属性的值根据名称插入到html元素中；
+
+            b: 在html元素中使用{{ attr_name }} 来占位，attr_name将会和vue实例中的同名属性绑定；
+
+            c: 在vue实例中：
+                var vm = new Vue({
+                    el:'#el',
+                    data:{
+                        attr_name:attr_value,
+                    }
+                })
+
+            d: 一旦html元素中的内容发生变化，同时，vue实例中名为attr_name的值也将发生变化，反之亦然；
+
+
+        2：绑定HTML：<div v-html="html_content_name"></div>
+
+            a: 就是将vue中属性的值根据名称插入到html元素中；只不过插入的是html；
+
+            b: 在需要被插入的html元素中使用<div v-html="html_content_name"></div> 来设置需要插入到div中的html内容的名称，html_content将会和vue实例中的同名属性绑定；
+
+            c: 在vue实例中：
+                var vm = new Vue({
+                    el:'#el',
+                    data:{
+                        html_content_name:"<h1>test</h1>",
+                    }
+                })
+            d: 一旦html元素中的html内容发生变化，同时，vue实例中名为html_content_name的值也将发生变化，反之亦然；
+
+            e: 如果使用{{ html_content_name }} 则会吧html元素当初普通的字符串插入其中，并不会解析html元素；
+
+        3：绑定属性：<div v-bind:class="class_content_name"></div>
+            a: v-bind需要声明绑定的属性名称；以及该属性值的名称；
+
+            b: 在需要被绑定属性的元素中使用<div v-bind:class="class_content_name"></div>，html_content将会和vue实例中的同名属性绑定；
+
+            c: 在vue实例中：
+                var vm = new Vue({
+                    el:'#el',
+                    data:{
+                        class_content_name:"list",
+                    }
+                })
+                相当于：<div class="list"></div>
+
+            d: 一旦html元素被绑定的属性值发生变化，同时，vue实例中名为class_content_name的值也将发生变化，反之亦然；
+            e：v-bind的缩写：:属性名="属性值对应的名称";
+
+        4：模板语法：
+            Vue.js允许在{{}}以及指令结果" "中使用原生js表达式；
+            如：
+                <div id="app">
+                    {{ a+b }}<br>
+                    <div v-bind:class="'sclass_' + id"></div>
+                </div>
+    2: Vue.js中的条件与循环：
+        1：条件：v-if="if_value"
+                v-else-if="else_if_value"
+                v-else="else_value"
+            作用：控制元素的显示与否；
+            备注：
+                1：可以单独使用v-if;如果该元素的v-if指令值为true该元素将会显示；否则将不显示该元素；如：
+                    <p v-if="seen">p元素</p> 
+                    如果vue实例中的属性seen为true,改html元素将会显示；否则将会隐藏；
+
+                2：可以使用v-if和v-else：如果v-if的值为false，则会显示v-else指令所在的html元素，并且此时使用v-if指令的元素必须和使用v-else指令的元素处于同一个vue实例绑定的html元素中；如：
+                    <div id="app">
+                        <div v-if="Math.random() > 0.5">
+                        Sorry
+                        </div>
+                        <div v-else>
+                        Not sorry
+                        </div>
+                    </div>
+                    1：使用v-if指令的元素与使用v-else指令的元素必须处于vue实例绑定的id=app的dom元素中；
+                    2：如果v-if指令的值为false，将会显示v-else指令所在的元素；否则显示v-if指令所在的元素；
+
+                3：可以使用v-if和v-else-if和v-else：如果v-if的值为false，则会判断v-else-if指令的值，如果v-else-if指令的值为true,则显示v-else-if指令所在的dom元素。否则将显示v-else指令所在的html元素，并且此时使用v-if指令的元素必须和使用v-else-if指令的元素以及使用v-else的html元素处于同一个vue实例绑定的html元素中；如：
+                <div id="app">
+                    <div v-if="type === 'A'">
+                        A
+                    </div>
+                    <div v-else-if="type === 'B'">
+                        B
+                    </div>
+                   <div v-else>
+                        C
+                    </div>
+                </div>
+                    1：使用v-if指令的元素与使用v-else指令的元素以及v-else-if的元素必须处于vue实例绑定的id=app的dom元素中；
+                    2：如果v-if指令的值为false，则将进入v-else-if指令中判断其值，如果v-else-if的值为false,将会显示v-else指令所在的元素；
+                4: 可以使用v-show来确定是否显示对应元素：                  
+                    <h1 v-show="ok">Hello!</h1>
+                    如果v-show的值为true则显示该html元素，否则将不显示该html元素；
+        2：循环：
+            v-for指令：遍历指定的数据集和元素
+                第一种遍历方式：
+                语法：v-for="item in list"
+                说明：list为需要被遍历的数据集；(数组或者js对象)
+                      item为遍历出来的数据值；
+                      遍历出来的item可以直接在指令所在的元素中使用；
+                      使用遍历出来的值的时候需要放置在{{ }}中，
+                如：
+                    <body>
+                        <ul id="app">
+                            <li v-for="item in list">
+                                <h3>{{item}}</h3>
+                            </li>
+                        </ul>
+                    </body>
+                    <script type="text/javascript">
+                        var vue = new Vue({
+                            el:'#app',
+                            data:{
+                                list:["tom","jean","lili"]
+                            }
+                        });
+                    </script>
+                第二种遍历方式：获取键值和键名
+                    语法：v-for="(value,key) in list"
+                    说明：list为需要被遍历的数据集；(数组或者js对象)
+                         value为遍历出来的数据值；key为遍历出来的键名
+                         遍历出来的item可以直接在指令所在的元素中使用；
+                         使用遍历出来的值的时候需要放置在{{ }}中，如：{{ key }} {{ value }}
+
+                第三种遍历方式：获取键值，键名，索引顺序
+                    语法：v-for="(value,key,index) in list"
+                    说明：list为需要被遍历的数据集；(数组或者js对象)
+                         value为遍历出来的数据值；key为遍历出来的键名,index为遍历出来的索引顺序
+                         遍历出来的item可以直接在指令所在的元素中使用；
+                         使用遍历出来的值的时候需要放置在{{ }}中，如：{{ key }} {{ value }} {{ index }}
+
+                第四种遍历方式：迭代整数
+                    语法：v-for="n in 10"
+                    说明：10为需要被遍历的数据集；
+                         n为遍历出来的整数值；
+                         使用遍历出来的整数值的时候需要放置在{{ }}中，如：{{ n }}
+        
+            
+            
+
+
+            
+
+
+
+        
+
+        
+
+
+
+        
+
+
+
+            
+
+
+    
