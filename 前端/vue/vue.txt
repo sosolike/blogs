@@ -191,6 +191,67 @@ Vue基本语法：
                     说明：10为需要被遍历的数据集；
                          n为遍历出来的整数值；
                          使用遍历出来的整数值的时候需要放置在{{ }}中，如：{{ n }}
+    3：计算属性：（动词）
+            1：vue中所谓计算属性：就是允许自定函数来更改vue对象data中声明的属性；计算属性中放置的是一系列函数；                     这些函数可以对data中的属性操作，返回新的属性值；
+            总结：
+                1：computed：计算属性（动词）
+                2：computed本质上就是一个json对象，其中的属性值全部为函数，只不过在语义上，这些函数都是用来操作data对象中的属性的；
+                3：computed中声明的这些函数是可以通过this代替vue实例访问vue属性；
+                4：computed和methods一样，都是一个json对象，且其中的属性值全部都是函数，但是computed中的函数的语义在于操作vue属性，而且computed操作vue属性，性能更好；
+                5：默认情况下在computed中为某个属性设置的函数将会自动转换为该属性的getter方法；通过vue.attr或者{{ attr }}来访问值的时候都会调用对应方法；
+                6：在computed中可以定义setter方法：之后可以使用vue.site = "str"来为site属性赋值；
+                7：定义方法如下：
+                    <div id="app">
+                        <p>{{ site }}</p>
+                    </div>
+
+                    var vm = new Vue({
+                        el: '#app',
+                        data: {
+                            name: 'Google',
+                            url: 'http://www.google.com'
+                        },
+                        computed: {
+                            site: {
+                                // getter 通过vue.site或者{{ site }} 取值的时候将会执行getter方法
+                                get: function () {
+                                    return this.name + ' ' + this.url
+                                },
+                                // setter--通过vue.site = "str" 赋值的时候将会执行setter方法
+                                set: function (newValue) {
+                                    var names = newValue.split(' ')
+                                    this.name = names[0]
+                                    this.url = names[names.length - 1]
+                                }
+                            }
+                        }
+                    })
+        4：监听属性：watch
+            1：watch监听属性用于监听其所绑定的某个值的变化，一旦值发生变化就会执行对应的函数；监听对象是值！
+            2：watch监听属性需要和v-model指令一起来用；
+            3：使用方式：
+                v-model="eventName"     ：设置用于监听该表单元素值的事件名称；
+
+                在vue中声明该监听器：
+                    var vm = new Vue({
+                        el:"#app",
+                        data:{},
+                        computed:{},
+                        methods:{},
+                        watch:{
+                            eventName:function(val){
+                                do something...
+                            }
+                        }
+                    })
+                
+                说明： 
+                    1：监听属性的处理函数要放在watch对象内；
+                    2：监听属性的处理函数需要一个参数，该参数就是该监听属性所监听的某个值；
+                    3:vue.js还提供了一个$watch方法，和watch属性一样，用于监听某个属性值的变化，如果属性值发生变化将会执行对应的函数：
+                        vue_obj.$watch("watch_attr",function(newValue,oldValue){
+                                do some things....
+                        })  
         
             
             
