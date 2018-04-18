@@ -1,0 +1,29 @@
+laravel中的视图
+    视图文件的创建：
+        1：视图的默认存放目录：resources/views
+        2：视图文件的默认类型是php类型，即视图文件以.php作为后缀
+    视图文件的返回：
+        在控制器中通过 return view(视图文件地址)；来返回
+        备注：
+            1：view函数中是视图文件地址，只需要文件名，不需要文件后缀;
+                如：resources/views/userReg.php视图文件
+                    return view("userReg")即可；
+
+            2：view函数的默认基地址是resources/views，因此view函数中的视图文件地址应该从views目录开始；
+                如：resources/views/User/userReg.php视图文件
+                    return view("User/userReg") 或者：
+                    return view("User.userReg") 即可；
+            3：判断视图是否存在：
+                view()->exists("视图地址");
+
+    向视图文件传递数据：
+        return view("视图文件地址",array("param_name"=>"param_value"));
+
+        多个视图共享参数：
+            在app/Http/Providers/AppServiceProvider的boot方法中调用share方法传入参数：
+                view()->share('key', 'value');
+                之后将在所有的视图中均可访问名为key的值；
+    
+    
+
+
