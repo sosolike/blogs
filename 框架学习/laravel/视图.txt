@@ -24,6 +24,56 @@ laravel中的视图
                 view()->share('key', 'value');
                 之后将在所有的视图中均可访问名为key的值；
     
+    blade模板：
+        blade模板：
+            1：不限制是否使用php原生语法；
+            2：会自动编译为php原生文件，缓存起来，只有在模板文件被修改之后才会从新编译；
+            3：模板之间的关系处理方式及其优雅
+        blade模板中内容区域的创建：
+            1：@section("content_name")   创建一块内容区域，名为content_name
+                    some value
+               @show
+            2:@yield("content_name")     声明一个占位，将要显示的内容名为content_name
+
+            区别：1:语义不同，@section目的是创建一块内容区域，@yield目的是声明一块内存区域，然后占位
+                 2：功能不同，@section中间的的内容可以被字模板获取到；@yield后面或者前面的内容将会被写死，字模板获取不到,而且始终占有，删不掉！
+        继承：
+            子模板使用@extends继承父模板
+            字模板创建内容：
+                @section("content_name")   为父模板中名为content_name的内容区域创建内容
+                    @parent  显示父模板中的内容，如果不要@parent则不会显示父模板中的内容；
+                    some value
+                @endsection
+        
+        模板中操作php
+            1：模板中默认使用 {{ $name }} 来接收后端向前端传入的变量；
+            2：模板中的的{{ }} 中可以直接使用php语法
+            3：循环：
+                @for ($i = 0; $i < 10; ++$i)
+                    {{ $i }} <br />
+                @endfor
+
+                @foreach ($data as $k => $v)
+                    {{ $k }} <br />
+                @endforeach
+
+                @foreach ($data as $k => $v)
+                    {{ $k }} <br />
+                @empty
+                    数组没有数据
+                @endforeach
+        模板中包含子视图：
+            1：子模板中可以使用全部父模板中的变量
+            2：父模板可以向字模板传递任意变量
+            3：父模板引入字模板方式：
+                @include('child' , [
+                    'other' => '额外数据'
+                ])
+        
+
+
+            
+
     
 
 
