@@ -1,0 +1,2 @@
+vue-router需要使用到npm：npm安装教程：
+https://www.cnblogs.com/yominhi/p/7039795.html

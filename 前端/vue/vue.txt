@@ -85,23 +85,6 @@ Vue基本语法：
 
             e: 如果使用{{ html_content_name }} 则会吧html元素当初普通的字符串插入其中，并不会解析html元素；
 
-        3：绑定属性：<div v-bind:class="class_content_name"></div>
-            a: v-bind需要声明绑定的属性名称；以及该属性值的名称；
-
-            b: 在需要被绑定属性的元素中使用<div v-bind:class="class_content_name"></div>，html_content将会和vue实例中的同名属性绑定；
-
-            c: 在vue实例中：
-                var vm = new Vue({
-                    el:'#el',
-                    data:{
-                        class_content_name:"list",
-                    }
-                })
-                相当于：<div class="list"></div>
-
-            d: 一旦html元素被绑定的属性值发生变化，同时，vue实例中名为class_content_name的值也将发生变化，反之亦然；
-            e：v-bind的缩写：:属性名="属性值对应的名称";
-
         4：模板语法：
             Vue.js允许在{{}}以及指令结果" "中使用原生js表达式；
             如：
@@ -206,12 +189,12 @@ Vue基本语法：
                     </div>
 
                     var vm = new Vue({
-                        el: '#app',
-                        data: {
+                        el: '#app',   #指定改Vue实例绑定的是哪个DOM；
+                        data: {       #指定的是该Vue实例所绑定的数据中心，在这里可以指定任意的数据
                             name: 'Google',
                             url: 'http://www.google.com'
                         },
-                        computed: {
+                        computed: {   #计算属性，如果对于属性值的获取和赋值有特殊需要，一般可以放在这里！
                             site: {
                                 // getter 通过vue.site或者{{ site }} 取值的时候将会执行getter方法
                                 get: function () {
@@ -224,6 +207,15 @@ Vue基本语法：
                                     this.url = names[names.length - 1]
                                 }
                             }
+                        }
+                        method:{  #方法，Vue的数据处理中心，就是定义一些方法，可以供Vue实例调用；
+
+                        }
+                        watch:{#监控属性，在这里可以监控某个属性的变化，设置变化之后的处理方法；
+
+                        }
+                        component:{# 局部组件声明
+
                         }
                     })
         4：监听属性：watch
