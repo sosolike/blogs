@@ -1,0 +1,110 @@
+module---模块
+    1：模块本质上就是一个js脚本文件；但是并非任何脚本文件都是模块
+    2：只有使用export抛出指定选项的js文件才能成为模块
+    3：模块名就是js文件名；
+    4：ES6的模块是编译时加载的，即ES6在编译时即可构建模块的依赖关系，并完成模块加载，效率要比commonJS的方式要高；
+    5：ES6模块自动采用严格模式，无论是否加上"use strict"都将使用严格模式！
+    6：ES6模块中顶层的this指向undefined，即不应该在顶层使用this；
+    7：模块的优势：可以将大段程序拆分为多个子程序，这些子程序称为模块，在需要的地方可以直接导入模块即可使用模块中定义的函数，变量，类；
+严格模式：
+    变量必须声明后再使用
+    函数的参数不能有同名属性，否则报错
+    不能使用with语句
+    不能对只读属性赋值，否则报错
+    不能使用前缀 0 表示八进制数，否则报错
+    不能删除不可删除的属性，否则报错
+    不能删除变量delete prop，会报错，只能删除属性delete global[prop]
+    eval不会在它的外层作用域引入变量
+    eval和arguments不能被重新赋值
+    arguments不会自动反映函数参数的变化
+    不能使用arguments.callee
+    不能使用arguments.caller
+    禁止this指向全局对象
+    不能使用fn.caller和fn.arguments获取函数调用的堆栈
+    增加了保留字（比如protected、static和interface）
+
+导出模块 ：export
+    ES6中使用export来导出模块的对外接口；并且只有使用export导出的接口才能被导入该模块的外部代码使用，其余没有使用export的函数、变量、类等均不能被外部代码使用；
+
+    导出语法：
+        1：直接通过添加export前缀导出：即直接在变量、函数、类名前加上export关键字即可导出该接口；
+
+            export function a(){}
+            export var b="b";
+
+        2：通过export列表导出：即定义变量、函数、类时不用添加export关键字，但是需要在模块文件的任意位置使用export列表的形式导出接口；
+
+            export {a,b}  
+        
+        3：为接口添加别名：接口添加别名之后再导入的时候就需要使用别名；
+            export {a as aa,b as bb}
+        
+    
+    特性：
+        ES6的导出是可以获取接口的实时值的；即调用了模块的接口a,如果a值发生变化，同样调用方也会变化；
+        CommonJS模块的输出值则是值的缓存，不存在动态更新；
+        export命令可以处于模块文件的任意位置，但是必须在模块的顶层，不能出现在代码块中，否则将会报错！
+
+导入模块：
+    ES6中使用import来导入模块的接口；只有使用import导入的模块接口才能被调用！
+
+    导入语法：
+        1：导入指定的模块接口：
+            import {a,b} from "module_name.js";  
+                #注意a,b都是模块中的接口名；
+
+        2：导入模块中的所有接口：
+            import * as all_api from "module_name.js"  
+                #注意，导入所有接口的时候必须给予名称；这个名称即是被导入接口组成对象的名称，通过该名称使用对象的语法即可访问被导入的接口；
+
+        3：为导入的接口起别名
+            import {a as aa,b as bb} from "module_name.js"
+
+            别名的注意事项：
+                1：为接口添加别名可以通过export在导出接口的时候添加，也可以通过import导入接口的时候添加；
+                2：如果别名是通过export导出接口的时候添加的，在使用import导入的时候就需要使用别名导入；使用的时候也需要使用接口的别名；
+                3：如果别名是通过import导入接口的时候添加的，则需要在调用的时候使用别名；
+    导入的特征：
+        1：导入语法import可以放在任意位置，但必须是顶层，不能放置语句块中，否则将会报错！
+        2：多次执行import语句只会执行一次，并不会执行多次！
+        3：导入模块的接口名不能再为其赋其他类型的值；
+
+export default命令：
+    export default特征：
+
+        1：export default 本质上是导出一个名为 default 的 变量接口；改变量接口可以接收函数，可以接收具体的值；
+            eg:
+                export default function funName(){}
+                或者
+                export default 12;
+            export default不能作用于变量,因为其本质上就是声明了一个default变量！
+
+        2：export default 因为输出的是一个default变量，因此一个模块中只能使用一次export default；
+
+        3：export default 输出的变量名是允许完全自定义的，因此使用export default导出接口，使用者可以不用知道接口的名称
+
+    导出方式：
+        export default function fun(){}
+        或者
+        export default function (){}
+        或者
+         function fun(){}
+         export default fun;
+
+        函数即便有名称也只能在模块内部有效，对外本质上是将函数本体赋值给了default变量！
+    
+    导入模块接口：
+        如果模块接口是通过export default导出的：则：
+            import _ from "./module_name.js";  即可导入默认的接口；
+        
+        或者使用：
+            import _ ,{a,b} from "./module_name.js";  即可导入默认接口以及其他接口；
+
+            特点：
+                1：_是可以自定义名称的；
+                2：导入的接口名无需带上{}
+
+
+
+
+

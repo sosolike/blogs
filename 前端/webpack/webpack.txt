@@ -28,7 +28,38 @@ webpack第一弹：简单打包js文件
         1：webpack配置文件：
             webpack配置文件默认名是webpack.config.js，也可以从新命名；
             如果配置文件名是webpack.config.js，那么打包的时候无需指定入口文件和出口文件，webpack会自动读取配置文件；
+                即：直接执行 webpack 即可！
             如果配置文件名不是webpack.config.js，那么打包的时候需要使用--config指定需要读取的配置文件名；
+                即：需要执行 webpack --config=webpack_name.config.js
+    3：打包js文件
+        
+
+webpack第二弹：打包css文件
+    1：webpack将所有的任务都视为一个模块，webpack本身可以处理的只有js模块，对于图片，css模块需要使用指定的loader来处理
+
+    cssloader:
+        1：对于css文件需要安装 css-loader 和 style-loader;
+            安装方式：
+                npm install css-loader,style-loader --save-dev
+                或者
+                npm install css-loader,style-loader -g
+
+        2：安装好之后需在打包时需要指定css文件需要的loader；
+
+            使用方式：
+               * 1：通过cli指定：webpack --module-bind 'css=style-loader!css-loader'
+                 2：通过内联的方式指定：import('style-loader!css-loader!'./a.css)
+               * 3：通过webpack.config.js来指定：
+                    module:{
+                        rules:[
+                            {test:/\.css$/,use:'style-loader!css-loader!'}
+                        ]
+                    }
+        3：引入css模块：
+            引入方式
+                import("./a.css")   #引入css模块
+        
+
     
         
     
