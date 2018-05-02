@@ -32,7 +32,7 @@ webpack第一弹：简单打包js文件
             如果配置文件名不是webpack.config.js，那么打包的时候需要使用--config指定需要读取的配置文件名；
                 即：需要执行 webpack --config=webpack_name.config.js
     3：打包js文件
-        
+
 
 webpack第二弹：打包css文件
     1：webpack将所有的任务都视为一个模块，webpack本身可以处理的只有js模块，对于图片，css模块需要使用指定的loader来处理
@@ -52,7 +52,7 @@ webpack第二弹：打包css文件
                * 3：通过webpack.config.js来指定：
                     module:{
                         rules:[
-                            {test:/\.css$/,use:'style-loader!css-loader!'}
+                            {test:/\.css$/,use:['style-loader','css-loader']}
                         ]
                     }
         3：引入css模块：
