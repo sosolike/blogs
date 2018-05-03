@@ -1,0 +1,43 @@
+laravel的响应可以通过response()辅助函数来处理
+
+响应字符串：
+    1：return "string";
+    2：return response("string");
+
+响应json：
+    1：return array();               
+    2：return response(array());
+
+    备注：对于laravel框架，响应一个数组或者集合，将会被自动转换为json字符串；
+
+响应视图：
+    1：return view("blade_path");
+    2：return response()->view("blade_path");
+
+使用response的优点：
+    1：通过response响应请求可以设置header头信息：
+        return response()->view()->header("Content-type:text/html;charset=utf-8")
+                                 ->header('X-Header-One', 'Header Value');
+    
+    2：通过response响应请求可以设置cookie：
+        return response()->view()->cookie($name, $value, $minutes, $path, $domain, $secure, $httpOnly);
+
+响应重定向：
+    如：Route::any('activity/close',"WorkerController@endAc")->name('end');
+
+    1：return redirect("url");               
+        将会重定向至指定的url页面
+
+    2：return redirect("activity/close");    
+        将会重定向至指定的路由地址
+
+    3：return redirect()->back();            
+        将会重定向至上一个请求
+
+    4：return redirect()->action("WorkerController@endAc",array("a"=>'tom'))   
+        将会重定向至指定的控制器方法,参数将会通过get形式传递
+    
+    5：return redirect()->route("end",array("a"=>'tom'))   
+        将会根据路由别名重定向至指定的路由地址,参数将会通过get形式传递
+
+    
