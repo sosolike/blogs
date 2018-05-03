@@ -1,0 +1,60 @@
+自定义服务
+    1：创建服务约束接口
+        位置：App\Contracts
+
+        文件名：XxxContract.php
+
+        命名空间：namespace App\Contracts;
+
+        接口声明：interface XxxContract{
+                    /* 接口声明 */
+                }
+    
+    2：创建服务：
+        位置：App\Services
+
+        文件名：XxxService.php
+
+        命名空间：namespace App\Services;
+
+        创建服务：
+                1：需要引入服务约束接口：use App\Contracts\XxxContract;
+
+                2：声明的服务类需要继承该约束接口：class XxxService implements XxxContract{}
+
+                3：实现服务约束接口所要求的方法；
+
+                4：根据需要创建其他方法；
+    
+    3：创建服务提供者：
+        位置：App\Providers
+
+        文件名：XxxProvider.php
+
+        命名空间：namespace App\Providers;
+
+        创建服务提供者：
+                1：需要引入服务：use App\Services\XxxService;
+                   需要引入服务提供者：use Illuminate\Support\ServiceProvider;
+
+                2：声明的服务提供者类需要继承ServiceProvider：class XxxServiceProvider extends ServiceProvider{}
+
+                3：实现注册方法：
+                    public function register()
+                    {
+                        $this->app->singleton('test',function(){
+                            return new XxxService();
+                        });
+                    }
+                    备注：'test'是使用App::make创建服务实例时使用的别名；
+                         return 需要返回真实服务的实例；
+                4：向app注册服务提供者：App\Providers\XxxServiceProvider::class,
+
+
+                5：使用服务：
+                    $xxx = App::make('test');   #创建真实服务的实例；
+                    $xxx->fun_name();           #通过服务实例调用服务提供的方法；
+
+    
+
+
