@@ -1,0 +1,41 @@
+laravel框架在响应的时候允许携带独立的参数,
+    备注：1：只能在响应的时候携带独立参数，例如：
+              response响应字符串、json：response("string")->with();response("array")->with();
+              或者使用view()、以及response响应view():view()->with();response()->view()->with();
+              或者使用redirect()重定向的时候:redirect()->with();redirect()->route()->with();
+         2：该功能的本质是将信息添加至session中，在服务器端获取的时候需要通过session的操作获取，在前端模板中需要通过变量名获取；
+
+         3：由于该功能是通过session实现的，因此要使用该功能必须开启session；
+
+1：使用with()方法
+    设置：->with("msg","msg inso");
+    获取：
+        在服务器端：$request->session()->get('msg');
+        在前端模板：{{ $msg }}
+
+2：使用withErrors()方法
+    设置：->withErrors(["name"=>"error1-name",'age'=>array("error1-age","error2-age")]);
+    获取：
+        在服务器端：$request->session()->get("errors");
+        在前端模板：{{ $errors->all() }} //获取所有的错误信息
+                   {{ $errors->first() }} //获取第一条错误信息
+                   {{ $errors->first('name') }} //获取名为name的第一条错误信息
+    备注：1：withErrors()参数必须是一个数组，可以是关联数组也可以是索引数组；
+         2：withErrors()在session中是赋值给了errors变量；因此在前后端获取的时候需要通过errors变量来获取；
+         3：withErrors()在语义上是用来传递错误消息的；
+         4：使用验证功能的时候，错误信息也是通过withErrors设置的；
+
+3：使用withInput()方法
+    设置：->withInput() 即可；
+    取值：在服务器端：$request->old()        取上次请求中的所有请求参数
+                    $request->old("name")  取上次请求中指定的参数；
+
+         在前端模板：{{ old() }}             获取上次发送的所有的请求参数
+                    {{ old('name') }}      获取上次发送的指定名称的请求参数
+    备注：
+        1：withInput默认是传递了上一次的Request对象；因此不需要给予任何参数；
+        2：通过withInput()可以方便的获取上次发来的请求参数，实现数据保持功能;
+        3：该功能需要依赖于session，因此使用该功能时确保session被启用；
+
+
+
