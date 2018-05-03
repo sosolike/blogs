@@ -1,0 +1,60 @@
+laravel中使用中间件在 请求 到达控制器方法的过程中 过滤验证请求；
+
+laravel中的请求流程：
+    浏览器发起请求->请求到达laravel项目->路由拦截进行匹配和分发->进入中间件层过滤请求->进入控制器方法处理请求
+    具体见larave请求流程图
+
+中间件的作用：
+    中间件的本质上是在请求达到 控制器方法之前 的处理程序；可以在请求到达处理方法之前对请求进行验证和过滤；
+
+自定义中间件：
+    位置：App\Http\Middleware
+    
+    文件名：根据需要任意命名，但必须遵守驼峰式命名法命名；
+
+    文件命名空间：namespace App\Http\Middleware;
+
+    需要引入的类库：use Closure;
+                  use Illuminate\Http\Request 
+    
+    方法：public function handle(Request $request,Closure $next){
+            #进行验证操作
+            #如果验证通过，需要使用return $next($request)将请求发往下一层；
+            #如果验证未通过，则根据需要处理！
+    }
+
+    注册：在App\Http\Kernel.php中注册：
+            $middleware 数组中注册，全局的请求都将执行该中间件；
+            $middlewareGroup 数组中注册，只有属于指定组的请求才会执行该中间件；
+            routeMiddleware 数组中注册，将会得到一个中间件的别名；
+    
+    为请求指定中间件：
+       1：在 $middleware 数组中注册，全局的请求都将执行该中间件；无需单独为某个请求指定该中间件！
+       2：在 $middlewareGroup 数组中注册，只有属于指定组的请求才会执行该中间件；
+            如：
+            'activity' => [
+                \App\Http\Middleware\Activity::class, #这个中间件注册到了activity组
+            ],
+
+            指定中间件：
+
+            Route::groups(['middleware'=>"activity"],function(){
+                Route::any('a',"ExampleController@afun");
+                Route::any('b',"ExampleController@bfun");
+            });
+        3：在 routeMiddleware 数组中注册，将会得到一个中间件的别名；
+            如："activity"  =>\App\Http\Middleware\Activity::class,
+            指顶中间件：
+                Route::any('c',"ExampleController@cfun")->middleware("activity");
+
+中间件的前置和后置：
+
+    如果中间件中的处理程序在传递请求对象之前，称为前置；
+
+    如果中间件中的处理程序在传递请求对象之后，称为后置；
+
+            
+
+
+
+
