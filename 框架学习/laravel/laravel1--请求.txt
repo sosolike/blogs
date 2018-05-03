@@ -1,0 +1,77 @@
+laravel中将所有的请求信息全部封装到了一个对象中，即 Illuminate\Http\Request 实例;
+
+请求Request实例的获取：
+    1：引入Request命名空间：use Illuminate\Http\Request;
+    2：在需要的方法中声明：function fun(Request $request){}
+    3：在方法中可以通过$request访问该实例的方法来获取请求信息；
+
+获取请求路径：
+    http://example.com/user/1/tom?name=tom
+
+    $request->path()       
+        ：返回的是路由路径：user/1/tom
+
+    $request->is("user/1/tom")    
+        ：检测本次请求路径是否是指定的路径;返回true，除此之外均返回false
+
+获取url：
+    http://example.com/user/1/tom?name=tom
+
+    $request->url()         
+        ：获取本次请求的url,但只有域名+路由的路径部分，没有查询字符串部分；http://example.com/user/1/tom
+
+    $request->fullurl()     
+        ：获取本次请求的url,包括查询字符串部分：http://example.com/user/1/tom?name=tom
+
+获取请求方法类型：
+    $request->method()      
+        :返回请求的方法类型：如：GET/POST等
+
+    $request->isMethod("GET")    
+        :返回本次请求的方法类型是否是指定的类型；
+
+获取请求参数：
+    $request->all() 
+        ：获取所有的请求参数，包括get/post/put/delete等所有http请求发来的参数；
+
+    $request->input()
+        :获取所有的请求参数，包括get/post等所有http请求发来的参数；如果有参数同名，post将会覆盖掉get参数
+
+    $request->input("name")
+        ：获取名为name的请求参数，
+
+    $request->input("name","default")
+        ：获取名为name的请求参数，如果没有获取到赋值为default
+    
+    $request->get("name")
+        ：当get请求参数名和post请求参数名重复时，需要使用这个方法获取get请求参数；
+    
+    $request->get("name","default")
+        ：当get请求参数名和post请求参数名重复时，需要使用这个方法获取get请求参数；同时可以给予默认值！
+
+获取cookie：
+    $request->cookie("name");获取名为name的cookie;
+
+操作session:
+
+    写入session：$request->session()->put("key","value")
+
+    获取session：$request->session()->get("key","default")
+
+    删除session：$request->session()->pull("key","default")  删除并返回；如果没有返回default默认值
+                $request->session()->forget('key')          删除指定session
+                $request->session()->flush()                删除所有的session
+                $request->session()->regenerate()           重新生成sessionid
+
+    检测session：$request->session()->has('key')             检测名为key的session是否存在，且不为null； 
+                $request->session()->exists('key')          检测名为key的session是否存在，可以为null;
+    
+    一次性session：$request->session()->flash("key","value") 创建一次性session，该session下次访问有效，访问之后即被删除！
+    
+文件上传
+
+
+
+
+
+
