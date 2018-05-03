@@ -1,0 +1,76 @@
+门面：laravel提供的一种调用服务方法的简便方式；使用门面将无需再创建服务实例，只需要通过服务名称调用即可！
+
+自定义门面：
+    1：创建服务约束接口
+        位置：App\Contracts
+
+        文件名：XxxContract.php
+
+        命名空间：namespace App\Contracts;
+
+        接口声明：interface XxxContract{
+                    /* 接口声明 */
+                }
+    
+    2：创建服务：
+        位置：App\Services
+
+        文件名：XxxService.php
+
+        命名空间：namespace App\Services;
+
+        创建服务：
+                1：需要引入服务约束接口：use App\Contracts\XxxContract;
+
+                2：声明的服务类需要继承该约束接口：class XxxService implements XxxContract{}
+
+                3：实现服务约束接口所要求的方法；
+
+                4：根据需要创建其他方法；
+    3：创建门面：
+        位置：App\Facades
+
+        文件名：Xxx.php
+
+        命名空间：namespace App\Facades;
+
+        创建门面：
+                1：需要引入服务：use Illuminate\Support\Facades\Facade;
+
+                2：门面类需要继承系统门面：class Xxx extends Facade{}
+
+                3：实现门面方法：
+                    protected static function getFacadeAccessor()
+                    {
+                        return 'test';
+                    }
+    
+    3：创建服务提供者：
+        位置：App\Providers
+
+        文件名：XxxProvider.php
+
+        命名空间：namespace App\Providers;
+
+        创建服务提供者：
+                1：需要引入服务：use App\Services\XxxService;
+                   需要引入服务提供者：use Illuminate\Support\ServiceProvider;
+
+                2：声明的服务提供者类需要继承ServiceProvider：class XxxServiceProvider extends ServiceProvider{}
+
+                3：实现注册方法：
+                    public function register()
+                    {
+                        $this->app->singleton('test',function(){
+                            return new XxxService();
+                        });
+                    }
+                    备注：'test'是使用App::make创建服务实例时使用的别名；这个别名必须和门面返回的一致！
+                         return 需要返回真实服务的实例；
+
+                4：向app注册门面：'Test' => App\Facades\Xxx::class,
+                    备注：此时的'Test'就是门面的名称；使用服务的方法使用需要使用该门面名称来调用！
+
+
+                5：使用服务：
+                    Test::fun_name();
