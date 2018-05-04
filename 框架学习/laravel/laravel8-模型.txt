@@ -1,0 +1,119 @@
+laravel中的模型
+ 位置：App目录下自定义目录，可以定义多层目录；
+ 文件名：根据需要创建模型文件名
+ 命名空间，按照目录结构声明命名空间
+
+第一种操作方式：执行原生sql
+1:引入 use Illuminate\Support\Facades\DB;
+2:使用 
+    执行原生查询：DB::select($sql)
+    执行原生更新：DB::update($sql)
+    执行原生删除：DB::delete($sql)
+    执行原生插入：DB::insert($sql)
+    执行表操作： DB::statement($sql);
+
+    注意事项：
+        1：sql语句中，用户输入部分全部使用 ? 占位符的形式占位，在第二个参数中通过数组按顺序提供对应参数；
+        2：查看sql执行日志：
+            DB::connection()->enableQueryLog();     放在执行sql之前
+            var_dump(DB::getQueryLog());            sql执行完毕之后查看
+        3：结果集操作：
+            通过门面DB类执行原生sql获取的结果集是数组，每一条数据是一个项，每一个项都是一个stdClass实例；
+            获取结果集：
+                $data = $result[n]      :获取第n条数据，返回的是stdClass实例；
+                $data->attr_name        ：获取具体的某个字段值，因为$data是stdClass实例，因此需要使用
+                                          对象的方式获取字段值；
+        
+
+
+第二种操作方式：通过查询构造器：
+    查询构造器：
+        laravel针对sql中不同部分封装的函数；
+        使用pdo实现，可以避免sql注入；
+        项目中的增、删、改推荐使用查询构造器，查询尽量避免使用查询构造器！
+    查询构造器： 
+        数据curd: 
+            1：insert()  
+                功能：插入数据；
+                参数：一维关联数组或者二维关联数组；
+                返回值：布尔值
+            2：insertGetId()
+                功能：插入数据；
+                参数：一维关联数组；
+                返回值：插入值的主键id
+            3：update()
+                功能：更新数据；
+                参数：一维关联数组；至少要和where()构造器联合使用！
+                返回值：布尔值
+            4：delet()
+                功能：删除数据；
+                参数：无；至少要和where()构造器联合使用！
+                返回值：布尔值
+            5：查询相关：
+                get()：根据条件获取所有行
+                first():根据条件获取第一行
+                chunk(n,function($res){}):会将结果集每次取出n条，通过匿名函数进行处理；避免一次取出太多内存爆掉；
+                count():符合条件的记录条数
+                max():
+                min();
+                avg();
+                sum();
+
+        其余构造器：
+            1：table()
+                功能：指定要操作的表名；
+                参数：表名；
+            2：where()
+                功能：指定操作条件
+                参数：第一个参数是字段名，第二个参数是操作符，第三个参数是值；
+                支持的操作符：=、>、<、
+               orWhere()
+                功能：指定操作条件,与其他where条件是或的关系！
+                参数：第一个参数是字段名，第二个参数是操作符，第三个参数是值；
+                支持的操作符：=、>、<、
+                whereRwa();支持自定义的where条件；需要参数的地方使用?作为占位符，第二个参数通过array()按顺序赋值即可；
+            3：orderBy('a','desc')
+                功能：对查询结果排序；
+                参数：第一个参数是需要排序的字段名，第二个参数是升序/降序选择；
+                备注：多个字段排序，按照顺序调用orderBy();
+            4：groupBy('a')
+                功能：对查询结果分组；
+                参数：参数为需要分组的字段名；
+                备注：多个需要分组的字段，可以按顺序调用groupBy即可；
+            5：offset(n)和limit(n)搭配 | skip(n)和take(n)搭配 
+                功能：限制条数：
+                      skip/offset ：限制从筛选的结果集中第几条数据开始查找
+                      limit：限制查找多少条数据；
+            6：select("a","b","c"):指定需要查询的字段名，也可以传入参数；
+        事务相关：
+            sharedLock()：获取共享锁  类似于sql语句中的LOCK IN SHARE MODE
+            lockForUpdate()：获取排它锁 类似于sql语句中的FOR UPDATE
+            备注：在查询之前使用，mysql事务中，对于查询操作默认不会加锁，因此如果有需要可以进行加锁！
+        结果集操作：
+            通过DB门面类获取的结果集是一个集合实例，可以通过toArray()转换成数组；
+            数组的每一项都是一个stdClass对象，而一项就是一条数据！
+            1：获取结果集：$result = DB::table()->get();
+            2：转换成数组：$res_array = $result->toArray();
+            3：获取某条数据：$item = $res_array[n];
+            4：获取字段值：$item->attr_name;
+
+ORM方式操作数据表
+
+    1：引入 use Illuminate\Database\Eloquent\Model;
+    2：声明的类需要继承Model;
+
+    3:属性配置：
+        protected $table = "game_info";         配置该模型类需要关联的表名
+        protected $primaryKey = "id";           配置表的主键名
+        public $timestamps = false;             是否启用模型类的timestamp功能；
+    4：使用ORM：
+        1：操作数据：
+            和表关联的模型类本质上就是一个查询构建器，因此在模型类中可以直接调用查询构造器方法！
+            通过门面使用查询构建器：DB::table()->get();
+            通过模型类使用查询构建器：Xxx::get();
+        2：获取结果集：
+
+        使用ORM模型类查询的结果是一个集合实例，
+        可以通过toArray()转换成数组，数组的每一项都是一个数组，一项代表一条数据；
+        也可以通过toJson()转换成json字符串；
+    
