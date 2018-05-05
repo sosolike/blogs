@@ -31,7 +31,19 @@ Vue.js基本
             data:{
                 message:"test_message",
                 message2:"test_message2",
-            }
+            },
+            computed:{
+                    #声明计算属性；
+            },
+            ethod:{  #方法，Vue的数据处理中心，就是定义一些方法，可以供Vue实例调用；
+
+            },
+            watch:{#监控属性，在这里可以监控某个属性的变化，设置变化之后的处理方法；
+
+            },
+            component:{# 局部组件声明
+
+            },
         })
 
         el:'#dom_el' 
@@ -67,6 +79,7 @@ Vue基本语法：
 
             d: 一旦html元素中的内容发生变化，同时，vue实例中名为attr_name的值也将发生变化，反之亦然；
 
+            e：通过v-text="message"绑定内容，推荐使用v-text指令来绑定内容；
 
         2：绑定HTML：<div v-html="html_content_name"></div>
 
@@ -93,10 +106,21 @@ Vue基本语法：
                     <div v-bind:class="'sclass_' + id"></div>
                 </div>
     2: Vue.js中的条件与循环：
-        1：条件：v-if="if_value"
-                v-else-if="else_if_value"
-                v-else="else_value"
+        1： 条件：v-if="isSeen"
+                 v-else-if="isSeen"
+                 v-else
+
+                 v-show="isShow"
             作用：控制元素的显示与否；
+
+            代码块：从if开始一直到第一个else结束；
+
+            值：
+                1：直接写死一个值：v-if=0/v-if=1 来控制是否显示元素；
+                2：设置为属性：v-if="attr" 如果attr为true则显示元素，否则隐藏元素；
+                3：设置为计算属性：v-if="computed_attr" 如果计算属性返回true则显示元素，否则隐藏元素；
+                4：通过js表达式判断：v-if="attr > 2" ；可以在""中使用js表达，最终结果为true则显示元素，否则将隐藏元素；
+
             备注：
                 1：可以单独使用v-if;如果该元素的v-if指令值为true该元素将会显示；否则将不显示该元素；如：
                     <p v-if="seen">p元素</p> 
@@ -139,6 +163,7 @@ Vue基本语法：
                       item为遍历出来的数据值；
                       遍历出来的item可以直接在指令所在的元素中使用；
                       使用遍历出来的值的时候需要放置在{{ }}中，
+                备注：遍历时v-for所在元素会被遍历，在被遍历元素中可以使用遍历出的值
                 如：
                     <body>
                         <ul id="app">
@@ -208,15 +233,7 @@ Vue基本语法：
                                 }
                             }
                         }
-                        method:{  #方法，Vue的数据处理中心，就是定义一些方法，可以供Vue实例调用；
 
-                        }
-                        watch:{#监控属性，在这里可以监控某个属性的变化，设置变化之后的处理方法；
-
-                        }
-                        component:{# 局部组件声明
-
-                        }
                     })
         4：监听属性：watch
             1：watch监听属性用于监听其所绑定的某个值的变化，一旦值发生变化就会执行对应的函数；监听对象是值！
