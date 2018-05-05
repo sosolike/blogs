@@ -1,0 +1,89 @@
+laravel通过使用axios来发起ajax请求：
+
+1：发起get请求：
+
+    axios.get("request_url?param=value")
+    .then(function(response){
+        console.log(response);
+    })
+    .catch(function(error){
+        console.log(error);
+    });
+
+    备注：
+        axios.get()注明是发起get请求，其参数是需要请求的地址，请求发送的get参数需要通过查询字符串的形式发往请求地址；
+        .then(function(response){}) 是本次请求的回调函数，resopnse是响应内容
+        .catch(fucntion(error){}) 是本次请求发生异常之后的回调函数；error是异常信息
+
+        response是一个对象：其属性有以下几个：
+            config：本次ajax对象的相关信息
+            data：请求成功后接收到的信息，会主动转换为json格式
+            headers：本次请求的请求头信息
+            request：本次请求的ajax对象
+            status：请求状态
+            statusText：请求状态描述字符串
+    或者：
+    
+    axios.get("request_url",{params:{param1:value,param2:value}})
+    .then(function(response){
+        console.log(response);
+    })
+    .catch(function(error)){
+        console.log(error);
+    }
+    备注： 
+        参数同样可以通过params对象传递；
+
+
+2：发起post请求：
+    axios.post("url",{param:value})
+    .then(function(response){
+        console.log(response);
+    })
+    .catch(function(error){
+        console.log(error);
+    })
+
+3：通过设置配置发起请求：axios(config) config是一个json对象；
+    
+    注意：
+        1：对于get请求，请求参数可以直接已查询字符串的方式发往服务器，也可以使用params对象属性设置参数
+        2：对于post/put/patch请求，请求参数则需要使用data属性来设置
+
+    axios({
+        method:'post/patch/put',        #请求方法
+        url:'url请求地址',               #请求地址
+        data:{                          #post/put/patch请求的请求参数；
+            param:value,
+            param2:value2,
+        },
+        /*                              #get请求时设置请求参数
+        params:{
+            param1:value1,
+            param2:value2,  
+        }
+        */
+        timeout:100,                    #超时时间
+        responseType:'json'             #设置返回类型，默认是json，
+                                        可以设置为：'arraybuffer','blob','document','text', 'stream' 
+        headers:{}                      #可以设置请求头信息； 
+        
+    })
+4：方法别名：
+        axios.request(config)
+
+        axios.get(url[,config])
+
+        axios.delete(url[,config])
+
+        axios.head(url[,config])
+
+        axios.post(url[,data[,config]])
+
+        axios.put(url[,data[,config]])
+
+        axios.patch(url[,data[,config]])
+
+
+
+
