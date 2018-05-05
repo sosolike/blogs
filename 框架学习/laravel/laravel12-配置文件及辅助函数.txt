@@ -1,0 +1,32 @@
+laravel的配置文件由两部分组成：项目根目录下的.env文件 以及 app\config目录下的文件
+
+laravel安装完成之后.env文件的名称为.env.example，需要手动将.env.example更改为.env文件；
+
+laravel的配置文件虽然有两个地方，但是app\config目录下的配置文件是最终的配置文件，.env文件里面的配置项最终都会被获取赋值到该目录下的配置文件中；
+
+访问配置项：
+    $value = config('app')      #获取app配置文件的所有配置项
+    $value = config('app.some') #获取app配置文件中的some配置项
+
+动态赋值：
+    config(['app.some'=>'value'])   #对app配置文件中的some配置项动态赋值
+
+获取.env中的配置项：
+    
+    env("APP_DEBUG",false)  #获取.env文件中的APP_DEBUG配置项，如果配置项没有值，则默认赋值为false；
+    注意：.env的配置项尽量只在config目录下的配置文件中访问，避免再项目中直接访问.env配置文件中的配置项；
+
+辅助函数：
+    laravel本身提供了一些全局可以使用的辅助函数；（http://laravelacademy.org/post/6894.html）
+
+    自定义全局赋值函数：
+        位置：在app\helpers.php
+
+        在app\helpers.php中按照面向过程的方式自定义辅助函数；
+
+        修改bootstrap\autoload.php，引入自定义的辅助函数文件即可全局使用！
+
+        或者修改composer.json的autoload配置项，在files中加入要引入的自定义函数文件（绝对路径）
+        执行 composer dump-autoload即可
+
+
