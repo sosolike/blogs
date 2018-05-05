@@ -1,0 +1,194 @@
+路由：
+    1：路由：匹配请求路径，根据预置的规则将请求分发到指定的控制器方法；
+    2：路由的功能：路由可以按照提前预设的规则匹配请求信息，然后将请求信息转发给对应的方法进行处理；
+    3：如果配置路由出现404一般就是nginx或者apache的问题；
+        nginx 在location中添加：
+        location / {  
+            #try_files $uri $uri/ =404;    这行要注释掉
+            try_files $uri $uri/ /index.php?$query_string;  需要添加这行
+        }  
+
+laravel框架中的路由：
+    1：lavarel中所有的请求都必须通过路由映射到对应的处理方法中才能够被处理；路由文件会被框架自动加载！
+
+       -----相对应thinkphp框架只需要按照对应的访问路径访即可访问对应的处理方法，laravel不行；必须提前预定义路由规则；
+
+    2：laravel 5.4版本中的路由：
+        路由文件的地址：项目的 routes 目录下；App\routes
+        路由文件：
+                1：web.php  如果该应用是个web应用，路由配置应该放在web.php中；路由会被分配给web中间件组；
+                2: api.php  果该应用是个api应用，路由配置应该放在api.php中；路由会被分配给api中间件组；
+                3: console.php   如果该应用是个cli应用，路由配置应该放在console.php中；
+    
+    3：路由的定义规则：
+        路由的声明都是通过Route来进行的；路由声明有三个基本特征：允许的请求类型、请求名称(路径)、请求处理方式
+
+        laravel中允许的请求类型：get、post、put、delete、patch
+
+            单请求路由：    
+                Route::get();       只允许get类型的请求      
+                Route::post();      只允许post类型的请求               
+                Route::put();       只允许put类型的请求
+                Route::delete();    只允许delete类型的请求
+                Route::patch();     只允许patch类型的请求
+            多请求路由：
+                Route::match(['get','post']):   该路由允许get、post请求;
+                Route::any():                   该路由允许任意请求方式；
+    
+        laravel中的请求路径：指的是域名后面的部分，要求使用pathinfo模式发起请求；
+            如：http://example.com/user/info   ----  user/info  就是请求路径
+                
+            单请求路由：    
+                Route::get('user/info');       只允许get类型的请求,且请求路径必须是user/info      
+                Route::post('user/info');      只允许post类型的请求,且请求路径必须是user/info       
+                Route::put('user/info');       只允许put类型的请求,且请求路径必须是user/info
+                Route::delete('user/info');    只允许delete类型的请求,且请求路径必须是user/info
+                Route::patch('user/info');     只允许patch类型的请求,且请求路径必须是user/info
+
+            多请求路由：
+                Route::match(['get','post'],'user/info'): 只允许get、post请求;且请求路径必须是user/info
+                Route::any('user/info'):   该路由允许任意请求方式；且请求路径必须是user/info
+        laravel中的请求参数：
+
+            laravel中可以设置某个路由需要传入的参数；
+            
+            这些参数和get参数以及post参数是不一样的，是属于路径的一部分；如果设置了，请求路径就必须携带参数,否则将会报错！
+
+            路径中可以在任意地方设置参数，可以在路径中设置任意个数的参数；
+
+            参数的设置：{name}   必选参数
+                       {name?}  可选参数，但是此时需要给name设置默认值
+            参数过滤：
+                    1：通过where方法过滤
+                    2：通过RouteServiceProvider类过滤
+            参数的接收：
+                    1：在自定义处理函数中通过同名形参接收
+                    2：在控制器的方法中通过同名形参接收
+            
+            如：
+            必传参数：
+              声明方式： Route::get('user/info/{id}'); 
+                        只允许get类型的请求,且请求路径必须是user/info,且必须要有参数
+            可选参数：需要指定默认值
+              声明方式： Route::get('user/info/{id?}'); 
+                        只允许get类型的请求,且请求路径必须是user/info,参数id可有可无，但是需要给id指定一个默认值；
+            多个参数：
+              声明方式： Route::get('user/info/{name}/{id?}'); 
+                        只允许get类型的请求,且请求路径必须是user/info,且要求亚由参数name和参数id可有可无
+            参数过滤：
+            a：只在当前路由中过滤参数：通过where方法：
+
+              声明方式：
+               Route::get('user/info/{name}/{id?}')->where(array("nmae"=>"[a-zA-Z]+"，'id'=>'0-9')); 
+               只允许get类型的请求,且请求路径必须是user/info,且name值只能是字母，id只能是数字；
+               
+            b：全局约束；即在整个项目中的所有请求中，名为指定名称的参数值都必须满足设定的条件
+               声明方式：
+                在 RouteServiceProvider 类的 boot方法中声明约束模式：
+                    /**
+                    * 定义路由模型绑定，模式过滤器等
+                    *
+                    * @param  \Illuminate\Routing\Router  $router
+                    * @return void
+                    * @translator  http://laravelacademy.org
+                    */
+                    public function boot()
+                    {
+                        Route::pattern('id', '[0-9]+');
+                        parent::boot();
+                    }
+                一旦声明，将会自动应用到所有包含该参数名的路由中；
+        
+    laravel中路由的处理方式：
+        1：通过自定义函数处理：
+            如：Route::get("user/info",function(){
+                    //do something...
+                })
+                Route::get("user/info/{id}",function($id){
+                    //该函数中可以通过$id访问请求传过来的参数
+                    //do something...
+                })
+        2：转发到控制器中的函数进行处理：
+            如：Route::get("user/info",'UserController@getUserInfo')
+                备注：
+                    1：UserController指的是控制器名称，getUserInfo指的是方法名；
+                    2：如果请求中携带了参数，该方法中需要通过形参来接收，且形参要和路由中声明的参数名保持一致；
+                    3：默认情况下转发至控制器不需要指明命名空间，默认命名空间就是App\Http\Controllers;
+                    4：如果控制器的命名空间不在该默认的命名空间下，则需要指定控制器的命名空间；如果是在Controller中创建了新的命名空间，则只需要指明新的命名空间即可；
+                
+    
+    laravel中路由的名称：
+        laravel允许给路由创建一个名称，该名称就代表了该路由；
+        创建路由名称：
+            Route::get('user/info','UserController@getUserInfo')->name("route_name");
+        路由名称作用：
+            通过路由名称生成url：
+                在任意地方可以通过：route('route_name')来获取该路由名称对应的完整的请求url；
+            通过路由名称重定向请求：
+                return redirect()->route('route_name');
+        路由中如果有参数：
+            路由中声明了参数：这个参数在route中通过第二个参数传入，route会自动将参数添加至指定位置：
+            如： Route::get('user/{id}/profile', function ($id) {
+                    //
+                })->name('profile');
+
+                $url = route('profile', ['id' => 1]);
+    laravel中的路由群组：
+        路由前缀：laravel中可以为每一个路由添加一个URI前缀；把都具备这个前缀的路由可以放在一个群组中；
+        前缀：域名后面的第一个参数称为前缀，解析的时候laravel会把第一个参数先当做前缀进行匹配，如果匹配不到则会当做路径的一部分进行匹配；
+        创建路由群组：
+            Route::group(['prefix']=>"pre_name",function(){
+                Route::get('user/info', "UserController@getUserInfo");
+                Route::get('user/name', "UserController@getUserName");
+            })
+        
+        根据laravel的匹配规则：路由前缀+路由路径和普通的路由路径一样的话则只会在路由群组中匹配对应路径；
+            如：
+                Route::get("foo/a","UserController@getUserInfo");
+                Route::group(array("prefix"=>"foo"),function(){
+                    Route::get("a",function(){
+                        return "prefix---foo---a";
+                    });
+                });
+                访问http://example.com/foo/a将返回prefix---foo---a，而不会转发到getUserInfo中处理！
+        
+    表单方法伪造：
+        html表单仅支持get/post方法，因此需要使用PUT/PATCH/DELETE方法时需要伪造：
+        可以添加一个隐藏的 _method 字段到表单中，其值被用作该表单的 HTTP 请求方法
+        <form action="/foo/bar" method="POST">
+            <input type="hidden" name="_method" value="PUT">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        </form>
+    访问当前路由：
+        $route = Route::current();  当前路由地址
+        $name = Route::currentRouteName(); 当前路由名称
+        $action = Route::currentRouteAction(); 
+
+
+总结：
+    1：路由：
+        路由概念
+        路由功能
+    2：laravel中的路由：
+        路由文件位置
+        路由文件解释
+        路由的是哪个基本要素
+    3：路由三要素
+        1：路由请求类型
+        2：路由路径
+            1：路由路径
+            2：路由参数设置
+            3：路由参数过滤
+        3：路由的处理方式
+            1：自定义函数处理
+            2：转发到控制器的方法处理
+    4：路由其他：
+        1：路由名称
+        2：群组路由
+        3：表单伪造
+        4：路由信息获取
+
+
+    
+            
+            
