@@ -9,6 +9,52 @@ python连接redis：
         import redis
         pool = redis.ConnectionPool(host="127.0.0.1",port=6379)
         red = redis.Redis(connection_pool=pool)
+----------------------------------------------------------------------------------------------------
+python使用管道命令
+    使用pipline可以实现一次请求指定多个命令，并且默认情况下一次pipline 是原子性操作。
+    import redis
+    pool = redis.ConnectionPool(host='192.168.0.110', port=6379)
+    r = redis.Redis(connection_pool=pool)
+
+    pipe = r.pipeline(transaction=True)
+
+    r.set('name', 'zhangsan')
+    r.set('name', 'lisi')
+
+    pipe.execute()
+----------------------------------------------------------------------------------------------------
+python实现发布和订阅模式
+    import redis
+
+    class RedisHelper(object):
+        def __init__(self):
+            self.__conn = redis.Redis(host='192.168.0.110',port=6379)#连接Redis
+            self.channel = 'monitor' #定义名称
+
+        def publish(self,msg):#定义发布方法
+            self.__conn.publish(self.channel,msg)
+            return True
+
+        def subscribe(self):#定义订阅方法
+            pub = self.__conn.pubsub()
+            pub.subscribe(self.channel)
+            pub.parse_response()
+            return pub
+    #发布
+    from RedisHelper import RedisHelper
+    obj = RedisHelper()
+    obj.publish('hello')#发布
+
+    #订阅
+    from RedisHelper import RedisHelper
+
+    obj = RedisHelper()
+    redis_sub = obj.subscribe()#调用订阅方法
+
+    while True:
+        msg= redis_sub.parse_response()
+        print (msg)
+----------------------------------------------------------------------------------------------------
 
 python操作string：
     set():
@@ -29,6 +75,7 @@ python操作string：
     mget()
         #批量取值
         mget("name1","name2")
+----------------------------------------------------------------------------------------------------
 python操作Hash
     hset(name, key, value)
         #name对应的hash中设置一个键值对（不存在，则创建，否则，修改）
@@ -70,6 +117,7 @@ python操作Hash
     hdel(name,*keys)
     #删除指定name对应的key所在的键值对
     r.hdel("dic_name","a1")
+----------------------------------------------------------------------------------------------------
 List操作：
     lpush(name,values)
     # 在name对应的list中添加元素，每个新的元素都添加到列表的最左边
