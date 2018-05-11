@@ -1,12 +1,13 @@
-redis基本了解：
+redis基本特征：
     1：redis是基于c开发的一个分布式缓存系统；
-    2：redis数据存储在内存中，允许按照指定条件持久化到磁盘上；
+    2：redis数据存储在内存中，允许按照指定条件通过两种不同的方式持久化到磁盘上；
     3：支持数据类型更多：string(string/bool/number)，set，zset，hash，list;
     4：redis支持主从同步。数据支持从主服务器向任意数量的从服务器同步，并且完全实现了发布订阅模式；
 redis基本数据类型及php接口：
-    1：string
+    1：string（k-v）
         @结构简介：
             @1：基本结构：key---value;
+            @2: key：数字，字母，下划线组成，不能以数字开头；
             @2：value：可以使string/bool/number;
             @3：各个键值对互相独立；
         @操作：
@@ -174,7 +175,7 @@ redis基本数据类型及php接口：
                 lPush_rPop/rPush+lPop   普通队列
                 lPush+lTrim             有限集合
                 lPush+lBrpop            阻塞式消息队列
-php使用redis：
+php使用redis----连接：
     1:$redis = new Redis();
     2:$redis->connect('120.78.67.67',7701);或：$redis->pconnect('120.78.67.67',7701);
     3:pconnect说明：
@@ -182,6 +183,23 @@ php使用redis：
             1：php与redis的链接声明周期和php-fpm的生命周期一致，即当前脚本结束，php与redis的链接也不会断开；
             2：显式调用close将只会使得当前脚本无法再与redis通信；但php与redis的连接仍然不会断开
             3：重新启动或者关闭php-fpm则php与redis的连接将会断开；
+php使用redis----发布订阅
+    发布：pub.php
+    $redis = new Redis();  
+    $redis->connect('127.0.0.1', 6379);  
+    $message='新年快乐';  
+    $ret=$redis->publish('channel',$message);  
+
+    订阅：sub.php
+    $redis = new Redis();
+    $redis->connect('127.0.0.1', 6379);
+    $redis->subscribe(array("channel1","channel2",),"callback");
+
+    function callback($redis,$channelName,$message){
+        #$redis  redis连接对象
+        #$channelName  redis频道名称
+        #$message      消息
+    }
                 
                 
 
