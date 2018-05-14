@@ -137,188 +137,75 @@ Vue基本语法：
                     {{ a+b }}<br>
                     <div v-bind:class="'sclass_' + id"></div>
                 </div>
-                
+
     2: Vue.js中的条件与循环：
-        1： 条件：v-if="isSeen"
-                 v-else-if="isSeen"
-                 v-else
+        1：条件指令：用于控制元素是否显示：
+            条件: v-if="isSeen"
+                  v-else-if="isSeen"
+                  v-else
 
-                 v-show="isShow"
-            作用：控制元素的显示与否；
-
-            代码块：从if开始一直到第一个else结束；
+            显示指令：v-show="isShow"
 
             值：
                 1：直接写死一个值：v-if=0/v-if=1 来控制是否显示元素；
-                2：设置为属性：v-if="attr" 如果attr为true则显示元素，否则隐藏元素；
+                2：设置为vue的属性：v-if="attr" 如果attr为true则显示元素，否则隐藏元素；
                 3：设置为计算属性：v-if="computed_attr" 如果计算属性返回true则显示元素，否则隐藏元素；
-                4：通过js表达式判断：v-if="attr > 2" ；可以在""中使用js表达，最终结果为true则显示元素，否则将隐藏元素；
+                4：通过原生js表达式判断：v-if="attr > 2" ；可以在""中使用js表达，最终结果为true则显示元素，否则将隐藏元素；
 
             备注：
-                1：可以单独使用v-if;如果该元素的v-if指令值为true该元素将会显示；否则将不显示该元素；如：
-                    <p v-if="seen">p元素</p> 
-                    如果vue实例中的属性seen为true,改html元素将会显示；否则将会隐藏；
+                1：控制某个元素是否显示可以使用：
+                    v-if='isSeen'
+                    或者：
+                    v-show="isSeen"
 
-                2：可以使用v-if和v-else：如果v-if的值为false，则会显示v-else指令所在的html元素，并且此时使用v-if指令的元素必须和使用v-else指令的元素处于同一个vue实例绑定的html元素中；如：
-                    <div id="app">
-                        <div v-if="Math.random() > 0.5">
-                        Sorry
-                        </div>
-                        <div v-else>
-                        Not sorry
-                        </div>
-                    </div>
-                    1：使用v-if指令的元素与使用v-else指令的元素必须处于vue实例绑定的id=app的dom元素中；
-                    2：如果v-if指令的值为false，将会显示v-else指令所在的元素；否则显示v-if指令所在的元素；
+                2：对于复杂的逻辑判断可以使用v-if/v-else-if/v-else来实现；且必须保证指令集在同一个vue实例的作用域内
 
-                3：可以使用v-if和v-else-if和v-else：如果v-if的值为false，则会判断v-else-if指令的值，如果v-else-if指令的值为true,则显示v-else-if指令所在的dom元素。否则将显示v-else指令所在的html元素，并且此时使用v-if指令的元素必须和使用v-else-if指令的元素以及使用v-else的html元素处于同一个vue实例绑定的html元素中；如：
-                <div id="app">
-                    <div v-if="type === 'A'">
-                        A
-                    </div>
-                    <div v-else-if="type === 'B'">
-                        B
-                    </div>
-                   <div v-else>
-                        C
-                    </div>
-                </div>
-                    1：使用v-if指令的元素与使用v-else指令的元素以及v-else-if的元素必须处于vue实例绑定的id=app的dom元素中；
-                    2：如果v-if指令的值为false，则将进入v-else-if指令中判断其值，如果v-else-if的值为false,将会显示v-else指令所在的元素；
-                4: 可以使用v-show来确定是否显示对应元素：                  
-                    <h1 v-show="ok">Hello!</h1>
-                    如果v-show的值为true则显示该html元素，否则将不显示该html元素；
-        2：循环：
+        2：循环指令：
             v-for指令：遍历指定的数据集和元素
                 第一种遍历方式：
                 语法：v-for="item in list"
                 说明：list为需要被遍历的数据集；(数组或者js对象)
                       item为遍历出来的数据值；
-                      遍历出来的item可以直接在指令所在的元素中使用；
-                      使用遍历出来的值的时候需要放置在{{ }}中，
-                备注：遍历时v-for所在元素会被遍历，在被遍历元素中可以使用遍历出的值
-                如：
-                    <body>
-                        <ul id="app">
-                            <li v-for="item in list">
-                                <h3>{{item}}</h3>
-                            </li>
-                        </ul>
-                    </body>
-                    <script type="text/javascript">
-                        var vue = new Vue({
-                            el:'#app',
-                            data:{
-                                list:["tom","jean","lili"]
-                            }
-                        });
-                    </script>
+                
+
                 第二种遍历方式：获取键值和键名
                     语法：v-for="(value,key) in list"
                     说明：list为需要被遍历的数据集；(数组或者js对象)
                          value为遍历出来的数据值；key为遍历出来的键名
-                         遍历出来的item可以直接在指令所在的元素中使用；
-                         使用遍历出来的值的时候需要放置在{{ }}中，如：{{ key }} {{ value }}
 
                 第三种遍历方式：获取键值，键名，索引顺序
                     语法：v-for="(value,key,index) in list"
                     说明：list为需要被遍历的数据集；(数组或者js对象)
                          value为遍历出来的数据值；key为遍历出来的键名,index为遍历出来的索引顺序
-                         遍历出来的item可以直接在指令所在的元素中使用；
-                         使用遍历出来的值的时候需要放置在{{ }}中，如：{{ key }} {{ value }} {{ index }}
 
                 第四种遍历方式：迭代整数
                     语法：v-for="n in 10"
-                    说明：10为需要被遍历的数据集；
+                    说明：10为需要被遍历的整数；
                          n为遍历出来的整数值；
-                         使用遍历出来的整数值的时候需要放置在{{ }}中，如：{{ n }}
-    3：计算属性：（动词）
-            1：vue中所谓计算属性：就是允许自定函数来更改vue对象data中声明的属性；计算属性中放置的是一系列函数；                     这些函数可以对data中的属性操作，返回新的属性值；
-            总结：
-                1：computed：计算属性（动词）
-                2：computed本质上就是一个json对象，其中的属性值全部为函数，只不过在语义上，这些函数都是用来操作data对象中的属性的；
-                3：computed中声明的这些函数是可以通过this代替vue实例访问vue属性；
-                4：computed和methods一样，都是一个json对象，且其中的属性值全部都是函数，但是computed中的函数的语义在于操作vue属性，而且computed操作vue属性，性能更好；
-                5：默认情况下在computed中为某个属性设置的函数将会自动转换为该属性的getter方法；通过vue.attr或者{{ attr }}来访问值的时候都会调用对应方法；
-                6：在computed中可以定义setter方法：之后可以使用vue.site = "str"来为site属性赋值；
-                7：定义方法如下：
-                    <div id="app">
-                        <p>{{ site }}</p>
-                    </div>
 
-                    var vm = new Vue({
-                        el: '#app',   #指定改Vue实例绑定的是哪个DOM；
-                        data: {       #指定的是该Vue实例所绑定的数据中心，在这里可以指定任意的数据
-                            name: 'Google',
-                            url: 'http://www.google.com'
-                        },
-                        computed: {   #计算属性，如果对于属性值的获取和赋值有特殊需要，一般可以放在这里！
-                            site: {
-                                // getter 通过vue.site或者{{ site }} 取值的时候将会执行getter方法
-                                get: function () {
-                                    return this.name + ' ' + this.url
-                                },
-                                // setter--通过vue.site = "str" 赋值的时候将会执行setter方法
-                                set: function (newValue) {
-                                    var names = newValue.split(' ')
-                                    this.name = names[0]
-                                    this.url = names[names.length - 1]
-                                }
-                            }
-                        }
+                使用遍历出来的值：
+                    1：直接通过插值使用：{{ item }}
+                    2：设置某个元素的属性：v-bind:href="item"
+                    3：和其他字符串拼接之后使用：v-bind:href="['http://example.com/' + item]"
+                    4：作为函数的参数传入：@click="click_event(item)"
+        3：v-bind:属性绑定指令
+            v-bind指令一般用来绑定某个属性的值：
 
-                    })
-        4：监听属性：watch
-            1：watch监听属性用于监听其所绑定的某个值的变化，一旦值发生变化就会执行对应的函数；监听对象是值！
-            2：watch监听属性需要和v-model指令一起来用；
-            3：使用方式：
-                v-model="eventName"     ：设置用于监听该表单元素值的事件名称；
+            对于clas属性：
+                绑定方式1--将属性值绑定为一个vue属性：v-bind:class="vue_attr"
+                        vue实例中的vue_attr会和该class属性双向绑定，
 
-                在vue中声明该监听器：
-                    var vm = new Vue({
-                        el:"#app",
-                        data:{},
-                        computed:{},
-                        methods:{},
-                        watch:{
-                            eventName:function(val){
-                                do something...
-                            }
-                        }
-                    })
+                绑定方式2--将属性值通过一个json对象绑定：v-bind:class="{a:is_a}"
+                        此时如果is_a的值是true，将会把a赋值给class；
+                        此时如果is_a的值是false,将不会把a赋值给class；
                 
-                说明： 
-                    1：监听属性的处理函数要放在watch对象内；
-                    2：监听属性的处理函数需要一个参数，该参数就是该监听属性所监听的某个值；
-                    3:vue.js还提供了一个$watch方法，和watch属性一样，用于监听某个属性值的变化，如果属性值发生变化将会执行对应的函数：
-                        vue_obj.$watch("watch_attr",function(newValue,oldValue){
-                                do some things....
-                        })  
-        
-    5：样式绑定：vue允许使用v-bind指令来绑定属性；一般用来绑定class属性或者style属性
-        对于clas属性：
-            绑定方式1：v-bind:class="class_name"
-                      此时vue对象的class_name属性值将会赋给vue对象绑定的dom元素中使用v-bind指令绑定的dom元素；
-            绑定方式2：v-bind:class="{a:is_a}"
-                      此时如果is_a的值是true，将会把a赋值给class；
-                      此时如果is_a的值是false,将不会把a赋值给class；
-            
-            绑定方式三：v-bind:class="{a:is_a,b:is_b}"   #vue允许绑定更多属性值来动态切换；
+                绑定方式3--降属性绑定为一个json对象：v-bind:class="{a:is_a,b:is_b}"   
                         如果is_a的值为true,class的值就是a;
                         如果is_b的值为true,class的值就是b,
                         如果两个都是true,则属性值为最后一个；反之则谁都不是；
-            绑定一个计算属性/方法：v-bind:class="computed_attr"
-                                computed: {
-                                    classObject: function () {
-                                        return {
-                                            a: true,
-                                            b: true,
-                                        }
-                                    }
-                                }
-                        通过绑定一个计算属性或者绑定一个方法;
-                        方法返回一个json对象，对象中的每一个键值如果是true,就把键名赋值给使用该计算属性的class；
-                        如果多个键值都是true，则class值为最后一个值为true的键名；如上例：class的值为b；
+                绑定方式4--绑定为一个计算属性/方法：v-bind:class="computed_attr"
+                        计算属性或者方法可以返回一个具体的值，或者返回一个json对象；
+
         对于style属性：
             可以使用v-bind指令将css样式属性绑定到style属性上；样式的属性值可以通过vue对象的属性动态改变；
             绑定方式1：直接赋值，只将样式属性值绑定到vue对象的属性；
@@ -334,19 +221,19 @@ Vue基本语法：
                             fontSize: '30px'
                         }
                     }
-    6：事件监听：v-on
+        对于其他自定义的属性，绑定方式和class属性绑定基本相同；
+
+    4：事件监听：v-on
         作用：通过v-on来监听元素的某个事件；
 
         使用方式：v-on:eventName="eventDoer"; 
                 如： v-on:click="eventDoer";eventDoer是该事件的处理器；
         
         事件处理器：
-            1：事件处理器可以定义在vue对象的methods属性中活着computed属性中；
+            1：通过methods中的函数处理
+            2：通过computed计算属性处理
                 区别在于：如果处理器定义在computed中，初始化的时候就会执行一次事件；定义在methods中则不会，只有触发时才会执行处理器；
-            2：methods：创建vue对象是传入的json对象的一个属性，这个属性的值是一个js对象，带对象中所有的属性值都是函数；并且函数中还可以通过this访问外部的vue对象的属性值；
-            3：处理方式：
-                1：可以直接通过一个方法来处理
-                2：可以通过内联js语句来处理：
+            3：通过js表达式直接处理
         事件修饰符：        
             .stop          ：阻止事件冒泡
             .prevent       ：
@@ -369,10 +256,11 @@ Vue基本语法：
             .meta                 监听：meta 按键
     7：表单元素：
         v-model指令：v-model指令用在表单元素中代表表单元素的value值；
+
         使用方式：v-model="value_name"   value_name代表该表单元素的value值；
-        通过v-model,
+        
         表单元素的value值一般通过v-model指令来创建双向绑定；
-            即：v-model="value_name" --- value_name是表单元素value值的名称！
+
     8：组件
         所谓组件就是被封装起来的一段html代码，通过把html代码封装成组件来实现html代码块的重复利用；
 
