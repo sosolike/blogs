@@ -20,46 +20,70 @@ vue.js：
                                                     2：根据数据名称绑定View和Model之间的数据；
                                                     3：处理View和Model之间传递的数据；
 Vue.js基本
-    1：Vue：ViewModel只是一个抽象的概念，一种实现View和Model绑定的方案；
-    2：Vue.js就是ViewModel方案的实现；在代码上一个Vue实例对象就类似一个ViewModel,负责管理该Vue实例绑定的DOM和数据处理中心；
-    3：Vue实例的创建：
-        创建方式：    var vue = new Vue({});
+    1：Vue：ViewModel只是一个抽象的概念，一种实现View和Model绑定的方案；vue.js框架则是对于该mvvm中vm的实现；
+    2：Vue实例就是一个vm,建立起了dom和数据之间的双向通道，并通过数据名称将dom中的数据和数据中心的数据进行双向绑定；
+    3：Vue编程中，尽量避免手动操作dom。vue的思想中，数据才是操作dom的驱动力！
+Vue实例的创建：
+    1：Vue实例的创建：
+        创建方式：    var app = new Vue({});
         参数：Vue实例的创建需要传入一个json对象；
-    4: Vue实例对象中的json对象内容：
-        var vueObj = new Vue({
-            el:"#dom_el",
+    2: Vue实例对象中的json对象内容：
+        var app = new Vue({
+
+            el:"#dom_el",       
+                #该vue实例绑定的dom元素域，一般通过#id值绑定，绑定完成后，该dom元素及子元素区域均属于该vue实例的作用域
+
+
             data:{
                 message:"test_message",
                 message2:"test_message2",
             },
+                #data中声明一系列的属性，如果需要dom中的数据能够和vue实例中的数据双向互通，则需要通过data中的属性完成
+
+
             computed:{
-                    #声明计算属性；
+                message3:function(){
+                    return this.message;
+                }
             },
-            ethod:{  #方法，Vue的数据处理中心，就是定义一些方法，可以供Vue实例调用；
+                #computed中声明计算属性，计算属性本质上是和data中的属性性质相同，调用的时候像调用属性的方式调用即可；
+                #getter:通过computed中的属性值需要提供一个方法得到，该方法默认是该属性的getter方法，获取该属性值的时候将会执行该getter方法；
+                #setter:computed计算属性也可以添加一个setter方法，在为该属性赋值的时候将会执行该setter方法
+                #创建方式： 
+                    site: {
+                                #以 app.site 获取数据的时候将会执行该方法
+                                get: function () {
+                                    return this.name + ' ' + this.url
+                                },
+                                #以 app.site = "value"的时候将会执行该方法
+                                set: function (newValue) {
+                                    this.name = newValue;
+                                }
+                          } 
+                        
 
+            methods:{  
+                loadData:function(data){
+                    return data;
+                }
             },
-            watch:{#监控属性，在这里可以监控某个属性的变化，设置变化之后的处理方法；
+                #一切在该vue实例中需要使用到的方法都可以在这里面定义；
+                #vue实例的公共方法也可以在vue实例外部声明，然后可以在vue实例中调用；
+                #注意，该属性名为methods，而不是method！
+                #方法中获取vue实例相关的属性或者方法需要通过this.attr或者this.fun来调用；
+            
 
+            watch:{
+                message:function(val){
+                    alert("message值已经被改变");
+                }
             },
-            component:{# 局部组件声明
+                #监控属性，如果某个被监控的属性值发生变化，将会主动执行该方法；其中val是被改变之后的值！
+                #也可以通过app.$watch("message",function(old,val){
 
-            },
+                })来实现对某一个属性的监控
         })
 
-        el:'#dom_el' 
-        说明：      
-            1：el 用于声明该Vue实例所绑定的DOM元素
-            2：其值是根据元素属性或者id获取的dom元素；
-
-        data:{
-            attr_name:attr_value,
-        }
-        说明：
-            1：data 用于声明该vue实例的属性
-            2：其值是一个json对象；json对象中的键名即为属性名，键值即为属性值
-            3：data只负责用来声明vue实例的属性，vue初始化之后会将属性转换为对应的getter和setter；可以通过vue实例直接访问该属性：如：
-                var attr_val = vue_obj.message;      #attr_val为test_message
-                vue.obj.message = "message_test";    #message的值将被修改为message_test
 
 Vue基本语法：
     1：模板语法：
