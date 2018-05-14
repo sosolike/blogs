@@ -87,29 +87,35 @@ Vue实例的创建：
 
 Vue基本语法：
     1：模板语法：
-        1：绑定文本：<div>{{ attr_name }}</div>
+        1：绑定文本：
+            方法1：<div>{{ message }}</div>
+            方法2：通过v-text="message"绑定内容，推荐使用v-text指令来绑定内容；
 
             a: 就是将vue中的属性的值根据名称插入到html元素中；
 
-            b: 在html元素中使用{{ attr_name }} 来占位，attr_name将会和vue实例中的同名属性绑定；
+            b: 在html元素中使用{{ message }} 来占位，message将会和vue实例中的同名属性绑定；
+               或者
+               通过指令v-text="message"来声明该dom元素中的内容，message将会和vue实例中的message属性绑定
 
             c: 在vue实例中：
                 var vm = new Vue({
                     el:'#el',
                     data:{
-                        attr_name:attr_value,
+                        message:attr_value,
                     }
                 })
 
             d: 一旦html元素中的内容发生变化，同时，vue实例中名为attr_name的值也将发生变化，反之亦然；
+            e:dom元素中需要用到的属性必须先进行初始化！
 
-            e：通过v-text="message"绑定内容，推荐使用v-text指令来绑定内容；
+            
 
-        2：绑定HTML：<div v-html="html_content_name"></div>
+        2：绑定HTML：
+            绑定方法：<div v-html="html_content_name"></div>
 
-            a: 就是将vue中属性的值根据名称插入到html元素中；只不过插入的是html；
+            a: 就是将vue中html_content_name属性的值插入到html元素中；只不过插入的是html；
 
-            b: 在需要被插入的html元素中使用<div v-html="html_content_name"></div> 来设置需要插入到div中的html内容的名称，html_content将会和vue实例中的同名属性绑定；
+            b: 在需要被插入的html元素中使用<div v-html="html_content_name"></div> 来设置需要插入到div中的html内容，html_content_name将会和vue实例中的同名属性绑定；
 
             c: 在vue实例中：
                 var vm = new Vue({
@@ -122,13 +128,16 @@ Vue基本语法：
 
             e: 如果使用{{ html_content_name }} 则会吧html元素当初普通的字符串插入其中，并不会解析html元素；
 
-        4：模板语法：
+            f：html_content_name 属性必须先进行初始化；
+
+        3：模板语法：
             Vue.js允许在{{}}以及指令结果" "中使用原生js表达式；
             如：
                 <div id="app">
                     {{ a+b }}<br>
                     <div v-bind:class="'sclass_' + id"></div>
                 </div>
+                
     2: Vue.js中的条件与循环：
         1： 条件：v-if="isSeen"
                  v-else-if="isSeen"
