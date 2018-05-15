@@ -200,6 +200,18 @@ php使用redis----发布订阅
         #$channelName  redis频道名称
         #$message      消息
     }
+php使用redis管道命令：
+    $redis = new Redis();
+    $redis->connect('127.0.0.1',6379);
+    $pipe = redis->multi(Redis::PIPELINE);   创建管道
+
+        $redis->set("key1","value1");        执行redis命令
+        $redis->set("key2","vlaue2");        执行redis命令
+
+    $result = $pipe->exec();                 提交redis命令
+
+Redis::PIPELINE：仅仅只是一次发送多条命令，加快命令的发送，提高命令的整体执行效率，没有任何原子性的保证；
+Redis::MULTI：会一次性发送多条命令，这些命令会被当成一个事务来执行；
                 
                 
 
