@@ -128,7 +128,8 @@ redis基本数据类型及php接口：
                 $redis->hVals('h');
                     获取h表中所有字段value
                 $redis->hGetAll('h');
-                    获取h表中所有字段和value 返回一个关联数组(字段为键值)    
+                    获取h表中所有字段和value 返回一个关联数组(字段为键值) 
+                $redis->hdel('key',$arr2);//删，删除指定下标的field,不存在的域将被忽略,[num | false]   
     5：list
         @结构简介：
             @1：基本结构：key---list
@@ -178,6 +179,8 @@ redis基本数据类型及php接口：
 php使用redis----连接：
     1:$redis = new Redis();
     2:$redis->connect('120.78.67.67',7701);或：$redis->pconnect('120.78.67.67',7701);
+    3:$redis->auth('password')验证登录密码，如果redis连接不需要密码，则可以不使用
+    4:$redis->select(0)     选择需要操作的redis数据库，
     3:pconnect说明：
         1：如果使用了pconnect来连接redis服务器则：
             1：php与redis的链接声明周期和php-fpm的生命周期一致，即当前脚本结束，php与redis的链接也不会断开；
