@@ -262,25 +262,141 @@ Vue基本语法：
         表单元素的value值一般通过v-model指令来创建双向绑定；
 
     8：组件
-        所谓组件就是被封装起来的一段html代码，通过把html代码封装成组件来实现html代码块的重复利用；
+        vue组件：
+        vue中，组件就是自定义的一个html标签，这个html标签是一段html代码的封装，通过嵌入我们自定义的标签即可嵌入标签所封装的html代码集合；同时，通过html代码组件化也可以实现html代码的重用！
 
-        全局组件：将组件注册给Vue，则所有的vue实例锁绑定的dom块中都可以使用改组件！；
-        局部组件：将组件注册给某个Vue实例对象，则该组件只能在该Vue实例所绑定的dom块中使用，不能在其他地方使用；
+        vue组件类型
+            全局组件：
+                将组件注册给Vue类本身，则所有的vue实例的dom作用域内都可以使用该组件！；
+            局部组件：
+                将组件注册给某个Vue实例对象，则该组件只能在该Vue实例所绑定的dom作用域中使用，不能在其他地方使用；
+            单文件组件：
+                将组件单独写入一个文件，以.vue为后缀名；该文件中包括template模板，scritp，style三部分组成；
+        
+        Vue组件与Vue实例
+            Vue组件，本质上就是一个可以服用的Vue实例对象，这个Vue实例对象所绑定的Dom就是template中声明的html代码！
+
+            因此Vue组件的属性和Vue实例的属性完全相同；只是没有el绑定元素的属性，因为其所绑定的dom就是template中的html
+
+            Vue组件的生命周期和Vue实例的生命周期完全相同，并且具有完全相同的生命周期钩子函数！
 
         组件的创建：
             创建全局组件：
                 Vue.component('component_name', {
-                    template: '<h1>自定义组件!</h1>'
+                    template: '<h1>自定义组件!</h1>',
+                    props:[
+                        #在这里声明需要接收的父组件参数
+                    ],
+                    data:function(){
+                        return {
+                            #在这里声明属性
+                            attr:name,
+                        }
+                    },
+                    methods:{
+                        #在这里声明函数
+                        fun1:function(){
+
+                        }
+                    },
+                    watch:{
+                        #在这里声明监控属性
+                        attr1:function(){
+
+                        }
+                    },
+                    computed:{
+                        #在这里声明计算属性
+                        attr:function(){
+
+                        }
+                    }
+
+
                 })
+
             创建局部组件：
                 new Vue({
                     el:"",
-                    components:{
-                        components_name:{
-                            template:"html"
+                    components:{ #局部组件需要通过components属性来声明
+                        components_name:{ #component_name是组件的名称
+                            template: '<h1>自定义组件!</h1>',
+                            props:[
+                                #在这里声明需要接收的父组件参数
+                            ],
+                            data:function(){
+                                return {
+                                    #在这里声明属性
+                                    attr:name,
+                                }
+                            },
+                            methods:{
+                                #在这里声明函数
+                                fun1:function(){
+
+                                }
+                            },
+                            watch:{
+                                #在这里声明监控属性
+                                attr1:function(){
+
+                                }
+                            },
+                            computed:{
+                                #在这里声明计算属性
+                                attr:function(){
+
+                                }
+                            }
                         }
                     }
                 })
+        创建单文件组件：
+            test.vue    #单文件组件的名称必须以.vue结尾；
+
+            <template>
+                #放置html代码
+            </template>
+
+            <script>
+                #js代码
+                #export default是必备的，通过import向外暴露该组件；
+                export default {
+                    name:"Test",    #该组件的名称
+                    props:[
+                        #在这里声明需要接收的父组件参数
+                    ],
+                    data:function(){
+                        return {
+                            #在这里声明属性
+                            attr:name,
+                        }
+                    },
+                    methods:{
+                        #在这里声明函数
+                        fun1:function(){
+
+                        }
+                    },
+                    watch:{
+                        #在这里声明监控属性
+                        attr1:function(){
+
+                        }
+                    },
+                    computed:{
+                        #在这里声明计算属性
+                        attr:function(){
+
+                        }
+                    }
+                }
+            </script>
+
+            <style>
+                #css代码
+            </style>
+
         父子组件：
             组件：就是包含了html,css,js的一段代码；
 
