@@ -48,9 +48,17 @@ range函数：range函数是一个生成器，可以生成指定整数范围的�
 
         生成器对象有两个方法：
             next():
-                creater.next();
-                    不断调用next方法即可获取下一个元素！
-                    也可以使用for循环来获取每一个元素
+                如：n=0
+                    yield n
+
+                next(creater);
+                    不断调用next方法即可获取下一个元素n！
+                    也可以使用for循环来获取每一个元素n
             send():
+                如： n=0
+                    x = yield n
                 creater.send(value)
-                    通过调用send方法可以将值发送给迭代器的yield关键字，yield接收到参数后将会把接收到的参数返回
+                    调用send方法可以将值发送给迭代器的yield关键字，此时yield n将会作为一个整体被替换成value;
+                    但是n依然是0;
+
+
