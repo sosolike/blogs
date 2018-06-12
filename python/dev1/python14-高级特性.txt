@@ -60,5 +60,7 @@ range函数：range函数是一个生成器，可以生成指定整数范围的�
                 creater.send(value)
                     调用send方法可以将值发送给迭代器的yield关键字，此时yield n将会作为一个整体被替换成value;
                     但是n依然是0;
+                    注意：send发送参数时，生成器必须处于挂起的状态，此时传入的参数才能够被yield接收到，否则将会报错；
+                        如果不需要调用next,第一步就必须调用send,则可以传入一个next；
 
 
