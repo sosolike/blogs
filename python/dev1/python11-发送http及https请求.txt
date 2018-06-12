@@ -1,4 +1,4 @@
-1：python发起请求使用urllib模块
+1：python3发起请求使用urllib模块，python2发起请求使用urllib和urllib2模块；
 2：发起请求的方式：
     1：通过urlopen直接发起请求：
         1：语法：urllib.request.urlopen(url,data=none,timeout)
@@ -31,7 +31,7 @@
                             fileno()返回响应字符串的个数
                 注意：返回的内容要decode("utf-8")才能使用，否则是字节类型的数据
                 
-    2：先创建request对象，再使用urlopen发送请求：
+    2：先创建request对象，再使用urlopen发送请求：相比上一个请求方式可以设置header头信息；
         1：使用方法：
             1：req = urllib.request.Request(URL,data=None,headers={},method=None);
             2：res = urllib.request.urlopen(req);
@@ -46,13 +46,80 @@
                     res = request.urlopen(req)
         4：获取结果：
             content = res.read().decode("utf-8");
-   3：urlib2
-total:
-    1：通过request.urlopen()直接发送请求
-    2：先创建请求对象：req = request.Request();
-       再发送具体请求：res = request.urlopen(req);
-    3：数据发送之前先encode("utf-8")
-       获取到的数据要decode("utf-8")
-    
+        5：示例：
+            request_data = {'name':'ttt','age':23}
+
+            request_obj = request.Request('http://atmp.com/a/a.php',data=parse.urlencode(request_data).encode('utf-8'),method='POST',headers={'Cookie':'uid=12df3;uui=234'})
+
+   3：requests库发送网络请求
+        安装requests：pip install requests
+        发送get请求：
+            发送简单get请求：    
+                用法： requests.get(url)      
+                示例： requests.get('http://eg.com);
+            发送带参数的get请求：
+                用法：requests.get(utl,params={})
+                示例：request.get('http://eg.com',params={'name':'tom'})
+            发送带cookie的get请求：
+                用法：requests.get(utl,params={},cookies={'uid':1,'uuid':2})
+                示例：request.get('http://eg.com',params={'name':'tom'},cookies={'uid':1,'uuid':2})
+                备注：cookies信息也可以使用header头信息来添加：
+            
+            发送带有header头信息的get请求
+                用法：requests.get(url,params={},headers={'Cookie':'uid=1;uuid=123;'});
+                示例：requests.get('http://eg.com',params={'name':'tom'},headers={'Cookie':'uid=1;'})
+            
+        发送post请求：
+            发送简单post请求：    
+                用法： requests.post(url)      
+                示例： requests.post('http://eg.com);
+            发送带参数的post请求：(参数使用application/x-www-form-urlencoded对字典编码)
+                用法：requests.post(utl,params={})
+                示例：request.post('http://eg.com',data={'name':'tom'})
+            发送带参数的post请求：(参数为json格式)
+                用法：requests.post(utl,params={})
+                示例：request.post('http://eg.com',json={'name':'tom'})
+            发送带cookie的post请求：
+                用法：requests.post(utl,params={},cookies={'uid':1,'uuid':2})
+                示例：request.post('http://eg.com',dtaa={'name':'tom'},cookies={'uid':1,'uuid':2})
+                备注：cookies信息也可以使用header头信息来添加：
+
+            发送带有header头信息的post请求
+                用法：requests.post(url,data={},headers={'Cookie':'uid=1;uuid=123;'});
+                示例：requests.post('http://eg.com',data={'name':'tom'},headers={'Cookie':'uid=1;'})
+        requests还支持发送PUT,DELETE,HEADER,OPTIONS请求，仅仅只需要将post换成对应的请求方式即可
+
+        特殊说明：
+            1：requests支持多种请求方式，具体使用时按照requests.xxx()即可；xxx可以是get.post,put,delete,header,options,
+
+            2：get请求发送数据需要使用params={}；
+            3：post、put、delete等需要使用data={}发送数据，如果需要发送json格式的数据需要使用json={}
+
+            4：设置cookie信息可以通过cookies={}来添加cookie信息，也可以使用headers={}来添加cookie信息；
+
+            5：设置timeout信息可以通过timeout=n来设置超时信息，单位为s；
+        
+
+        requests请求结果解析：
+            1：requests的请求结果是一个response对象
+            2：获取相关请求信息：
+                获取请求状态码：response.status_code
+
+                获取响应头信息：response.headers;或者：response.headers['Content-Type']
+
+                获取实际请求的url:response.url
+
+                获取响应编码：response.encoding
+
+                获取响应cookie:response.cookies;或者使用response.cookies['cookie_name']
+
+                获取请求内容(字符串格式)：response.text
+
+                获取请求内容(bytes对象)：response.content
+                
+                获取请求内容(json格式)：response.json()
+                
+
+
 
 
