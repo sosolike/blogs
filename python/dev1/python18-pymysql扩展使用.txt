@@ -6,7 +6,7 @@ python 操作mysql是通过 pymysql扩展来进行的；
 使用pymysql：
     import pymysql              #导入pymysql模块
 
-    #创建mysql数据库连接：
+    #创建mysql数据库连接：po
     link = pymysql.Connect(host="127.0.0.1",port=3306,user="username",passwd="password",db="dbname",charset="utf8");
 
     #创建游标：
@@ -34,9 +34,10 @@ python 操作mysql是通过 pymysql扩展来进行的；
 
     #执行增删改操作：
         #执行增加操作：增加一条数据
-            num = cur.execute("insert into example(att1,att2) values(%s,%s)",('value1','value2'))
+            issuccess = cur.execute("insert into example(att1,att2) values(%s,%s)",('value1','value2'))
+            添加成功返回1，失败返回0
         #执行增加操作：增加多条数据：
-            num = cur.execute("insert into example(att1,att2) values(%s,%s)",[('v1','v2'),('v1','v2'),('v1','v2')]   
+            issuccess = cur.executemany("insert into example(att1,att2) values(%s,%s)",[('v1','v2'),('v1','v2'),('v1','v2')]   
         #执行删除操作：
             num = cur.execute("delete from example where uid = %s",(1001))
         #执行更新操作：
@@ -44,14 +45,14 @@ python 操作mysql是通过 pymysql扩展来进行的；
         #num是返回被影响的行数；
         
     #对于增删改操作，执行完sql之后必须使用cur.commit()来提交；
-            cur.commit()
+            link.commit()
     #关闭cursor:
             cur.close()
     #关闭连接：
             link.close()
 游标的相关操作：
-    cur.scroll(n.mode="relative")       相对当前位置移动
-    cur.scroll(n.mode="absolute")       相对起始位置移动
+    cur.scroll(n,mode="relative")       相对当前位置移动
+    cur.scroll(n,mode="absolute")       相对起始位置移动
 
 使用with简化连接过程：
     import pymysql
