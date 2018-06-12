@@ -42,6 +42,9 @@ range函数：range函数是一个生成器，可以生成指定整数范围的�
             def createData():
                 for i in range(10):
                     yield i*i
+
+            或者 yield from createData()
+                这两个是等价的关系
     5：python中的生成器：
         python中的生成器和上述createData一样，通过规则生产一系列的数据，并通过yield关键字返回元素；
         python生成器调用之后返回的结果称为生成器对象:creater = createData()
@@ -58,7 +61,7 @@ range函数：range函数是一个生成器，可以生成指定整数范围的�
                 如： n=0
                     x = yield n
                 creater.send(value)
-                    调用send方法可以将值发送给迭代器的yield关键字，此时yield n将会作为一个整体被替换成value;
+                    调用send方法可以将值发送给迭代器的yield关键字，此时yield n将会作为一个整体被替换成value,"---并唤醒程序，继续向下执行直到结束或者再次被挂起---"（重要！！）;
                     但是n依然是0;
                     注意：send发送参数时，生成器必须处于挂起的状态，此时传入的参数才能够被yield接收到，否则将会报错；
                         如果不需要调用next,第一步就必须调用send,则可以传入一个next；
