@@ -39,16 +39,18 @@
  
 视口：
     一个显示html文档的虚拟层
+布局视口：显示html文档的虚拟层，可大可小，由自己设置
+
+视觉视口：设备的显示器屏幕
+
+理想视口：元素的尺寸，字体，图片的尺寸不随像素密度的改变而改变的一个虚拟层，这个虚拟层和设备有关;其尺寸等于视觉视口的尺寸；设置理想视口的目的在于保证只要屏幕尺寸是一定的，无论其像素密度如何，显示的元素大小都是一样的；
 
 pc端视口：
     pc端的视口只有一个：就是布局视口，其尺寸等于浏览器窗口宽度；
     html文档的显示由两部分组成：html文档自身的尺寸，视口的尺寸：
-        html文档的尺寸大于视口的尺寸：将会出现下拉条
-        html文档的尺寸等于视口尺寸：文档刚刚好被显示
-        html文档的尺寸小于视口的尺寸：文档将会被全部显示
 
 移动端视口：
-    移动端视口有两个：布局视口，视觉视口
+    移动端视口有两个：布局视口，视觉视口，理想视口
 
     html文档的显示由三部分组成：html文档自身的尺寸，布局视口的尺寸，视觉视口的尺寸
 
@@ -56,17 +58,122 @@ pc端视口：
 
     最理想的尺寸关系是：
         html文档的尺寸 = 布局视口尺寸 = 视觉视口尺寸
-缩放
-    缩放指的是css像素的缩放，
 
-dpr 设备像素比
-    逻辑像素/设备物理像素（前提条件是缩放比例为1）
+
+
+缩放
+    缩放指的是css像素的缩放;
+
+meta标签的viewport属性
+    基本设置方式：<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+    width：
+        指的是layout viewport的宽度，
+        如果将width设置为device-width，布局视口的宽度将会和设备的宽度一致
+        也可以指定为一个具体的尺寸,如：width=400px
+
+    initial-scale
+        指的是布局视口相对于设备屏幕宽度的缩放比例；n = 布局视口宽度/视觉视口宽度
+        如果设置为1，那么布局视口的宽度将和设备屏幕的宽度一致；此时initial-scale=1和width=device-width的效果一样
+        如果将initial-scale设置为1，但是width却没有设置为device-width，那么布局视口的大小取决于最大的一个：
+            如：设备屏幕的宽度是200px;width=300px那么布局视口的宽度就是300px；
+                设备屏幕的宽度是200px,width=100px那么布局视口的宽度就是200px;
+
+    minimum-scale
+        指的是布局视口的最小缩放比例
+
+    maximum-scale
+        指的是布局视口的最大缩放比例
+
+    user-scalable:
+        指的是是否允许用户缩放页面
+    
+rem单位实现响应式
+    rem是一个相对于html标签的font-size值的一个尺寸单位；1rem = html标签的font-size值；
+
+    如果html根标签的font-size值发生变化，以rem为单位的元素尺寸都会发生变化，因此可以根据不同的屏幕设置不同的rem值来实现元素尺寸的响应式变化；
+
+    一般移动端以iphone6的像素尺寸作为标准--即以750px作为标准；以750/7.5作为1个rem的值，即：1rem=100px;
+    具体rem除以多少并无所谓，只要方便尺寸转换即可，重点是利用rem的相对性！
+
+    设置方式：document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 +'px';
+
+
+布局方式：
+    flex布局----页面元素布局方式
+    父级元素：
+        设置布局方式为flex布局
+            display:flex
+            display:-webkit-flex /* Safari */
+        设置元素排列方式：
+            flex-direction：
+                column -- 纵向排列
+                column-reverse -- 纵向排列
+                row -- 横向排列
+                row-reverse -- 横向逆序排列
+        设置元素是否换行：
+            flex-wrap:
+                nowrap  --  不换行(如果父元素尺寸较小将撑破父元素)
+                wrap    --  换行
+                wrap-reverise -- 换行，且逆序换行
+        元素在水平方向上的对齐方式：
+            justify-content：
+                flex-start  --  左对齐
+                flex-end  -- 右对齐
+                center  --  居中对齐
+                space-between -- 两边对齐
+                space-around  --  环绕对齐
+        竖直方向上的对齐：
+            align-items：
+                flex-start  --  上对齐
+                flex-end  --  下对齐
+                center --  居中对齐
+                baseline --  按第一行文字基线对齐
+                stretch  --  如果项目的高度设置为auto,将占满整个容器
+        
+        竖直方向多根水平轴线的对齐方式
+            align-content:
+                flex-start  --  上对齐
+                flex-end  --  下对齐
+                center --  居中对齐
+                baseline --  按第一行文字基线对齐
+                stretch  --  如果项目的高度设置为auto,将占满整个容器 
+    设置在子级元素上：
+        定义子项目顺序
+            order:数值越小越排前，默认是0
+          
+        定义子项目占据空间的比例：
+            flex-grow:对于单个元素如果设置为0，那么即是有剩余空间元素也不会占用；
+                      对于多个元素，占据空间的大小由他们占的比例而定
+        
+        定义子项目的缩小比例：
+            flex-shrik：对于单个元素，如果设置为1，如果空间不足，该项目将会缩小，
+                        如果设置为0，则将不缩小
+        定义单个项目在竖直方向上的对齐方式
+            align-self:
+                auto：继承父元素的对齐方式：默认值；
+                flex-start：上对齐
+                flex-end：下对齐
+                flex-center：中间对齐
+                flex-baseline：与第一行文字基线对齐
+                streach：如果不设置宽高则占满空间
+        
+            
+
+
+
+
+
+
+
+
+
 
 尺寸修改：
     html文档的尺寸通过修改body的尺寸即可修改
 
     布局视口的尺寸需要通过viewport修改：
-      <meta name="viewport" content="wisth=device-width,init-scale=1,minimum-scale=1,maximum-scale=1,user-scable=no" />  
+        
         1、width：设置布局视口的宽           可以设置px，亦可以使用device-width来使布局视口和视觉视口尺寸一致
         2、initial-scale：设置页面的初始缩放程度        1：页面初始化是布局视口的缩放比例
         3、minimum-scale：设置了页面最小缩放程度        1：布局视口最小缩放比例为1
