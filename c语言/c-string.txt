@@ -1,0 +1,141 @@
+c语言中字符串处理函数
+
+1：字符串声明以及初始化：
+    char s1[2] = {'a','b'};
+    char s2[2] = {"ab"};
+    char s3[2] = "ab";
+    char *s4 = "ab";
+    char *s5 = {"ab"};
+字符串基本处理函数：string.h
+    复制类：
+        2:复制字符串：
+            strcpy(char destination[], const char source[]); 
+                功能：复制字符串；
+                说明：将字符串source拷贝值destination中；对于目标字符串的声明长度无要求！
+                备注：对于s4和s5代表的是字符串常量，无法作为目标字符串！
+                返回值：无返回值，源字符串的内容会覆盖掉目标字符串之前的内容！
+        3：拷贝指定字符到目标字符串：
+            strncpy(char destination[],const char source[],int numbers);
+                功能：将指定个数的字符从源字符串复制到目标字符串！
+                说明：该函数对于目标字符串的声明长度是有要求的，如果待复制字符超过目标字符串长度，\0将没有地方添加！
+                备注：对于s4和s5代表的是字符串常量，无法作为目标字符串！
+                返回值：无返回值，源字符串的内容会覆盖掉目标字符串之前的内容！
+        4：将字符串拷贝到新建的位置处
+            char *strdup(char *str); 
+            功能：将字符串拷贝至
+        5：将字符串的前n个字节拷贝到目标字符串中
+            extern void bcopy(const void *src, void *dest, int n);
+            功能：将字符串src的前n个字节复制到dest中
+            说明：bcopy不检查字符串中的空字节NULL，
+            返回值：函数没有返回值。
+        
+    连接类：
+        4：连接两个字符串：
+            strcat(char target[],const char source[])
+                功能：将字符串source连接到字符串target后面；
+                备注：对于s4和s5代表的是字符串常量，无法作为目标字符串！
+                返回值：无返回值，源字符串的内容连接到目标字符串后面会作为新的目标字符串的内容！
+        5：将源字符串前n个字符连接到目标字符串：
+            strncat(char target[],const char source[],int numbers)
+                功能：将字符串source连接到字符串target后面；
+                备注：对于s4和s5代表的是字符串常量，无法作为目标字符串！
+                返回值：无返回值，源字符串的内容连接到目标字符串后面会作为新的目标字符串的内容！
+    比较类：
+        6：比较两个字符串：
+            int strcmp(const char firststring[],const char secondstring)
+                功能：比较两个字符串;
+                返回值：如果返回0，则说明两个字符串内容相同；
+                    如果返回值>0,则说明firststring大于secondstring;
+                    如果返回值<0,则说明firststring小于secondstring;
+
+        7：忽略大小比较两个字符串：
+            int strcasecmp(const char firststring[],const char secondstring)
+                功能：忽略大小写比较两个字符串;
+                返回值：如果返回0，则说明两个字符串内容相同；
+                    如果返回值>0,则说明firststring大于secondstring;
+                    如果返回值<0,则说明firststring小于secondstring;
+        8：比较两个字符串前n个字节是否相等
+            extern int bcmp(const void *s1, const void *s2, int n);
+            功能：比较字符串s1和s2的前n个字节是否相等
+            返回值：如果为0，则相等，如果不为0则不相等；
+    获取字符串长度：
+        8：获取字符串长度：
+            1：strlen:获取字符串真实字符个数，(不包括声明但未初始化的部分，不包括\0)；
+            2：sizeof:获取字符数组的长度，该函数在char *str这种声明方式中不可用；
+    查找指定字符：
+        9：在字符串查找指定字符：
+            char *strchr(const char *string, int c); 
+                功能：正向查找目标字符在字符串中的首次出现的位置
+                返回值：该函数返回一个指针，指向所找到的目标字符的内存中的位置；如果没有找到则返回NULL；
+            char *strrchr(const char *string, int c);
+                功能：反向查找目标字符在字符串中的首次出现的位置
+                返回值：该函数返回一个指针，指向所找到的目标字符的内存中的位置；如果没有找到则返回NULL；
+            char *strstr(const char *string, const char *strSearch)：
+                功能：在目标字符串中查找子串
+                返回值：返回字符串首次出现的位置的指针，如果没有找到则返回NULL；
+    转换大小写：
+        将字符串转换为大写：
+            extern char *strupr(char *s);
+                功能：将字符串转换为大写的形式；
+                返回值：返回指向s的指针；
+        将字符串转换为小写：
+             extern char *strlwr(char *s);   
+                功能：将字符串s转换为小写形式
+                返回值：返回指向s的指针。
+    逆转类：
+        extern char *strrev(char *s);
+            功能：将字符串顺序颠倒过来；
+            返回值：返回指向颠倒顺序后的字符串指针；
+    分解：
+        extern char *strtok(char *s, char *delim);
+        功能：分解字符串为一组标记串，s为要分解的字符串，delim为分割字符串；
+        说明：首次调用时，s必须指向要分解的字符串，随后调用要把s设成NULL。
+        返回值：返回指向下一个标记串的指针；
+
+还有直接通过内存操作字符串的函数
+    memccpy
+    memcpy
+    memchr
+    memcmp
+    memicmp
+    memmove
+    memset
+    setmem
+    movmem
+字符串转换为数字：stdlib.h
+    1：将字符串转换为浮点数：
+        double strtod(const char *nptr,char **endptr);
+            功能：从左向右扫描字符串，获取字符串中的数字，并转换为浮点数；
+            返回值：返回浮点数，若没有则返回NUll
+            说明：第二个参数若endptr不是null,将会把终结查找数字的字符指针传回
+        long int strtol(const char *nptr,char **endptr,int base);
+            功能：将字符串转换为长整型，
+            返回值：长整型值；
+            参数：nptr:目标字符串，函数从左向右扫描nptr，遇上正负号或者数数字还是转换，知道遇上非数字字符或者\0则结束转换；
+                 endptr:若nptr不为空，则将终结查找的字符指针返回；
+                 base:设置需要查找的数字的进制，默认当做10进制；
+        
+        atoi(p) 将数字字符串转换为int整型；
+        atof(p) 将数字字符串转换为double浮点数
+        atol(p) 将数字字符串转换为long整型
+字符操作函数：
+    检查类：
+        isalpha()检查是否为字母
+        isupper()检查是否为大写字母
+        islower()检查是否为小写字母
+        isspace()检查是否为空格类型字符
+        isalnum()检查是否为数字和字母
+        ispunct()检查是否为标点符号
+        isdigit()检查是否为十六进制数字表示的有效字符
+        iscntrl()检查是否为控制字符
+        
+        
+
+
+
+
+
+    
+
+
+    
