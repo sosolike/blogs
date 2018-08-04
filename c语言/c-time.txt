@@ -68,6 +68,7 @@ time.h中定义了四个变量两个宏来存储日期时间信息：
         clock_t end = clock();
         double duration = (double)(finish - start)/CLOCKS_PER_SEC;
 
+
     
     
     
