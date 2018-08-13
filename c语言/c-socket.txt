@@ -1,0 +1,116 @@
+socket编程流程：
+    server:
+        1：创建socket
+        2：绑定ip和端口
+        3：监听端口
+        4：接收数据
+        5：发送数据
+    client:
+        1：创建socket
+        2：绑定ip和端口
+        3：监听端口
+        4：连接服务端
+        5：发送数据
+        6：接收数据
+创建套接字：socket
+    1：socket是系统向应用程序提供的网络编程接口，在linux中被映射为一个虚拟的文件！
+    2：两台计算机需要通信需要先创建socket文件，linux中每一个文件都会分配一个int类型的编号，称为文件描述符；socket文件也一样！
+    3：linux中创建socket需要使用socket函数：
+        int socket(int af, int type, int protocol);
+            功能：该函数创建一个socket文件；
+            返回值：该函数返回socket文件描述符；
+            参数：
+                af：ip协议类型(包括IPV4和IPV6);
+                    IPV4：AF_INET/PF_INET;
+                    IPV6：AF_INET6/PF_INET6;
+                type：数据传输类型(包括SOCK_STREAM和SOCK_DGRAM);
+                    SOCK_STREAM：面向具有连接的数据传输方式，一般用于TCP传输协议；
+                    SOCK_DGRAM：面向不具有连接的数据传输方式，一般用于UDP传输协议；
+                protocol：指定传输协议(包括IPPROTO_TCP协议和IPPROTO_UDP协议)；
+            说明：
+                1：一般根据af参数以及type参数即可确定使用何种协议，简便写法protocol设置为0即可；
+
+绑定ip和端口
+    1：计算机通信本质上是应用软件的通信，ip地址可以唯一确定计算机在网络中的位置，端口则可以唯一确定该计算机上的软件。
+    2：绑定方式：bind()
+        int bind(int sock, struct sockaddr *addr, socklen_t addrlen);
+            功能：为网络通讯程序绑定ip地址和端口；
+            返回值：无；
+            参数：
+                sock:socket描述符；
+                addr:struct sockaddr类型的结构体，存放着ip地址和端口；
+                addrlen:sockaddr的大小；可以由sizeof计算出；
+
+    3：封装ip和端口号需要使用的结构体：sockaddr
+        sockaddr结构：
+            struct sockaddr{
+                sa_family_t sin_family;//地址族，即地址类型
+                char        sa_data[14];//存储ip地址和端口号
+            }
+        备注：在c语言中并无任何函数能够直接将ip地址和端口号封装进sa_data,但是c语言根据不同的协议类型提供了不同的结构体来封装ip地址和端口；
+            
+    2：c语言中根据不同的协议类型来封装ip地址和端口的结构体：
+        对于IPV4：
+            struct sockaddr_in{
+                sa_family_t     sin_family; //地址族，即地址类型
+                uint16_t        sin_port;   //16位端口号
+                struct in_addr  sin_addr;   //32位ip地址
+                char            sin_zero[8];//不使用，一般用0填充
+            }
+        对于IPV6：
+                struct sockaddr_in6 { 
+                    sa_family_t sin6_family;  //(2)地址类型，取值为AF_INET6
+                    in_port_t sin6_port;  //(2)16位端口号
+                    uint32_t sin6_flowinfo;  //(4)IPv6流信息
+                    struct in6_addr sin6_addr;  //(4)具体的IPv6地址
+                    uint32_t sin6_scope_id;  //(4)接口范围ID
+                };
+    
+                            
+监听端口：
+    1：在绑定完ip和端口之后需要使端口处于监听状态才能接收到数据；
+    2：c语言中通过listen来让socket处于监听状态；
+        int listen(int sock, int backlog); 
+            功能：让socket处于监听状态
+            参数：
+                sock：socket描述符
+                backlog: 请求队列的最大长度
+    3：请求队列：
+        1：在socket正在处理请求时如果有新的请求发来，新的请求将会被放入缓冲区，等当前请求处理完成之后将会从缓冲区中取出请求继续处理，此时缓冲区就称为请求队列；
+        2：listen的第二个参数用于指导缓冲区的长度；如果将backlog设置为SOMAXCONN,则交由系统来决定请求队列的长度；
+        3：当队列满时，对于Linux将会返回ECONNREFUSED错误；
+对于服务端：
+    对于服务端监听端口之后将阻塞等待客户端发送消息；
+        1：linux上使用accept函数来接收客户端请求：
+            int accept(int sock, struct sockaddr *addr, socklen_t *addrlen);  //Linux
+                功能：接收客户端发来的消息，当没有消息发来时将会阻塞直至有消息！
+                参数：sock：socket描述符
+                     addr: 该结构也是sockaddr类型，存储客户端IP地址和端口号信息；需要转换为对应的IP类
+                           型的结构体(sockaddr_in或者sockaddr_in6)才能获取具体的ip地址和端口号；
+                     addrlen：为addr的长度；
+                备注：该函数只能接收一次客户端发来的消息，处理完成之后程序将会结束，因此如果需要持续接收客户端发来的消息将需要在死循环中使用；
+对于客户端：
+    对于客户端监听端口之后将需要连接服务端
+     1：在linux中使用connect来建立连接：
+       int connec(int sock,struct sockaddr $serv_addr,socklen_t addrlen); 
+            功能：连接服务器
+            参数：sock:socket描述符
+                 serv_addr:封装了IP地址和端口的结构体
+                 addrlen:addr参数的长度
+
+数据的接收和发送：
+    在linux上socket被映射为一个文件，因此消息的接收和发送均为读写文件：
+        发送消息：ssize_t write(int fd, const void *buf, size_t nbytes);
+                功能：write函数将会把缓冲区buf中的nbytes个字节写入文件fd;成功返回写入的字节数，失败返回-1；
+                参数：fd:文件描述符
+                     buf:需要写入的数据
+                     nbytes:需要从buf中写入fd文件的字节个数；
+        读取消息：ssize_t read(int fd,void *buf, size_t nbytes);
+                功能：该函数将会从文件fd中读取nbytes个字节的数据存入buf缓冲区中；成功返回读取的字节数，失败返回-1；
+                参数：fd:文件描述符
+                      buf:存储读取到的数据的缓冲区
+                      nbytes:需要读取的字节个数
+
+  
+
+                     
