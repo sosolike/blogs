@@ -1,0 +1,160 @@
+socket编程流程：
+    server:
+        1：创建socket
+        2：绑定ip和端口
+        3：监听端口
+        4：接收数据
+        5：发送数据
+    client:
+        1：创建socket
+        2：绑定ip和端口
+        3：监听端口
+        4：连接服务端
+        5：发送数据
+        6：接收数据
+创建套接字：socket
+    1：socket是系统向应用程序提供的网络编程接口，在linux中被映射为一个虚拟的文件！
+    2：两台计算机需要通信需要先创建socket文件，linux中每一个文件都会分配一个int类型的编号，称为文件描述符；socket文件也一样！
+    3：linux中创建socket需要使用socket函数：
+        int socket(int af, int type, int protocol);
+            功能：该函数创建一个socket文件；
+            返回值：该函数返回socket文件描述符；
+            参数：
+                af：ip协议类型(包括IPV4和IPV6);
+                    IPV4：AF_INET/PF_INET;
+                    IPV6：AF_INET6/PF_INET6;
+                type：数据传输类型(包括SOCK_STREAM和SOCK_DGRAM);
+                    SOCK_STREAM：面向具有连接的数据传输方式，一般用于TCP传输协议；
+                    SOCK_DGRAM：面向不具有连接的数据传输方式，一般用于UDP传输协议；
+                protocol：指定传输协议(包括IPPROTO_TCP协议和IPPROTO_UDP协议)；
+            说明：
+                1：一般根据af参数以及type参数即可确定使用何种协议，简便写法protocol设置为0即可；
+
+绑定ip和端口
+    1：计算机通信本质上是应用软件的通信，ip地址可以唯一确定计算机在网络中的位置，端口则可以唯一确定该计算机上的软件。
+    2：绑定方式：bind()
+        int bind(int sock, struct sockaddr *addr, socklen_t addrlen);
+            功能：为网络通讯程序绑定ip地址和端口；
+            返回值：无；
+            参数：
+                sock:socket描述符；
+                addr:struct sockaddr类型的结构体，存放着ip地址和端口；
+                addrlen:sockaddr的大小；可以由sizeof计算出；
+
+    3：封装ip和端口号需要使用的结构体：sockaddr
+        sockaddr结构：
+            struct sockaddr{
+                sa_family_t sin_family;//地址族，即地址类型
+                char        sa_data[14];//存储ip地址和端口号
+            }
+        备注：在c语言中并无任何函数能够直接将ip地址和端口号封装进sa_data,但是c语言根据不同的协议类型提供了不同的结构体来封装ip地址和端口；
+            
+    2：c语言中根据不同的协议类型来封装ip地址和端口的结构体：
+        对于IPV4：
+            struct sockaddr_in{
+                sa_family_t     sin_family; //地址族，即地址类型
+                uint16_t        sin_port;   //16位端口号
+                struct in_addr  sin_addr;   //32位ip地址
+                char            sin_zero[8];//不使用，一般用0填充
+            }
+        对于IPV6：
+                struct sockaddr_in6 { 
+                    sa_family_t sin6_family;  //(2)地址类型，取值为AF_INET6
+                    in_port_t sin6_port;  //(2)16位端口号
+                    uint32_t sin6_flowinfo;  //(4)IPv6流信息
+                    struct in6_addr sin6_addr;  //(4)具体的IPv6地址
+                    uint32_t sin6_scope_id;  //(4)接口范围ID
+                };
+    
+                            
+监听端口：
+    1：在绑定完ip和端口之后需要使端口处于监听状态才能接收到数据；
+    2：c语言中通过listen来让socket处于监听状态；
+        int listen(int sock, int backlog); 
+            功能：让socket处于监听状态
+            参数：
+                sock：socket描述符
+                backlog: 请求队列的最大长度
+    3：请求队列：
+        1：在socket正在处理请求时如果有新的请求发来，新的请求将会被放入缓冲区，等当前请求处理完成之后将会从缓冲区中取出请求继续处理，此时缓冲区就称为请求队列；
+        2：listen的第二个参数用于指导缓冲区的长度；如果将backlog设置为SOMAXCONN,则交由系统来决定请求队列的长度；
+        3：当队列满时，对于Linux将会返回ECONNREFUSED错误；
+对于服务端：
+    对于服务端监听端口之后将阻塞等待客户端发送消息；
+        1：linux上使用accept函数来接收客户端请求：
+            int accept(int sock, struct sockaddr *addr, socklen_t *addrlen);  //Linux
+                功能：接收客户端发来的消息，当没有消息发来时将会阻塞直至有消息！
+                参数：sock：socket描述符
+                     addr: 该结构也是sockaddr类型，存储客户端IP地址和端口号信息；需要转换为对应的IP类
+                           型的结构体(sockaddr_in或者sockaddr_in6)才能获取具体的ip地址和端口号；
+                     addrlen：为addr的长度；
+                备注：该函数只能接收一次客户端发来的消息，处理完成之后程序将会结束，因此如果需要持续接收客户端发来的消息将需要在死循环中使用；
+对于客户端：
+    对于客户端监听端口之后将需要连接服务端
+     1：在linux中使用connect来建立连接：
+       int connec(int sock,struct sockaddr $serv_addr,socklen_t addrlen); 
+            功能：连接服务器
+            参数：sock:socket描述符
+                 serv_addr:封装了IP地址和端口的结构体
+                 addrlen:addr参数的长度
+
+数据的接收和发送：
+    在linux上socket被映射为一个文件，因此消息的接收和发送均为读写文件：
+        发送消息：ssize_t write(int fd, const void *buf, size_t nbytes);
+                功能：write函数将会把缓冲区buf中的nbytes个字节写入文件fd;成功返回写入的字节数，失败返回-1；
+                参数：fd:文件描述符
+                     buf:需要写入的数据
+                     nbytes:需要从buf中写入fd文件的字节个数；
+        读取消息：ssize_t read(int fd,void *buf, size_t nbytes);
+                功能：该函数将会从文件fd中读取nbytes个字节的数据存入buf缓冲区中；成功返回读取的字节数，失败返回-1；
+                参数：fd:文件描述符
+                      buf:存储读取到的数据的缓冲区
+                      nbytes:需要读取的字节个数
+
+socket缓冲区：
+    对于发送数据：
+        write函数被调用之后并不会立即向网络中传输数据，而是先将数据写入缓冲区中；再由TCP协议将数据从缓冲区发送到目标机器；对于write函数，一旦将数据写入到缓冲区函数就可以成功返回，不管消息是否到达目标机器；也不管消息何时被发送至网络；
+    发送时机：
+        write函数将数据写入缓冲区之后，有可能立即被发送至网络，页游可能在缓冲区中堆积，然后将多次写入的数据一次性被发送至网络；这完全取决于系统；
+
+    对于读取数据：
+        read函数也是从输入缓冲区中读取数据，并不会直接从网络中读取数据；
+    
+    I/O缓冲区特征：
+        1：I/O缓冲区在每个TCP套接字中单独存在，并非在整个系统中只有一个！
+        2：I/O缓冲区在创建套接字时自动生成；
+        3：即使关闭套接字也会继续传送输出缓冲区中遗留的数据；
+        4：关闭套接字将丢失输入缓冲区中的数据；
+        5：输入输出缓冲区的默认大小一般都是8KB；可以通过getsockopt()函数获取；
+
+阻塞模式：
+    对于TCP-SOCKET,当使用write发送数据时：步骤如下：
+        1：首先会检查缓冲区，如果缓冲区的长度小于要发送的数据时，write将会被阻塞，直到缓冲区中腾出足够的空间，才会唤醒write继续发送数据；
+        2：如果TCP协议正在向网络发送数据，那么输出缓冲区会被锁定，不允许写入，write()/send() 也会被阻塞，直到数据发送完毕缓冲区解锁，write()/send() 才会被唤醒。
+        3：如果要写入的数据大于缓冲区的最大长度，那么将分批写入。
+        4：直到所有数据被写入缓冲区 write()/send() 才能返回。
+    对于TCP-SOCKET,当使用ead()/recv()读取数据时：步骤如下：
+        1：首先会检查缓冲区，如果缓冲区中有数据，那么就读取，否则函数会被阻塞，直到网络上有数据到来。
+        2：如果要读取的数据长度小于缓冲区中的数据长度，那么就不能一次性将缓冲区中的所有数据读出，剩余数据将不断积压，直到有 read()/recv() 函数再次读取。
+        3：直到读取到数据后 read()/recv() 函数才会返回，否则就一直被阻塞。
+TCP的粘包问题：
+    粘包：
+        由于tcp发送数据的策略：有可能会像缓冲区中写入一个数据就发送一次，也可能写入多次数据之后再发送；此时TCP在发送数据时有可能刚好发送的是一个完整的数据包，也有可能是多个完整或者不完整的数据包；
+        由于接收数据的策略：接收方接收数据时会将整个缓冲区中的数据读取出来，此时缓冲区中的数据有可能是一个完整的数据包，也有可能是多个数据包；此时多个数据包之间是没有边界的，是连续的数据流。这种现象被称为粘包！
+    eg:
+        比如发送方分两次次发送abc字符串：则发送方式有可能为一下几种：
+            abc abc：分两次发送，每次都是一个完整的包
+            abcab c：分两次发送；
+            abca bc：分两次发送
+            abcabc ：分一次发送，
+            除过第一种以外其余现象都称为粘包；
+
+    粘包带来的问题：由于粘包现象，导致接收方无法区分不同的数据包，最终将导致读取到的数据或不完整或多余，进而无法正确的处理发送方发送的数据！
+
+
+
+
+
+  
+
+                     

@@ -1,0 +1,25 @@
+c语言数学处理：math.h
+1：float fabs(float x)
+    功能：求浮点数x的绝对值
+2：int abc(int x)
+    功能：求整数x的绝对值
+3：int ceil(float x)
+    功能：对浮点数x向上取整
+4：int floor(float x)
+    功能：对浮点数x向下取整
+5：float fmod(float x,float y)
+    功能：计算x/y的余数
+6：float modf(float num,float *i)
+    功能：将浮点数num分解成整数部分和小数部分
+    返回值：返回小数部分，并将整数部分存入*i所指内存中；
+7：float pow(float x,float y)
+    功能：计算x的y次幂；
+    返回计算结果
+8：float sqrt(float x)
+    功能：计算x的平方根；
+随机数：stdlib.h
+    1：先使用srand()播种；srand((unsigned)time(NULL));
+    2：使用rand获取随机数：rand();
+    3：获取指定范围的随机数：rand () % (upper - lower + 1) + lower ;  
+    4：使用时间作为种子时需要包含time.h头文件
+

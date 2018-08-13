@@ -1,0 +1,74 @@
+c语言时间处理函数：time.h
+time.h中定义了四个变量两个宏来存储日期时间信息：
+    变量：
+        clock_t         用于存储处理器的时间
+        time_t          用于存储时间戳，以s为单位，数据类型为lld
+        struct tm       结构体：用于保存日历时间信息
+
+                        tm结构体：
+                            int tm_year:年(四位年数)
+                            int tm_mon:月，取值范围在0~11
+                            int tm_mday:一月中的某一天，取值范围在1~31
+                            
+                            int tm_hour:小时，取值范围在0~23
+                            int tm_min:分钟，取值范围在0~59
+                            int tm_sec:秒，取值范围在0~61
+                            
+                            int tm_wday:周，取值范围在0~6
+                            int tm_yday:一年中的某一天，取值范围在0~365
+                            int tm_isdst:夏令时标记
+    宏：
+        NULL：空指针
+        CLOCKS_PER_SEC:表示每秒处理器的始终周期的数目
+库函数：
+    clock_t clock(void)
+        功能：获取程序自开始执行到目前为止所占用的处理机时间
+        返回值：返回clock_t类型的值，如果处理机时间不可使用，那么返回-1；
+    
+    time_t time(time_t *p)
+        功能：返回当前时间的时间戳(以s为单位)，如果时间戳不可用，则返回-1；
+              如果p不为NULL，那么同时吧返回值赋值给*p;p为time_t类型的指针变量；
+    
+    double difftime(time_t time2,time_t time1)
+        功能：返回time2-time1的值；
+
+    struct tm *localtime(const time_t *tp);
+        功能：将*tp中的时间戳转换为struct tm的结构体形式的本地时间，并返回指向该结构的指针；
+             *tp是time_t类型的指针变量；
+             tm是指向struct tm的结构体！
+    
+    strftime(char *s, size_t smax, const char *fmt, const struct tm *tp);
+        功能：该函数将*tp结构体中的日期与时间信息转换成指定格式，并存储到字符串s中，并且写到s中的字符数不能多于smax;
+        %a 星期几缩写
+        %A 星期几全名
+        %b 月份缩写
+        %B 月份全名
+        %c 当地时间和日期表示
+        %d 用整数表示的一个月的第几天
+        %H 用整数表示的时(24小时制)
+        %I 用整数表示的时(12小时制)
+        %m 用整数表示的月份(01～12)
+        %M 用整数表示的分(00～59)
+        %S 用整数表示的秒(00～61)
+        %Y 完整年份表示
+        常用格式：%Y %m %d %H %M %S
+    
+    time_t mktime(struct tm *tp)
+        功能：将结构*tp中的当地时间转换为time_t类型的日历时间，并返回改时间，如果不能转换，则返回-1；
+    
+    char *ctime(const time_t *tp);
+        功能：将*tp中的日历时间转换为当地时间的字符串，并返回指向该字符串指针；
+始终周期数：
+    clock()：获取时钟周期数；
+    CLOCKS_PER_SEC：宏，代表一秒中内cpu运行的始终周期数；
+    clock()/CLOCKS_PER_SEC 则可获取以s为单位的时间！
+
+    衡量程序持续时间：
+        clock_t start = clock();
+        clock_t end = clock();
+        double duration = (double)(finish - start)/CLOCKS_PER_SEC;
+
+
+    
+    
+    

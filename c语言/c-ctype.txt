@@ -1,0 +1,27 @@
+字符操作函数库：ctype.h
+
+字符操作函数：
+    检查类：
+        isalpha(int c)检查是否为字母：
+            { a b c d e f g h i j k l m n o p q r s t u v w x y z } 
+            {A B C D E F G H I J K L M N O P Q R S T U V W X Y Z }
+        isupper(int c)检查是否为大写字母：
+            {A B C D E F G H I J K L M N O P Q R S T U V W X Y Z }
+        islower(int c)检查是否为小写字母
+            { a b c d e f g h i j k l m n o p q r s t u v w x y z }
+        isspace(int c)检查是否为空格类型字符：
+            制表符、换行符、垂直制表符、换页符、回车符、空格符的集合。
+        isalnum(int c)检查是否为数字和字母：
+            数字，大写字母，小写字母的集合
+        ispunct(int c)检查是否为标点符号：
+             ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
+        isdigit(int c)检查是否为十六进制数字表示的有效字符：
+            { 0 1 2 3 4 5 6 7 8 9 A B C D E F a b c d e f }
+        iscntrl(int c)检查是否为控制字符：
+            在 ASCII 编码中，这些字符的八进制代码是从 000 到 037，以及 177（DEL）。
+        如果检测结果为真则返回非0，否择返回0
+    转换类：
+        int tolower(int c)
+        该函数把大写字母转换为小写字母
+        int toupper(int c)
+        该函数把小写字母转换为大写字母
