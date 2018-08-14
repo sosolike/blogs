@@ -1,21 +1,20 @@
 socket编程流程：
-    server:
-        1：创建socket
-        2：绑定ip和端口
-        3：监听端口
-        4：接收数据
-        5：发送数据
-    client:
-        1：创建socket
-        2：绑定ip和端口
-        3：监听端口
-        4：连接服务端
-        5：发送数据
-        6：接收数据
+    1：创建socket
+    2：绑定ip和端口
+    3：监听端口
+    对于服务端：
+        4：阻塞接收客户端连接；
+        5：接收客户端发来的数据
+        6：向客户端发送数据
+    对于客户端：
+        4：向服务器端发送连接请求
+        5：向服务器端发送数据
+        6：接收来自服务器的数据
+
 创建套接字：socket
     1：socket是系统向应用程序提供的网络编程接口，在linux中被映射为一个虚拟的文件！
     2：两台计算机需要通信需要先创建socket文件，linux中每一个文件都会分配一个int类型的编号，称为文件描述符；socket文件也一样！
-    3：linux中创建socket需要使用socket函数：
+    3：linux中创建socket需要使用socket函数：<sys/socket.h>
         int socket(int af, int type, int protocol);
             功能：该函数创建一个socket文件；
             返回值：该函数返回socket文件描述符；
@@ -31,20 +30,19 @@ socket编程流程：
                 1：一般根据af参数以及type参数即可确定使用何种协议，简便写法protocol设置为0即可；
 
 绑定ip和端口
-    1：计算机通信本质上是应用软件的通信，ip地址可以唯一确定计算机在网络中的位置，端口则可以唯一确定该计算机上的软件。
+    1：计算机通信本质上是应用软件的通信，ip地址可以唯一确定计算机在网络中的位置，端口则可以唯一确定该计算机上的软件。因此必须为网络通信程序绑定ip和端口才能够实现应用程序的通信！
     2：绑定方式：bind()
         int bind(int sock, struct sockaddr *addr, socklen_t addrlen);
-            功能：为网络通讯程序绑定ip地址和端口；
-            返回值：无；
+            功能：为网络通讯程序绑定ip地址和端口；；
             参数：
-                sock:socket描述符；
+                sock:socket文件描述符；
                 addr:struct sockaddr类型的结构体，存放着ip地址和端口；
                 addrlen:sockaddr的大小；可以由sizeof计算出；
 
     3：封装ip和端口号需要使用的结构体：sockaddr
         sockaddr结构：
             struct sockaddr{
-                sa_family_t sin_family;//地址族，即地址类型
+                sa_family_t sin_family;//地址族，即地址类型(IPV4/IPV6)
                 char        sa_data[14];//存储ip地址和端口号
             }
         备注：在c语言中并无任何函数能够直接将ip地址和端口号封装进sa_data,但是c语言根据不同的协议类型提供了不同的结构体来封装ip地址和端口；
@@ -65,8 +63,23 @@ socket编程流程：
                     struct in6_addr sin6_addr;  //(4)具体的IPv6地址
                     uint32_t sin6_scope_id;  //(4)接口范围ID
                 };
-    
-                            
+    3：用于存放32位ip地址的结构体：struct in_addr
+                struct in_addr{
+                    in_addr_t  s_addr;  //32位的IP地址
+                };
+                备注：in_addr_t在<netinet/in.h>中定义，等价于unsigned long，长度为四个字节！
+
+    4：在封装ip和端口时需要先填充对应ip类型的结构体(sockaddr_in或者sockaddr_in6)，然后再转换成sockaddr;
+
+    5：样例：
+        struct sockaddr_in serv_addr;
+        memset(&serv_addr,0,sizeof(serv_addr)); //将每个字节全部都用0填充
+        serv_addr.sin_family = AF_INET;         //设置IP协议类型
+        serv_addr.sin_port = htons(9999);       //设置端口，需要使用htons函数来转换
+        serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); //设置ip地址，需要使用inet_addr来转换
+        bind(serv_sock,(struct sockaddr*)&serv_addr,sizeof(serv_addr)); //绑定ip和端口
+    6：特别说明：端口的取值理论范围在0~65536，但是0~1023的端口一般由系统分配给特定的服务程序；应用程序的端口号尽量在1024~65536之间分配！
+                      
 监听端口：
     1：在绑定完ip和端口之后需要使端口处于监听状态才能接收到数据；
     2：c语言中通过listen来让socket处于监听状态；
