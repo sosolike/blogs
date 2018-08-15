@@ -887,19 +887,18 @@ c语言结构体：
         2：结构体理论上在内存中是连续存储的，但是在编译器的具体实现中各个成员之间可能存在缝隙；
 
 c语言为数据类型定义别名：typedef
-    typedef oldName newName;
-        eg: 
-            定义基本数据类型：
-                typedef int INTEGER;那么INTEGER就代表int类型的数据！
-            定义数组
-                typedef char arr[20];
-                arr a1,a2;等价于char a1[20],a2[20]
-            定义结构体
-                typedef struct stu{
+    使用方式：typedef oldName newName;
+    为基本数据类型定义别名：
+        如：typedef int INTEGER;那么INTEGER就代表int类型的数据！
+    为数组类型定义别名：
+        如：typedef char arr_type[20];
+            arr_type a1,a2;等价于char a1[20],a2[20]
+    为结构体定义基本类型：
+        如：typedef struct stu{
                     char *name;
                     int age
-                } STU;
-                此时STU 将代表 struct stu
+            } STU;
+            STU stu1;等价于 struct stu stu1;
 c语言中的常量：
     1：在c语言中常量指值不能被修改的变量称为常量！
     2：c语言中的常量通过const修饰一个变量得到！
