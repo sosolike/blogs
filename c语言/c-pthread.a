@@ -74,16 +74,19 @@ c-多线程：创建线程
             说明：1：该函数可以阻塞当前线程，等待指定线程的运行，等指定线程运行完毕之后才会返回当前线程继续运行；
                  2：如果在线程中使用pthread_join等待多个线程，那么被等待的线程将会争用cpu时间片；
                  3：一个线程只能被一个线程等待，不能多个线程等待一个线程，否则第一个接收到信号的线程返回成功，其余调用pthread_join的线程则返回错误码ESRCH；
+                 4：pthread_join只能用于处于joinable状态的线程；对于unjoinable状态的线程无法使用pthread_join()
+                 5：pthread_join的另外一个作用在于回收线程所占用的资源；对于joinable状态的线程，如果不使用pthread_join的话该线程的资源将无法被释放；
     分离线程：
         分离线程--pthread_detach(pthread_t thread);
             功能：分离当前线程；将当前线程状态设置为unjoinable状态；
             原型：int pthread_detach(pthread_t thread)
             参数：需要被分离的线程id
             返回值：0代表分离成功，如果出错将会返回错误码(EINVAL\ESRCH)；
-            说明：1：pthread线程有两种状态，joinable和unjoinable状态，该函数江湖吧线程设置为unjoinable状态；
+            说明：1：pthread线程有两种状态，joinable和unjoinable状态，该函数将会把线程设置为unjoinable状态；
                  2：该函数可以在主线程创建完成子线程之后调用，也可以在线程内部调用；
                  3：线程的unjoinable状态可以在创建线程时指定，也可以使用pthread_detach()来设置；
-
+                 4：线程如果处于分离状态(unjoinable)将不能再设置为结合(joinable)状态;
+                 5：线程处于分离状态之后，线程所占有的资源在线程结束时自行释放，无需其他线程控制；
 
     取消线程：
         取消线程：取消线程的运行命令只能由外部的线程下达，取消线程并不等同于直接终止线程的运行；仅仅只是向目标线程发出取消通知；具体如何处理该通知则由目标线程决定；
