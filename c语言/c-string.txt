@@ -8,22 +8,19 @@ c语言中字符串处理函数
     char *s5 = {"ab"};
 字符串基本处理函数：string.h
     复制类：
-        2:复制字符串：
+        1:复制字符串：
             strcpy(char destination[], const char source[]); 
                 功能：复制字符串；
                 说明：将字符串source拷贝值destination中；对于目标字符串的声明长度无要求！
                 备注：对于s4和s5代表的是字符串常量，无法作为目标字符串！
                 返回值：无返回值，源字符串的内容会覆盖掉目标字符串之前的内容！
-        3：拷贝指定字符到目标字符串：
+        2：拷贝指定字符到目标字符串：
             strncpy(char destination[],const char source[],int numbers);
                 功能：将指定个数的字符从源字符串复制到目标字符串！
                 说明：该函数对于目标字符串的声明长度是有要求的，如果待复制字符超过目标字符串长度，\0将没有地方添加！
                 备注：对于s4和s5代表的是字符串常量，无法作为目标字符串！
                 返回值：无返回值，源字符串的内容会覆盖掉目标字符串之前的内容！
-        4：将字符串拷贝到新建的位置处
-            char *strdup(char *str); 
-            功能：将字符串拷贝至
-        5：将字符串的前n个字节拷贝到目标字符串中
+        3：将字符串的前n个字节拷贝到目标字符串中
             extern void bcopy(const void *src, void *dest, int n);
             功能：将字符串src的前n个字节复制到dest中
             说明：bcopy不检查字符串中的空字节NULL，
@@ -43,7 +40,7 @@ c语言中字符串处理函数
     比较类：
         6：比较两个字符串：
             int strcmp(const char firststring[],const char secondstring)
-                功能：比较两个字符串;
+                功能：区分大小写比较两个字符串;
                 返回值：如果返回0，则说明两个字符串内容相同；
                     如果返回值>0,则说明firststring大于secondstring;
                     如果返回值<0,则说明firststring小于secondstring;
@@ -56,6 +53,9 @@ c语言中字符串处理函数
                     如果返回值<0,则说明firststring小于secondstring;
         8：比较两个字符串前n个字节是否相等
             extern int bcmp(const void *s1, const void *s2, int n);
+            功能：比较字符串s1和s2的前n个字节是否相等
+            返回值：如果为0，则相等，如果不为0则不相等；
+        9：int strncmp(const char *str1, const char *str2, size_t n)
             功能：比较字符串s1和s2的前n个字节是否相等
             返回值：如果为0，则相等，如果不为0则不相等；
     获取字符串长度：
@@ -94,12 +94,17 @@ c语言中字符串处理函数
 
 还有直接通过内存操作字符串的函数
     memccpy
-    memcpy
-    memchr
-    memcmp
-    memicmp
+    memcpy：void *memcpy(void *dest, const void *src, size_t n)：从src复制n个字符到dest
+    memchr：void *memchr(const void *str, int c, size_t n) 在str指向的字符串的前n个字节中搜索第一次出现字符c的位置。
+    memcmp：int memcmp(const void *str1, const void *str2, size_t n)：把 str1 和 str2 的前 n 个字节进行比较。
+    memicmp：int memicmp(const void *str1, const void *str2, size_t n)：把 str1 和 str2 的前 n 个字节进行比较()忽略大小写。
     memmove
-    memset
+    memset 
+        功能：在一段内存块中填充某个给定的信息(是对结构体或者数组进行清零操作的一种最快的方法)；
+        原型：void *memset(void *s, int ch, size_t n);
+        说明：1：memset按照字节对内存块进行初始化，所以不能用它将int数组初始化为0和-1之外的其他值；
+             2：指针s指向的内存区域必须是可写的，ch代表字符，n代表需要修改s指向的内存区域的前n个字节；
+        
     setmem
     movmem
 字符串转换为数字：stdlib.h
@@ -118,7 +123,7 @@ c语言中字符串处理函数
         atoi(nptr) 将数字字符串转换为int整型；
         atof(nptr) 将数字字符串转换为double浮点数
         atol(nptr) 将数字字符串转换为long整型
-        备注：上述函数的转换规则均为：数从左向右扫描nptr，遇上正负号或者数数字还是转换，知道遇上非数字字符或者\0则结束转换
+        备注：上述函数的转换规则均为：数从左向右扫描nptr，遇上正负号或者数数字开始转换，知道遇上非数字字符或者\0则结束转换
 
         
         
