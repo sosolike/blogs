@@ -96,19 +96,24 @@ c-多线程：创建线程
                  5：线程处于分离状态之后，线程所占有的资源在线程结束时自行释放，无需其他线程控制；
 
     取消线程：
-        取消线程：取消线程的运行命令只能由外部的线程下达，取消线程并不等同于直接终止线程的运行；仅仅只是向目标线程发出取消通知；具体如何处理该通知则由目标线程决定；
+        取消线程：线程的运行可由外部其他线程来发送取消命令，进而终止指定线程的运行；
+        取消特征：取消线程的运行命令只能由外部的线程下达，取消线程并不等同于直接终止线程的运行；仅仅只是向目标线程发出取消通知；具体如何处理该通知则由目标线程决定；
         取消线程函数：
             int pthread_cancel(pthread thread):
-                1：发送终止信号给thread线程，如果发送成功返回0，发送失败则返回非0值；但是发送成功并不等同于thread会被终止；
+                1：发送终止信号给thread线程，如果发送成功返回0，发送失败则返回非0值；发送成功仅仅只能代表信号被发往指定线程；但并不等同于thread会被终止；
             int pthread_setcancelstate(int state,int *oldstate):
                 1：设置本线程对于cancel信号的处理方式；state有两种值：PTHREAD_CANCEL_ENABLE(默认值)和PTHREAD_CANCE_DISABLE;
-                2：PTHREAD_cancel_ENABLE ：接收到信号之后将当前线程设置为cancel的状态；
-                3：PTHREAD_cancel_DISABLE : 忽略接收到的信号，继续运行；
+                2：PTHREAD_CANCEL_ENABLE ：接收到信号之后将当前线程设置为cancel的状态；
+                3：PTHREAD_CANCEL_DISABLE : 忽略接收到的信号，继续运行；
                 4：old_state如果不为NULL则存入cancel状态以便恢复；
             int pthread_setcanceltype(int type,int *oldtype)
                 1：设置本线程取消动作的时机，type有两种值：PTHREAD_CANCEL_DEFFERED和PTHREAD_CANCEL_ASYCHRONOUS；
-                2：该函数设置的处理方式仅在cancel为enable时有效，分别表示收到信号之后继续运行到下一个取消点再退出和立即执行取消动作；
+                2：该函数设置的处理方式仅在cancel为enable时有效；
+                3：PTHREAD_CANCEL_DEFFERED表示收到信号之后继续运行到下一个取消点再退出；
+                4：PTHREAD_CANCEL_ASYCHRONOUS表示立即执行取消动作；
                 3：oldtype如果不为NULL则存入用来存储取消动作类型值
+            void pthread_testcancel(void):
+                1：该函数用于在不包含取消点，但是又需要一个取消点的地方创建一个取消点；
         取消点：
             1：线程外部向线程发送取消信号之后，是否终止线程的执行，由线程本身决定，可以忽略，可以立即执行取消动作，或者继续运行至取消点；
             2：线程的默认处理是运行到取消点，然后退出；
@@ -118,6 +123,39 @@ c-多线程：创建线程
                 (2)线程等待pthread_cond_wait或pthread_cond_timewait()中的特定条件。
                 (3)被sigwait(2)阻塞的函数
                 (4)一些标准的库调用。通常，这些调用包括线程可基于阻塞的函数。 
+            4：根据POSIX标准，pthread_join(),pthread_testcancel(),pthread_cond_wait(),pthread_cond_timedwait(),sem_wait(),sigwait()等函数还有read(),write()等会引起阻塞的系统调用都是取消点；但是pthread_cancel手册声明该库由于与c库结合不好，因而目前c库函数都不是取消点；如果需要将c库函数作为取消点，则需要在c库函数前后分别调用pthread_testcancel();
+    线程同步：
+        线程同步：由于多个线程共享进程中公共资源；如果同一时刻多个线程同时操作某些资源会导致逻辑错误；此时需要使得线程同步对资源进行操作；
+        实现线程同步方式：互斥锁，条件变量，信号量；
+        互斥锁：
+            
+            1：初始化锁：Linux中互斥锁的数据类型是pthread_mutex_t,在使用之前需要先进行初始化：
+                静态初始化：
+                    pthread_mutex_t mutex = PTHREAD_MUTEX_INITALIZER;
+                动态初始化：
+                    int pthread_mutex_init(pthread_mutex_t *mutex,const pthread_mutex_attr_t *mutexattr);
+                        功能：动态创建一个互斥锁；
+                        参数：mutex:创建的互斥锁指针；
+                             mutexattr:指定互斥锁属性；
+                        互斥锁属性：
+                             1：PTHREAD_MUTEX_TIMED_NP : 默认值，普通锁，一个线程加锁之后其余请求锁的线程将形成一个等待队列，并在解锁之后按照优先级获得锁，这种锁策略保证了资源分配的公平性；
+                             2：PTHREAD_MUTEX_RECURSIVE_NP : 嵌套锁，允许同一个线程对同一个锁成功获得多次，并通过多次unlock解锁；如果是不同线程请求，则在加锁线程解锁时重新竞争；
+                             3：PTHREAD_MUTEX_ERRORCHECK_NP : 检错锁，如果同一个线程请求同一个锁，则返回EDEADLK，否则与PTHREAD_MUTEX_TIMED_NP类型动作相同，这样就抱着当不允许多次加锁时不会出现最简单情况下的死锁；
+                             4： PTHREAD_MUTEX_ADAPTIVE_NP，适应锁，动作最简单的锁类型，仅等待解锁后重新竞争。
+
+            2：加锁：对于共享资源的访问，要进行加锁，如果互斥量已经加锁，那么线程对该资源的访问将会阻塞，直至互斥量解锁；
+                int pthread_mutex_lock(pthread_mutex_t *mutex);
+                int pthread_mutex_trylock(pthread_mutex_t *mutex);
+            3：解锁：在完成对共享资源的访问之后要对互斥量进行解锁；
+                int pthread_mutex_unlock(pthread_mutex_t *mutex);
+            4：销毁锁：锁在使用完成之后要销毁，释放资源；
+                int pthread_mutex_destory(pthread_mutex_t *mutex);
+            
+
+            
+
+        
+        
         
 
 
