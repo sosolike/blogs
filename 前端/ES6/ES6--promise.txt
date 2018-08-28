@@ -1,0 +1,56 @@
+Promise 承诺 对于某件事情未来发生结果的一种行为保证；
+
+在JavaScript中，异步操作只能通过回调或者事件来进行；Promise则提供了对于回调的支持，可以通过同步代码的形式实现异步回调；
+
+Promise原理：
+    Promise是一个对象，通过Promise执行某个行为可以获取到行为的执行结果；Promise会根据对执行结果调用统一的API进行处理；
+
+Promise使用：
+    基本使用流程：
+        1：Promise是一个对象，需要将执行行为封装在该对象中，该行为的执行结果则可以通过resolve和reject向外暴露；
+        2：Promise对象调用then方法可以获取接收到通过resolve以及reject向外暴露的执行结果；
+        3：在then方法中可以针对执行结果做处理，进而通过同步的方式实现异步调用；
+    Promise对象的创建：
+        const promise = new Promise(function(resolve,reject){
+            //do something
+            if(/*执行成功*/){
+                resolve(value);
+            }else{
+                reject(error);
+            }
+        });
+        说明：
+            1：Promise创建实例时需要封装异步操作逻辑；
+            2：异步执行结果的回调函数有两个参数:resolve和reject；这两个函数JavaScript引擎自带；
+            3：resolve函数的作用是在异步执行完成且成功时的回调；reject函数的作用是在异步执行完成且失败时的回调；
+            4：resolve函数在异步执行结果成功时会将异步操作结果作为参数传递出去；
+            5：reject函数在异步执行结果失败时将异步操作报出的错误作为函数传递出去；
+            6：如果在resolve和reject后面还有执行代码，那么这些代码执行完毕之后，resolve和reject方法才会调用，因为立即 resolved 的 Promise 是在本轮事件循环的末尾执行，总是晚于本轮循环的同步任务；一般不退将将结果处理代码放在resolve和reject后面执行；
+            7：无论是resolve还是reject都会返回一个新的promise实例；
+            8：promise内部的错误不会影响到外面，无论promise发生何种错误，只要能进入resolve和reject就不会影响外部的处理；
+
+
+    Promise处理异步执行结果：
+        Promise通过then方法来处理异步执行结果：
+            promise.then(function(value){},function(error){})
+            说明：
+                1：两个参数均为回调函数；
+                2：第一个回调函数接收resolve的结果，value即为执行成功后的异步执行信息；
+                3：第二个回调函数接收reject的结果，error即为执行失败后的错误信息；
+                4：第一个参数是必备参数，第二个参数是可选参数；
+        Promise也可以通过catch来处理错误信息：
+            promise.catch(function(error){})
+            说明： 
+                1：error和then方法中的第二个回调函数的参数一样，都是reject返回的错误信息；
+                2：该catch方法不仅会捕获promise对象也会捕获到then方法中的错误；
+                3：推荐使用该方法捕获错误，而不是实现then方法的第二个参数，原因在于then方法的第二个参数仅仅只能捕获promise对象的错误，不能捕获到then方法的错误；
+                4：可以使用多个catch捕获错误；
+
+        Promise可以通过finally来设置必须要执行的代码：
+            promise.finally(function(){})
+            说明： 
+                1：该方法无论promise中的异步操作执行成功或者失败都会执行；
+                2：finally方法无参数；
+        
+
+
