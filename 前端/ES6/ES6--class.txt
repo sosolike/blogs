@@ -1,0 +1,89 @@
+ES--class
+    ES5中创建对象：
+        1：通过构造函数：
+            function consfun(){
+                this.name = "name_value";       //声明属性;
+                this.getName = function(){      //声明属性;
+                    console.log(this.name);
+                }
+            }
+            var obj = new consfun();            //创建对象;
+        2：创建JSON对象:
+            var obj = {
+                name:"name_value",              //声明属性;
+                getName:function(){             //声明属性;
+                    console.log(this.name);
+                }
+            }
+        3：通过Object创建对象：
+            var obj = new Object();             //创建对象;
+            obj.name = "name_value";            //声明属性;
+            obj.getName = function(){           //声明属性;
+                console.log(this.name);
+            }
+        备注：在ES5标准中，对象只有属性一个元素；
+             属性的值可以为任意数据类型、函数、其他对象或者其他合法嵌套；
+    ES6中创建对象：
+        ES6标准中引入类(class)的概念，让对象的创建以及使用方式更加接近于传统的面向对象方式；
+        类的声明：
+            class 类名{
+                //类元素
+            }
+            说明：
+                1：class是类的声明关键字；
+                2：类的内部默认就是严格模式，因此无需使用use strict指定运行模式；
+        类的元素：
+            类中包括：
+                属性：实例属性、静态属性
+                方法：实例方法、静态方法、构造方法
+        构造方法：constructor()
+            方法声明：constructor(){
+                //do something...
+            }
+            备注：1：constructor是类的构造方法，和传统的面向对象的构造方法一致；
+                 2：可以显式的声明构造方法，如果未声明，类会自动创建一个空的构造方法；
+                 3：构造方法默认返回当前类的实例，也可显式指定返回其他对象；
+        实例方法和静态方法：
+            声明：
+                实例方法：fun_name(){//do something...}
+                静态方法：static fun_name(){//do something...}
+            调用：
+                类内部调用：
+                    实例方法：this.fun_name();
+                    静态方法：class_name.fun_name();
+                类外部调用：
+                    实例方法：obj.fun_name();
+                    静态方法：class_name.fun_name();
+                说明：静态方法内部不允许使用实例属性以及实例方法；如果必须使用，则需要手动new出一个实例；
+        属性：
+            实例属性：
+                声明：1：可以在类中直接声明实例属性：
+                        class Example{
+                            myProp = 23;     //在类中声明实例属性；
+                        }
+                     2：也可以在实例方法或者构造函数中通过this.var_name来声明实例属性；
+                        class Example{
+                            constructor(){
+                                this.myProp1 = 23;  //在构造函数中声明实例属性
+                            }
+                            fun_a(){
+                                this.myProp2 = 24;  //在实例方法中声明实例属性
+                            }
+                        }
+                调用：在类内部：this.var_name;
+                     在类外部：obj.var_name;
+            静态属性：
+                目前只能在类外部通过类名添加类属性；如：
+                    class Example{}
+                    Example.prop_name = "prop_value";   //添加类属性
+                但是目前有提案：在类内部通过static prop_name来声明静态属性；
+        对象的创建：
+            1：ES6标准中，对象的创建必须通过new关键字实例化类；
+            2：ES6标准为new关键字提供了一个target属性，new.target如果作用在构造函数中，则代表当前构造函数，new.target如果作用在类中，则为当前类名；如果在子类中，则new.target返回子类类名；
+
+            
+
+        
+
+
+            
