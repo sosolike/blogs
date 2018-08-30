@@ -28,6 +28,7 @@ Promise使用：
             6：如果在resolve和reject后面还有执行代码，那么这些代码执行完毕之后，resolve和reject方法才会调用，因为立即 resolved 的 Promise 是在本轮事件循环的末尾执行，总是晚于本轮循环的同步任务；一般不退将将结果处理代码放在resolve和reject后面执行；
             7：无论是resolve还是reject都会返回一个新的promise实例；
             8：promise内部的错误不会影响到外面，无论promise发生何种错误，只要能进入resolve和reject就不会影响外部的处理；
+      (重点*)9:Promise一旦创建，内部的代码会立即执行，但是then以及catch中的回调代码则会等待当前脚本同步代码全部执行完毕之后再执行；
 
 
     Promise处理异步执行结果：
