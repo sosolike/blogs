@@ -81,7 +81,68 @@ ES--class
             1：ES6标准中，对象的创建必须通过new关键字实例化类；
             2：ES6标准为new关键字提供了一个target属性，new.target如果作用在构造函数中，则代表当前构造函数，new.target如果作用在类中，则为当前类名；如果在子类中，则new.target返回子类类名；
 
+class的继承：
+    继承特征：
+        1：ES6标准中，类通过extends继承父类；
+        2：子类继承父类之后子类将拥有父类的属性以及方法：
+    子类构造函数：
+        1：子类构造函数也使用constuctor来创建；
+        2：ES5中的继承本质是先创建子类的实例对象this,然后将父类的方法添加都this上面。
+           ES6中的继承机制则是先将父类的属性和方法加到this上面，然后再用子类的构造函数修改this;
+        3：由于ES6中子类实例的构建是基于父类的实例，只有super方法才能调用父类实例，因此必须在子类的构造函数中调用super方法创建父类实例；如果父类构造函数需要参数，则super()必须按照父类构造函数要求传入参数；
+        4：如果子类没有显式的声明构造函数，则系统会默认添加上一个空的构造函数，并使用super()调用父类构造函数；
+        5：构造函数中在使用super()之前无法使用this关键字；如果使用将会报错；
+
+    判断父类：
+        Object.getPrototypeOf(class_name)  //class_name是子类名称，通过该方法可以判断当前类是否是指定类的子类；该方法只能判断直接父类，无法判断父类的父类；
+
+    子类调用父类属性以及方法：
+        在子类内部调用父类属性以及方法需要通过super对象；super关键字在子类实例方法中代表父类原型对象，在子类静态方法中代表父类；
+            1：子类实例方法中调用父类实例属性和实例方法：
+                super.parent_prop;      
+                    //调用父类实例属性；该操作只能调用父类原型链上的属性，无法调用父类实例的属性；
+                    //A.prototype.prop_name = 2,子类中通过super.prop_name即可获取该属性值；
+                    //如果在类A中实例方法中通过this.prop_name = 2,子类中通过super.prop_name无法获取该属性值；
+                super.parent_fun;       
+                    //调用父类实例方法；
+                备注：
+                    1：如果在子类中通过super调用父类方法时，父类方法中的this指向当前子类的实例；
+                    2：如果在子类实例方法中调用静态属性以及静态方法则需要直接使用父类类名调用；
+            2：子类实例在类外部调用父类方法以及属性直接通过子类实例对象调用父类实例方法以及实例属性即可；
+            3：在子类静态方法中调用父类静态属性以及静态方法：
+                super.parent_prop;
+                super.parent_fun;
             
+类的prototype和__proto__属性:
+    ES5标准的浏览器中每一个对象都有__proto__属性；指向对应的构造函数的prototype属性；
+    ES6标准中，class作为构造函数逇语法糖，同时有prototype属性以及__proto__属性；存在两条继承链；
+
+    1：子类的__proto__属性，表述构造函数的继承，总是指向父类；
+    2：子类的prototype属性的__proto__属性表示方法的继承，总是指向父类的prototype属性；
+        class A {}
+        class B extends A {}
+        B.__proto__ === A // true
+        B.prototype.__proto__ === A.prototype // true
+        原因在于类的继承是通过下面的方式实现的：
+            class A{}
+            class B{}
+            Object.setPrototypeOf(B.prototype,A.prototype); //B的实例继承A的实例
+            Object.setPrototypeOf(B,A);     //B继承A的静态属性
+
+        而setPrototypeOf的实现为：
+            Object.setPrototypeOf = function(obj,proto){
+                obj.__proto__ = proto;
+                return obj;
+            }
+        因此得到最开始的结果；
+    
+
+    
+
+            
+        
+
+
 
         
 
