@@ -1,0 +1,108 @@
+ES6--Set&Map:
+  Set数据结构：
+    1：ES6新提供的数据结构；
+    2：数据存储特征：
+        1：set中存储的数据元素有序；
+        2：set中存储的数据元素不可重复(具备自动去重功能)；
+        3：set中存入元素时的相等判断采用的是===，例外在于NaN;(===情况下NaN不等于NaN，但是set内部只能存储一个NaN)
+    3：set初始化：
+        1：const s = new Set();//初始化一个空的set
+        2：const s = new Set([1,2,3,"3"]);//使用数组初始化一个set；
+        3：const s = new Set(document.querySelecorAll('div'));//使用具备iterable接口的任意数据结构初始化set
+    4：Set提供的实例方法：
+        const s = new Set();
+        1：添加一个元素：s.add(1);
+        2：删除一个值，返回一个布尔值：s.delete();
+        3：检测Set中是否包含指定元素，返回一个布尔值：s.has();
+        4：清除所有成员：s.clear();
+    5：Set提供的实例属性：
+        1：Set.prototype.constructor：构造函数；
+        2：Set.prototype.size：返回Set实例成员的成员总数；
+    6：Set与数组转换：
+        1：将数组转换为Set：const s = new Set([1,2,3,4]);
+        2：将Set转换为数组：const array = Array.from(s);
+    7：Set的遍历操作：
+        1：遍历获取键名，返回遍历器对象：keys();
+        2：遍历返回键值，返回遍历器对象：values();
+        3：遍历返回键值对，返回遍历器对象：entries();
+        4：使用回调函数遍历每一个成员：forEach();
+        备注：1：Set的遍历顺序为数据元素的插入顺序；
+             2：Set数据结构中的元素没有键名，因此keys()和values()行为完全一致；
+             3：key(),values(),entries()返回的都是遍历器对象，需要通过for...of来获取元素；
+                for (let item of set.values()) {
+                    console.log(item);
+                }
+            4：set实例本身就是可遍历的，因此可以省略values、keys、entries方法直接遍历；
+            5：forEach方法的回调函数有三个参数(键值，键名，集合本身)；
+    8：扩展运算符：...set
+        扩展运算符内部使用for...of循环，随意可以用于Set结构：
+        如：
+            const set = new Set([1,2,3]);
+            const setb = new Set([1,2,4]);
+            let arr = [...set];//将一个Set转换为数组
+            let arrb = [...set,...setb];//将多个Set转换为数组
+        可以通过Set实现交并差集：
+            let a = new Set([1,2,3]);
+            let b = new Set([2,3,4]);
+            //并集：
+            let union = new Set([...a,...b]);
+            //差集：
+            let difference = new Set([...a].filter(x=>!b.has(x)));
+            //交集：
+            let intersect = new Set([...a].filter(x=>b.has(x)));
+
+Map:存储键值对集合：
+    1：ES5中的Object可以存储键值对集合，但是键名仅仅只能为字符串，不能是其他数据结构；
+    2：Map数据结构中，键名可以为任意数据类型(包括对象)；
+    3：Map数据存储特征：
+        1：Map用于存储键值对数据集合；
+        2：Map中的键名可以为任意数据类型；
+        3：Map中的键名不允许重复；
+    4：Map的初始化：
+        1：const m = new Map();  //初始化一个空Map;
+        2：const m = new Map([
+            ["name","value"],
+            ["age","agevalue"]
+        ]);//初始化一个具有键值对数据的Map;
+        3：任何一个具有Iterator接口，且每个成员都是一个双元素的数组的数据结构，都可以当做Map构造函数的参数；
+    5：map的实例方法：
+        1：添加一个键值对：m.set(name,value);
+        2：获取一个数据：m.get(name);
+        3：检测是否存在指定键名的数据：m.has(name);
+        4：删除一个键：m.delete(key);
+        5：清空所有成员：m.clear();
+        4：获取Map中的数据元素总数：m.size();
+    6：只有对同一个对象的引用，Map结构才会将其视为同一个键；即判断键名是否一致是按照内存地址来判断的；
+    7：遍历方法：
+        keys()：返回键名的遍历器。
+        values()：返回键值的遍历器。
+        entries()：返回所有成员的遍历器。
+        forEach()：遍历 Map 的所有成员。
+        备注：Map的遍历顺序就是元素的插入顺序；
+
+    8：扩展运算符：...
+        Map中使用扩展运算符需要通过...m.keys、...m.values、...m.entries、...map
+    9：其他数据结构和Map数据结构的互转：
+        1：将Map转换为数组：
+            const map = new Map([['name',"name_value"],['age','age_value']]);
+            arr = [...map]
+        2：将Map转换为对象：
+           将对象转换为Map;
+           将Map转换为Json；
+           将Json转换为Map;
+           都可以通过自定函数实现；
+
+
+
+
+
+WeakSet：数据集合：
+    WeakSet本身仍然是数据集合，且不能重复(具备自动去重功能);
+    WeakSet数据存储特征：
+        1：WeakSet只能存储对象，不能存储其他类型的值；
+        2：WeakSet不允许重复；
+        3：WeakSet中保持对对象的弱引用；即如果其他对象都不再引用目标对象时，垃圾回收机制会自动回收对象所占用的内存，不会考虑该对象是否在WeakSet中被引用；
+
+        
+
+        
