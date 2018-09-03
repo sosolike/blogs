@@ -29,6 +29,11 @@ Promise使用：
             7：无论是resolve还是reject都会返回一个新的promise实例；
             8：promise内部的错误不会影响到外面，无论promise发生何种错误，只要能进入resolve和reject就不会影响外部的处理；
       (重点*)9:Promise一旦创建，内部的代码会立即执行，但是then以及catch中的回调代码则会等待当前脚本同步代码全部执行完毕之后再执行；
+      10：promise和async和await的执行顺序：
+            1：promise会在所有同步代码执行完毕之后执行；
+            2：promise会优先于setTimeout宏任务，所以setTimeout回调会在最后执行；
+         http://www.cnblogs.com/geyouneihan/p/9127324.html
+
 
 
     Promise处理异步执行结果：
