@@ -3,13 +3,19 @@ c-多线程
     2：POSIX-可移植操作系统接口简称，由IEEE开发，由ISO和ANSY标准化，POSIX标准定义了操作系统应该为应用程序提供的接口集；目的在于使程序在源码上具备系统可移植性；
     3：Linux上使用c语言实现多线程需要引入pthread.h线程库，线程库中的函数全部由pthread_开头；
 
-Linux上pthread线程之间的关系：
+Linux上pthread线程之间的结束关系：
     1：main函数所在线程称为主线程，任何其他子线程只能在主线程中创建；
     2：如果在主线程中，即main函数中调用了return或者exit函数，则主线程退出，整个进程也终止运行，其他属于该进程的线程全部退出；
     3：如果在主线程中调用pthread_exit()来退出主线程;则仅仅是主线程结束运行，进程不会结束，进程内的其他线程也不会结束，直到所有线程结束进程才会终止；
     4：在任何一个线程中调用exit函数都会导致进程结束，其余线程也将会结束；
     5：线程中调用pthread_exit()仅仅会终止当前线程，不影响进程的运行，不影响其他线程的运行；
 
+Linux上pthread线程之间的运行关系：
+    1：如果主线程中创建了子线程，如果不使用pthread_join的话，主线程结束整个进程也就结束；子线程有可能没有机会执行或者执行不完全！
+    3：为了保证子线程能够执行完毕再退出整个进程有以下几种方式：
+        1：使主线程在子线程结束后再结束主线程；
+        2：主线程结束时使用pthread_exit()结束，此时仅仅结束主线程，并不会结束主进程；
+        3：对于处于joinable状态的子线程使用pthread_join()来阻塞主线程，等待子线程执行完毕；
 线程结束后资源释放问题：
     1：线程创建之后要么是PTHREAD_CREATE_JOINABLE状态，要么是PTHREAD_CREATE_DETACH状态；
     2：如果线程是PTHREAD_CREATE_JOINABLE状态，那么线程结束后线程所占用的资源必须通过pthread_join()来释放；
@@ -93,13 +99,9 @@ c-多线程：创建线程
             原型：void pthread_exit(void * value_ptr)
             参数：该参数代表当前线程中执行的函数的返回值；在线程结束时传入，该值可以使用pthread_join的第二个参数获取得到；
             返回值：无；
-            说明：1：该函数是一个阻塞的线程函数，调用该函数的线程将只能等待指定线程运行完毕；
-                 2：当函数返回时，被等待线程的资源被收回；
-                 3：如果主线程中创建了子线程，如果不使用pthread_join的话，主线程结束整个进程也就结束；子线程有可能没有机会执行或者执行不完全！
-                 4：为了保证子线程能够执行完毕再退出整个进程有以下几种方式：
-                    1：使主线程在子线程结束后再结束主线程；
-                    2：主线程结束时使用pthread_exit()结束，此时仅仅结束主线程，并不会结束主进程；
-                    3：对于处于joinable状态的子线程使用pthread_join()来阻塞主线程，等待子线程执行完毕；
+            说明：
+                 1：当函数返回时，被等待线程的资源被收回；
+                 
 
     取消线程：
         取消线程：线程的运行可由外部其他线程来发送取消命令，进而终止指定线程的运行；
@@ -130,11 +132,13 @@ c-多线程：创建线程
                 (3)被sigwait(2)阻塞的函数
                 (4)一些标准的库调用。通常，这些调用包括线程可基于阻塞的函数。 
             4：根据POSIX标准，pthread_join(),pthread_testcancel(),pthread_cond_wait(),pthread_cond_timedwait(),sem_wait(),sigwait()等函数还有read(),write()等会引起阻塞的系统调用都是取消点；但是pthread_cancel手册声明该库由于与c库结合不好，因而目前c库函数都不是取消点；如果需要将c库函数作为取消点，则需要在c库函数前后分别调用pthread_testcancel();
+            
     线程同步：
         线程同步：由于多个线程共享进程中公共资源；如果同一时刻多个线程同时操作某些资源会导致逻辑错误；此时需要使得线程同步对资源进行操作；
         实现线程同步方式：互斥锁，条件变量，信号量；
         互斥锁：
-            
+            注：加互斥锁的目的是对公共资源的边界做安全防护；
+
             1：初始化锁：Linux中互斥锁的数据类型是pthread_mutex_t,在使用之前需要先进行初始化：
                 静态初始化：
                     pthread_mutex_t mutex = PTHREAD_MUTEX_INITALIZER;
@@ -151,23 +155,54 @@ c-多线程：创建线程
 
             2：加锁：对于共享资源的访问，要进行加锁，如果互斥量已经加锁，那么线程对该资源的访问将会阻塞，直至互斥量解锁；
                 int pthread_mutex_lock(pthread_mutex_t *mutex);
+            
                 int pthread_mutex_trylock(pthread_mutex_t *mutex);
+                备注：1：trylock和lock不同的是，lock获取锁失败将会进入阻塞状态；
+                     2：trylock获取锁失败，将不会进入阻塞状态，而是继续返回线程执行，该函数可以有效避免循环等待锁，并且trylock失败可以释放已经占有的资源；
             3：解锁：在完成对共享资源的访问之后要对互斥量进行解锁；
                 int pthread_mutex_unlock(pthread_mutex_t *mutex);
             4：销毁锁：锁在使用完成之后要销毁，释放资源；
                 int pthread_mutex_destory(pthread_mutex_t *mutex);
+
+                
         条件变量：
+            注：条件变量的目的在于通过条件的结果来确定线程执行顺序；
             1：初始化条件变量：
                 静态初始化：pthread_cond_t cond = PTHREAD_COND_INITIALIER;
                 动态初始化: int pthread_cond_init(pthread_cond_t *cond,pthread_condattr_t *cond_attr);
             2:等待条件成立，释放锁，同事阻塞等待条件变量为真才行。timewait()设置等待时间仍未signal，返回ETIMEOUT(加锁保证只有一个线程wait)
                 int pthread_cond_wait(pthread_cond_t *cond,pthread_mutex_t *mutex);
                 int pthread_cond_timewait(pthread_cond_t *cond,pthread_mutex *mutex,const timespec *abstime);
+                备注：1：wait功能也可以使用while(true)实现，但是wait是将线程挂起，不占用任何cpu资源，而while则会一直占用cpu资源；
+                     2：该函数需要放在while的条件判断中，目的在于获取到信号之后还需再做一次条件判断，之所以需要再做一次条件判断的原因在于pthread_cond_signal在多处理器上可能同时唤醒多个线程，当你只能让一个线程处理某个任务时，其他线程就需要持续wait,因此需要使用while来做条件判断；
+            
             3:激活条件变量：
                 int pthread_cond_signal(pthread_cond_t *cond);
+                    功能：向等待cond信号的线程发送cond信号，激活线程继续运行；
+                    备注：该操作不会产生惊群现象，最多只给一个线程发信号，如果有多个线程都在等待该信号，那么会根据优先级高级来决定那个线程可以接收到信号继续执行，如果优先级一样则根据等待时间长短来获取信号；
                 int pthread_cond_broadcast(pthread_cond_t *cond);
             4：清除条件变量。无线程等待否咋返回EBUSY
                 int pthread_cond_destory(pthread_cond_t *cond);
+            备注：1:条件变量的一般使用模式：
+                    /*设置线程等待信号*/
+                    pthread_mutex_lock(&mutex);
+                        while(条件为假){
+                            pthread_cond_wait(&cond,&mutex);
+                        }
+                        //执行某些操作
+                    pthread_mutex_unlock(&mutex);
+
+                    /*发送信号*/
+                    pthread_mutex_lock(&mutex);
+                        //设置条件为真
+                    pthread_mutex_unlock(&mutex);
+                    pthread_cond_signal(&cond);
+                2：条件变量的使用必须和锁一起进行，用来控制线程之间的执行顺序；
+           重点：3：pthread_cond_wait(&cond,&mutex);
+                    1：该函数用于等待一个信号；是一个原子操作；
+                    2：其执行顺序为：先将mutex解锁，(这样别的线程才能够访问mutex锁住的条件变量进而修改条件)
+                        之后，再将本身的线程/进程投入睡眠状态，等待信号；
+                    3：该函数获取到唤醒信号之后会立即对mutex加锁，之后从阻塞的位置继续向下执行；因此该函数之后执行完必要的操作之后必须要有pthread_mutex_unlock对mutex解锁，否则之后的线程将再无法获取对应的锁；
 
         信号量：
             1：信号量初始化。
