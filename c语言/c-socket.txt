@@ -93,9 +93,9 @@ socket编程流程：
         转换方式：
             in_addr_t inet_addr(const char *string);
                 备注：该函数可以将点分十进制表示法表示的ip地址转换为32位整数；并能够检测ip地址是否有效！
-            int inet_aton(const char *string,struct in_addr * addr);
-                功能：将点分十进制表示的ip地址转换为32位整数，并保存在结构体addr中；
-                参数：string:点分十进制表示的ip地址;addr:需要保存转换之后结果的结构体地址；
+            int inet_aton(const char *string,struct in_addr * in_ddr);
+                功能：将点分十进制表示的ip地址转换为32位整数，并保存在结构体in_addr中；
+                参数：string:点分十进制表示的ip地址;in_addr:需要保存转换之后结果的结构体地址；
         除过通过上述将点分十进制ip地址转换为32位整数来填充sockaddr_in的方式还可以直接设置为INADDR_ANY;
             INADDR_ANY和上述手动填入ip地址相比，其可以自动获取服务器的ip地址，在服务器端推荐采用这种方式，对于客户端则推荐手动填入ip地址；
     7：样例：
@@ -114,7 +114,7 @@ socket编程流程：
             功能：让socket处于监听状态
             参数：
                 sock：socket描述符
-                backlog: 请求队列的最大长度
+                backlog: 请求队列的最大长度(服务器最大允许的客户端连接个数)
     3：请求队列：
         1：在socket正在处理请求时如果有新的请求发来，新的请求将会被放入缓冲区，等当前请求处理完成之后将会从缓冲区中取出请求继续处理，此时缓冲区就称为请求队列；
         2：listen的第二个参数用于指导缓冲区的长度；如果将backlog设置为SOMAXCONN,则交由系统来决定请求队列的长度；
