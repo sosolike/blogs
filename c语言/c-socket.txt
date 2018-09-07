@@ -153,7 +153,7 @@ socket编程流程：
                       nbytes:需要读取的字节个数
 socket的关闭：
     1：完全断开连接：close()/closesocket();
-        备注：1：该函数意味着服务器和客户端将会完全断开连接，即系统将会把socket套接字从内存中清楚，之后将再无法使用该套接字，既不能发sing数据也不能再接收数据；
+        备注：1：该函数意味着服务器和客户端将会完全断开连接，即系统将会把socket套接字从内存中清楚，之后将再无法使用该套接字，既不能发送数据也不能再接收数据；
             2：close/closesocket()被调用之后会立即向对方发送FIN包，这将导致即便输出缓冲区中还有数据，对方也不会再收到了；
     2：不完全断开：只断开一条数据通道，而保留另一条数据通道的方式：shutdown()函数；
         原型：shutdown(int sock,int howto);
@@ -164,8 +164,21 @@ socket的关闭：
                     SHUT_RD：断开输入流，即套接字将无法接收数据（即使数据输入到缓冲区中也将会被抹去），关闭之后将无法调用输入相关函数(read/recv)；
                     SHUT_WR：断开输出流，套接字无法发送数据，但是如果缓冲区中还有数据，这些数据将会被继续发送至网络；
                     SHUT_RDWR:同时断开I/O流，相当于分两次调用shutdown();一次以SHUT_RD为参数，一次以SHUT_WR为参数；
-        备注：1：shutdown只是用来关闭连接，而不是套接字，无论调用多少次shutdown套接字也还是在内存中保存着，并不会清除掉；直到调用close和closesocket()之后才会清除；
+        备注：1：shutdown只是用来关闭连接，而不是套接字，无论调用多少次shutdown套接字也还是在内存中保存着，并不会清除掉；直到调用close/closesocket()之后socket关键字才会清除；
             2：无论是调用close还是closesocket还是shutdown都会向对方发送FIN包；但是shutdown将会在缓冲区中的数据发送完成之后才会发送FIN包；
+socket使用域名：
+    在通讯中也可以使用域名，c语言中通过gethostbyname()函数完成域名和ip的转换：
+    原型：struct hostent *gethostbyname(const char *hostname);
+    参数：域名，
+    返回值：返回struct hostent类型的结构体；
+    struct hostent结构体：该结构体封装了通过域名获取到的ip信息：
+        struct hostent{
+            char *h_name;       //域名名称
+            char **h_aliases;   //域名别名，（指向别名列表的地址，一个域名可能有多个别名）
+            int  h_addrtype;    //ip地址类型（AF_INET/PF_INET或者AF_INET6/PF_INET6）
+            int  h_length;      //ip地址的长度(IPV4的长度为4字节，IPV6的长度为16个字节);
+            char **h_addr_list; //该类型为指向数组的地址，数组中保存了ip地址；（一个域名有可能会对应多个地址）
+        }
             
 socket缓冲区：
     对于发送数据：
@@ -193,9 +206,11 @@ socket缓冲区：
         1：TCP协议在发送数据时，有可能在write写入缓冲区之后就发送数据；
         2：也有可能在缓冲区写入较多数据后才会发送数据；
         3：如果输入缓冲区已满，无法再存入数据，TCP协议将会暂停向输入缓冲区存储数据；
+
     对于TCP-SOCKET,当使用read()/recv()读取数据时：步骤如下：
         1：read函数会先检查缓冲区是否有数据，如果有数据将直接读取指定长度的数据，如果没有数据，read函数将会阻塞至缓冲区有数据！
         2：如果需要读取的数据长度小于缓冲区数据的长度，read函数读取之后剩下的数据将会积压在缓冲区；直至下次被读取出来；
+
     对于缓冲区中数据的边界性：
         由于tcp协议是流式协议，数据无边界：因此：
             1：write向缓冲区中写入的数据是无边界的；
