@@ -228,6 +228,33 @@ TCP的粘包问题：
             除过第一种以外其余现象都称为粘包；
 
     粘包带来的问题：由于粘包现象，导致接收方无法区分不同的数据包，最终将导致读取到的数据或不完整或多余，进而无法正确的处理发送方发送的数据！
+UDP编程：
+    1：UDP协议中并不明确服务器端和客户端，只有一般意义上的发送端和接收端；因此在使用UDP协议的时候并不需要使用listen监听端口，也不必使用accept函数等待发送方的连接；
+    2：UDP协议的收发双方均只需要一个套接字，TCP中是流式数据传输，一个socket即唯一确定了一个数据的发送端和接收端，UDP则不需要，UDP是基于消息的协议，套接字中也不会绑定接收方的地址，因此通过一个套接字即可向多个接收方发送消息；
+    3：UDP编程：
+        1：创建socket：(#include <sys/>socket.h>)
+            int socketa = socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
+        2：绑定地址并发送数据：
+            ssize_t sendto(int sock,void *buff,size_t bytes,int flags,struct sockaddr *to,socklen_t addrlen);
+            功能：绑定地址，参数，并发送消息
+            参数：sock：socket
+                 buff：待传输数据的缓冲地址值
+                 bytes：待传输的数据长度
+                 flags：可选参数，如果无，则传递0
+                 to：存有目标地址信息的sockaddr结构体变量的地址结构；
+                 addrlen：地址结构的长度；
+        3：接收数据：
+            ssize_t recvfrom(int sock,void *buff,size_t nbytes,int flags,struct sockaddr *from,socklen_t *addrlen);
+            功能：接收指定地址的消息
+            参数：sock: socket文件描述符；
+                 buff:用于保存接收数据的缓冲地址值；
+                 nbytes：可接收最大字节数；
+                 flags：可选参数，若无则传递0；
+                 from：存放有发送端地址信息的结构体；
+                 addrlen：保存参数from的结构体变量长度的变量地址值；
+           
+
+
 
 
 
