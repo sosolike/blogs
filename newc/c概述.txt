@@ -45,6 +45,9 @@
         或者：
         gcc -o test.out test.o ./dir/myfile.o
         链接过程导入源程序中使用到的库函数代码时只会导入使用到的部分，并不会将整个库函数中所有代码导入；
+四：编译器：
+    linux上的常用的编译器为：gcc
+    windows上常用的编译器为：Cygwin
     
     
     
