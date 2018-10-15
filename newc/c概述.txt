@@ -385,8 +385,8 @@ c基本语法+c流程控制+c运算+c函数
         4：基于第三条：递归的调用速度是低于循环的，而且占用额外的内存空间；并且递归的深度取决于内存的大小；
         
   c语言中的函数库：       
-    基本库：<stdio.h>、<ctype.h>、<stdlib.h>、<string.h>
-    常用库：<assert.h>、<limits.h>、<stddef.h>、<time.h>
+    基本库：<stdio.h>、<ctype.h>、<stdlib.h>、<string.h>、<time.h>
+    常用库：<assert.h>、<limits.h>、<stddef.h>、
     其他库：<float.h>、<math.h>、<error.h>、<locale.h>、<setjmp.h>、<signal.h>、<stdarg.h>         
 
 
