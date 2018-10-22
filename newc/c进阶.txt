@@ -392,6 +392,44 @@ c文件操作：
                         理论上每次最多读取size*count个字节的数据，存储读取到的数据的内存块的大小至少是size*count;如果实际读取到的数据超过size*count的话，则会占用紧跟着申请到的内存后面；
                 3：size_t 是在stddef.h头文件中使用typedef定义的数据类型，表示无符号整数，也即非负数；常用来表示数量
                 4：返回值：读取成功返回读取成功的块数，即count数；如果返回值小于count，对于fread来说可能读到了文件末尾，也可能发生了错误；
+            4：从任意位置开始读写数据
+                1：rewind()用来将位置指针移动到文件开头；
+                   原型：void rewind(FILE *fp);
+                   参数：fp：文件指针；
+                2：fseek()用来将指针移动到指定的任意位置：
+                   原型：int fseek(FILE *fp,long offset,int origin);
+                   参数：fp：文件指针；
+                        offset：偏移量
+                        origin：为起始位置；SEEK_SET|0(文件开头);SEEK_CUR|1(当前位置);SEEK_END|2(文件末尾)；
+                3：ftell()获取文件指针距离文件开头的字节数；原型为：
+                    原型：long int ftell (FILE * fp);
+                    参数：fp：文件指针，必须以二进制打开；
+                    返回值：文件指针距离文件开头的字节数
+                    c语言并未提供获取文件大小的函数，因此需要使用fseek和ftell来获取文件大小；
+                4：fgetops()获取文件指针当前位置：
+                    原型：fgetops(FILE *fp,fpos_t &fpos);
+                    返回值：如果获取成功则会将当前指针的位置赋值给fpos;
+                5：fsetpos()设置文件指针位置：
+                    原型：fsetops(FILE *fp,fpos_t &fpos);
+                    
+
+        4：文件写入：
+            1：以字符形式写入：fputc();
+                原型：int fputc(int ch,FILE *fp);
+                参数：ch为要写入的字符，fp为文件指针；
+                返回值：成功时返回写入的字符，失败时返回EOF；
+
+            2：以字符串的形式写入文件：
+                原型：int fputs(char *str,FILE *fp);
+                参数：str为需要写入的字符串，fp为文件指针；
+                返回值：写入成功返回非负数，失败返回EOF；
+                
+            3：以数据块的形式写入文件：
+                原型：size_t fwrite ( void * ptr, size_t size, size_t count, FILE *fp );
+                参数：ptr:需要写入数据块的内存指针地址，存放的是待写入的数据；size表示每个数据块的字节数；count表示要读写的数据块的块数；fp表示文件指针；
+                返回值：写入成功返回块数，如果返回的块数小于写入的块数，则肯定发生了错误，可以使用ferror()检测；
+
+
 
             
             
