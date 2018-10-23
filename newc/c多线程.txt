@@ -1,0 +1,103 @@
+c语言多线程：
+    1：c语言在linux上的多线程编程需要使用POSIX提供的线程库--pthread.h;
+    2：c语言进行多线程编程时需要引入pthread.h线程库。线程库中的函数全部由pthread_开头；
+    3：POSIX-可移植操作系统接口简称，由IEEE开发，POSIX标准定义了操作系统应该为应用程序提供的接口集，目的在于使程序在源码上具备系统的可移植性；
+Linux上pthread线程之间的运行关系：
+    1：main函数所在的线程称之为主线程；所有的子线程只能在主线程中创建，子线程创建完成之后和主线程地位相同；
+    2：主线程中创建了子线程，在不使用pthread_join时，主线程结束整个进程也就结束，子线程将有可能没有机会执行或者执行不完全；
+    3：如果主线程中创建了子线程，并且使用pthread_join后，主线程将会等待pthread_join过的线程执行完毕后继续执行；
+    4：多个pthread_join的子线程将会一起竞争cpu时间片；
+Linux上pthread线程之间的结束关系：
+    1：如果在主线程中，即main函数中调用了return或者exit函数，则主线程退出，整个进程也将终止运行；其他属于该进程的线程全部退出结束运行；
+    2：在任何一个线程中调用exit()函数都会导致进程结束，其余未运行完毕的线程也将结束退出；
+    3：任何一个线程中调用pthread_exit()仅仅只会终止当前线程，不影响进程的运行，不影响其他线程的运行；
+    4：如果在主线程中调用pthread_exit()来退出主线程；则仅仅是主线程结束运行，进程不会结束，进程内的其他线程也不会结束，直到所有的线程结束进程才会终止；
+    5：保证子线程能够执行完毕再退出整个进程有以下两种方式：
+        1：在主线程结束时调用pthread_exit();只结束当前主线程，不影响到进程以及属于进程的其他线程；
+        2：对于处于PTHREAD_CREATE_JOINABLE状态的线程使用pthread_join来阻塞主线程，直到子线程执行完毕；
+Linux上线程结束后资源释放问题：
+    1：线程创建之后要么是PTHREAD_CREATE_JOINABLE状态，要么是PTHREAD_CREATE_DETACH状态；
+    2：如果线程是PTHREAD_CREATE_JOINABLE状态，那么线程结束后线程所占用的资源必须通过pthread_join()来释放；
+    3：如果线程是PTHREAD_CREATE_DETACH状态，那么线程结束后会自动释放所占用的资源；
+
+Linux上多线程之创建线程：
+    创建方式：
+        pthread_create(pthread_t *thread,const pthread_attr_t *attr,void *(*thread_fun)(void *),void *args);
+        参数：thread------创建好的线程id，类型为pthread_t类型；
+             attr--------用于设置线程运行状态的属性；
+             thread_fun--线程执行的函数
+             args--------线程被调用的函数传入的形参；
+        参数说明：
+            thread:当前创建的线程id,类型为pthread_t；类型定义为typedef unsigned long int pthread_t;
+            thread_fun:当前线程中需要执行的函数：
+                函数声明类型：void *fun(void *args);
+                备注：1：函数的返回值类型必须是void *;改返回值可以在pthread_join中获取；
+                     2：函数接收到的参数是void *类型，因此在函数内部使用参数时需要强制转换为指定的数据类型；
+            args:传给当前线程中执行的函数的参数；被执行函数只能接收一个参数的指针地址，因此，如果有多个参数时使用结构体来包含，将结构体地址转换成void *类型并传入；并在函数内部使用时再转换为指定的结构体类型；
+            attr：设置当前线程运行状态的属性：该属性是struct pthread_attr_t类型的结构体，包含以下几项：
+                1：__detachstate:
+                    1：线程创建完成之后有两种状态PTHREAD_CREATE_DETACH和PTHREAD_CREATE_JOINABLE两种；
+                    2：对于PTHREAD_CREATE_DETACH状态的线程，其资源由线程自行管理；
+                    3：对于PTHREAD_CREATE_JOINABLE状态的线程，其资源由进程管理；
+                    4：该参数表示新线程是否与进程中其他线程脱离同步，默认为PTHREAD_CREATE_JOINABLE状态；
+                    2：如果设置为1则脱离同步，新线程将处于PTHREAD_CREATE_DETACH状态；
+                    3：如果设置0或者使用默认值，新线程将处于PTHREAD_CREATE_JOINABLE状态；
+                    4：一旦设置线程脱离同步为PTHREAD_CREATE_DETACH状态之后，将不能再恢复到PTHREAD_CREATE_JOINABLE状态；
+                2：__schedpolicy,
+                    1：表示新线程的调度策略，包括SCHED_OTHER(正常，非实时)、SCHED_RR(实时，轮转法)和SCHED_FIFO(实时、先入先出)，
+                    2：默认是SCHED_OTHER,后两种调度策略仅对root用户有效；
+                    3：运行时可以通过pthread_setschedparam()来改变；
+                3：__schedparam，
+                    1：struct sched_param结构，目前仅有一个sched_priority整型变量表示线程的运行优先级。
+                    2：这个参数仅当调度策略为实时（即SCHED_RR或SCHED_FIFO）时才有效，
+                    3：可以在运行时通过pthread_setschedparam()函数来改变，缺省为0。  
+                4：__inheritsched，
+                    1：有两种值可供选择：PTHREAD_EXPLICIT_SCHED和PTHREAD_INHERIT_SCHED，前者表示新线程使用显式指定调度策略和调度参数（即attr中的值），而后者表示继承调用者线程的值。
+                    2：缺省为PTHREAD_EXPLICIT_SCHED。 
+                5：__scop，
+                    1：指定线程间竞争cpu的范围；包括仅在当前进程中竞争和系统中所有的进程中竞争；
+                    2：POSIX实现了定义了两种标准，PTHREAD_SCOPE_SYSTEM以及PTHREAD_SCOPE_PROCESS，
+                    3：目前linuxThreads仅实现了pthread_SCOPE_SYSTEM；即和全部的线程竞争cpu执行时间；
+
+Linux多线程之等待线程：可以让当前线程挂起，等待指定线程运行完毕之后从挂起处继续执行当前线程；
+    等待方式：pthread_join();
+    功能：
+        1：等待指定线程运行完毕，然后继续运行当前线程；
+        2：管理PTHREAD_CREATE_JOINABLE状态的线程资源；并接收线程的返回值；
+    原型：int pthread_join(pthread_t thread,void **retval)
+    参数：thread:为指定需要等待的线程id,retval是thread_exit第一个参数，也即线程的返回值；
+    返回值：0代表成功，失败则返回错误号；
+    说明：1：该函数可以阻塞当前线程，等待指定线程运行，等指定线程运行完毕之后才会返回当前线程继续执行；
+         2：如果多个线程使用pthread_join(),那么被等待的线程将会一起争用cpu时间片
+         3：一个线程可以等待多个线程，但是一个线程只能被一个线程等待，否则被等待的第一个线程接收到信号返回成功，其余则接收到返回的错误码；
+         4：pthread_join()只能对PTHREAD_CREATE_JOINABLE状态的线程有效，对于PTHREAD_CREATE_DETACH状态的线程则无法使用pthread_join来等待线程；
+         5：pthread_join另一个作用在于回收PTHREAD_CREATE_JOINABLE状态的线程所占用的资源；
+Linux多线程之分离线程：使线程的资源由线程自己管理；
+    分离方式：pthread_detach(pthread_t thread);
+    功能：分离当前线程，将当前线程状态设置为PTHREAD_CREATE_DETACH状态；
+    原型：int pthread_detach(pthread_t thread)
+    参数：需要被分离的线程id；
+    返回值：成功返回0,失败返回错误码
+    说明：1：该函数可以在主线程创建完成子线程之后调用，也可以在线程内部调用(分离线程自己)；
+         2：线程一旦分离之后将不能再使用pthread_join()来等待该线程；
+         3：如果线程处于分离状态之后，线程所占用的资源在线程结束时自行释放，无需由进程来管理；
+Linux多线程之结束线程：
+    线程退出时有两种方式：
+        1：线程在其主题函数运行结束退出时在佛那个终止；
+        2：在当前线程内部执行pthread_exit()来终止；
+    线程结束函数：pthread_exit();
+        功能：退出当前线程，用于在当前线程中的执行函数中调用；可以结束线程自己，也可以结束其他线程；
+        原型：void pthread_exit(void * value_ptr)
+        参数：该函数代表当前线程中执行的函数的返回值；在线程结束时传入，该值可以使用pthread_join的第二个参数获取；
+        返回值：无；
+        说明：该函数返回时，被等待线程的资源被回收；
+
+
+
+
+
+
+
+
+
+
