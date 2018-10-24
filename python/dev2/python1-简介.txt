@@ -1,0 +1,18 @@
+python简介：
+    语言类型：python是解释执行的脚本编程语言；
+                1：python代码需要解释器解释执行；
+                2：python是脚本编程语言(动态语言)，而非静态语言；
+    编程方式：python提供三种编程方式：
+                1：面向过程编程；
+                2：面层对象编程
+                3：交互试编程；
+    功能范围：1：web开发
+            2：数据接口
+            3：爬虫等其他范围
+python源程序：
+    1：python源程序是以.py作为后缀的；
+    2：python分为2.x和3.x版本，且互不兼容；
+    3：python是解释执行的脚本编程语言，且python语言本身以及python解释器均是开源的；因此存在多个不同实现的python解释器；同一段代码由不同的Python解释器执行的结果有可能不一样；Cpython是官方所使用的解释器；
+python安装：
+    windows上安装的时候需要将python的执行路径添加进环境变量；
+    linux上则可以在http://www.python.org/download上下载源码编译安装；
