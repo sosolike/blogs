@@ -1,10 +1,15 @@
 1：python处理json需要引入json包：
     import json
 2：python将数据编码为json格式：
-    json.dumps()
+    json.dumps(var)
 3：python将json格式字符串解码：
-    json.loads()
+    json.loads(var)
 4：备注：
    1：python支持多种数据类型转换为json;
-   2：推荐实际应用中只转换dict字典，其他转换为json并无任何实际意义；
+        如：
+            list/tuple   =json.dumps()>   str格式的list/tuple   =json.loads()>   list
+            str/number   =json.dumps()>   str/str格式的number   =json.loads()>   str/number
+            dict         =json.dumps()>   json格式的字符串       =json.loads()>   dict
+
+   2：推荐实际应用中只转换dict字典，其他转换为json字符串并无任何实际意义；
 
