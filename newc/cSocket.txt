@@ -166,20 +166,18 @@ c---socket编程：
                 ssize_t：signed int;
                 size_t: unsigned int;
             功能：该函数将会从socket中读取nbytes个字节存储缓冲区buf中；
-
-
-
-    
-
-
-
-                         
-
-                
-
-
-
-        
-
-
-
+    7：关闭套接字：
+        1：完全断开连接：close();
+            备注：1：该函数意味着服务器和客户端将会完全断开连接，即系统将会把socket套接字从内存中清楚，之后将再无法使用该套接字，既不能发送数据也不能再接收数据；
+                2：close被调用之后会立即向对方发送FIN包，这将导致即便输出缓冲区中还有数据，对方也不会再收到了；
+        2：不完全断开：只断开一条数据通道，而保留另一条数据通道的方式：shutdown()函数；
+            原型：shutdown(int sock,int howto);
+                参数：sock,需要断开的socket标识，
+                    howto,需要断开的方式；
+                取值：sock：代表int类型的标识；
+                    howto：有以下取值方式：
+                        SHUT_RD：断开输入流，即套接字将无法接收数据（即使数据输入到缓冲区中也将会被抹去），关闭之后将无法调用输入相关函数(read/recv)；
+                        SHUT_WR：断开输出流，套接字无法发送数据，但是如果缓冲区中还有数据，这些数据将会被继续发送至网络；
+                        SHUT_RDWR:同时断开I/O流，相当于分两次调用shutdown();一次以SHUT_RD为参数，一次以SHUT_WR为参数；
+            备注：1：shutdown只是用来关闭连接，而不是套接字，无论调用多少次shutdown套接字也还是在内存中保存着，并不会清除掉；直到调用close/closesocket()之后socket关键字才会清除；
+                2：无论是调用close还是closesocket还是shutdown都会向对方发送FIN包；但是shutdown将会在缓冲区中的数据发送完成之后才会发送FIN包；
