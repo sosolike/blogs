@@ -1,0 +1,71 @@
+python常见的两种错误：
+    程序语法错误异常、程序运行错误异常：系统错误异常
+    根据运行逻辑需要，手动抛出错误异常：用户错误异常
+
+错误处理方式：
+    1：默认情况下如果没有任何捕获错误异常信息的设置，这些错误异常信息会被一直上抛至python解释器；解释器会将错误信息打印至控制台；
+    2：手动捕获错误异常信息：try...except
+
+使用try...except
+    基本语法：
+        try:
+            normal_code...
+        except error_class as e:
+            slave_error_code...
+    备注：
+        1：try语句块包含正常需要被执行但是有可能出错的代码，
+        2：except在于：
+            1：可以捕获指定类型的错误异常，捕获到的则是错误异常的实例对象，并可以为该实例对象设置别名；
+            2：可以在except中通过错误异常对象调用错误异常类的实例属性或者实例方法来获取错误详情；
+            3：可以在except中处理捕获到的错误异常，也可以使用raise继续向上抛出异常；
+            4：如果发生错误异常并且被except捕获则进入except中执行错误异常处理代码，否则会一直上抛，直至被python解释器捕获；
+
+        2：try..except..可以带上else：
+            try:
+                normal_code...
+            except error as e:
+                slave_error_code...
+            else:
+                some_code...
+        如果未发生任何异常时，执行完try代码块将会进入else代码块继续执行：
+    
+        3：try..except还可以带上finally语句块，无论是否发生错误，try...except语句块执行完成后总会进入finally中执行；
+
+        4：python中的异常都是class，均直接或间接继承自BaseException;except捕获到的是一个错误异常类对象；
+
+        5：由于错误异常种类较多，因此可以使用多层except来捕获不同的错误异常信息，由上至下，错误类型范围应该逐渐增大；否则错误范围较小的永远无法被捕获；也可使用Exception类来捕获任意可能的错误异常
+
+        6：except可以跨越多层调用，只需要在需要处理的地方捕获并处理即可，无需在源头处理；
+
+        7：如果except捕获了错误，但是不知道如何处理，则可以使用raise把错误原样抛出给上层处理；也可以使用raise抛出一个新的错误异常对象；
+
+手动抛出错误异常：
+    1：python中可以通过raise抛出错误异常；
+    2：raise 抛出的是错误异常类的实例对象；
+    3：语法：raise Exception()；
+    
+自定义异常类：
+    1：自定义异常类本质上就是一个普通的类，只是该类在功能上用来处理错误异常；
+    2：自定义异常类必须继承自BaseException,一般直接继承Exceptio即可；
+    3：自定义异常类在使用时必须先导入至当前脚本；在使用时通过raise抛出，并在except中可以捕获；
+    4：自定义异常类实例：
+        eg:
+            #错误异常处理:自定义一个参数类，专门用于抛出用户传入的参数异常
+                class ParamException(Exception):
+                    errorList = ("未知错误","参数为空","参数不合法","参数长度不正确")
+                    
+                    def __init__(self,errorCode=0):
+                        self.errorMsg = ParamException.errorList[errorCode]
+            #使用这个异常类：
+                a=None
+                try:
+                    if a==None:
+                        raise ParamException(3)
+                except ParamException as e:
+                    print(e.errorMsg)
+            通过这种方式处理可以让触发用户错误异常更加规范；易于维护；
+
+    
+
+    
+    
