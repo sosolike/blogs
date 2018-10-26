@@ -1,0 +1,72 @@
+python操作日期时间有三个模块：time,datetime,Calendar
+1:time模块：
+    1：time模块中可以获取三种格式的时间：
+             时间戳：time.time()
+        本地时间元祖：time.localtime()
+     世界标准时间元祖：time.gmtime()
+    注：1：一般常用时间戳和本地时间
+
+    2：解析时间戳
+     将时间戳解析成本地时间元祖：time.localtime(time_stamp)
+     将时间戳解析成标准时间元祖：time.gmtime(time_stamp)
+
+    3:时间信息和字符串之间的转换
+        time.ctime(time_stamp)  ：时间戳转英文格式字符串（本地时间字符串）
+        time.asctime(localtime) :本地时间信息元祖转英文字符串
+        time.strftime("%Y-%m-%d, %H:%M:%S, %w", local_time)：本地时间信息元祖转格式化字符串
+
+2:datetime模块：
+    1：datetime.date类：
+        创建date对象：
+            date_obj = datetime.date.today()
+            date_obj = datetime.date.fromtimestamp(time_stamp)
+        date对象属性：
+            date_obj.day
+            date_obj.month
+            date_obj.year
+        date对象的方法：
+            date_obj.isoweekday():返回日期是星期几[1-7]
+            date_obj.isoformat()：返回‘YYYY-MM-DD'格式的日期字符串
+            date_obj.strftime(format,struct_time);格式化日期时间信息
+    
+    2：datetime.time类：    
+        time对象的创建：
+            time_obj = datetime.time(hour, [minute[, second, [microsecond]]])   :小时是必须的，其余是可选参数
+        time对象的属性：
+            time_obj.hour
+            time_obj.minute
+            time_obj.second
+            time_obj.microsecond
+        time对象的方法
+            time_obj.strftime(format,struct_time)：时间信息格式化
+            time_obj.isoformat()：返回一个‘HH:MM:SS.%f'格式的时间字符串
+
+    3：datetime.datetime类:
+        datetime类对象的创建：
+            datetime_obj = datetime.datetime.today()
+            datetime_obj = datetime.datetime.now()
+            datetime_obj = datetime.datetime.fromtimestamp(time_stamp)
+            datetime_obj = datetime.datetime.combine(date,time)：将date对象和time对象整合成一个datetime对象
+        datetime属性：
+            datetime_obj.year
+            datetime_obj.month
+            datetime_obj.day
+            datetime_obj.hour
+            datetime_obj.minute
+            datetime_obj.second
+            datetime_obj.microsecond
+        datetime方法：
+            datetime_obj.date()：获取一个date对象
+            datetime_obj.time()：获取一个time对象
+            datetime_obj.timetuple()：返回一个tuple
+            datetime_obj.isoweekday():返回星期几
+            datetime_obj.strftime(format)：格式化日期时间信息
+3：根据日期时间差获取日期时间信息：
+        使用方式：
+                datetime_obj + datetime.timedelta(days=3/days=-3) 
+                datetime_obj + datetime.timedelta(housr=3/hours=-3)
+                datetime_obj + datetime.timedelta(seconds=3/seconds=-3)
+                datetime_obj + datetime.timedelta(minutes=3/minutes=-3)
+            或者任意组合
+                1:仅支持：days/hours/minutes/seconds
+                2:正数代表未来时间，负数代表过去时间；
