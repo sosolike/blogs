@@ -1,0 +1,56 @@
+python中操作目录或者文件需要使用os模块
+
+1：导入os模块：import os
+
+目录操作：
+    1：创建目录:
+        os.mkdir(path)：在指定位置创建一个目录
+        os.makedirs():创建多级目录
+    2：删除目录：
+        import os
+        os.rmdir(path)：删除指定位置的目录（必须是空目录）
+
+        import shutile
+        shutile.rmtree(path)：递归删除指定位置的目录（可以删除非空目录）
+
+    3：读取目录：
+        os.listdir(path)：返回指定路径指向的文件夹包含的文件或者文件夹的名字列表；
+    4：获取当前的工作目录：
+        os.getcwd();返回当前的工作目录
+    5：重命名当前目录
+        os.rename("oldname","newname")
+
+    5：连接路径：
+        os.path.join(path1,path2)：尽量不要直接拼路径，而是使用这个函数来适应各种不同的操作系统；
+    6：拆分路径：
+        os.path.split(path)：拆分结果是两部分：前一部分一定是路径，后一部分一定是文件加扩展名；
+    7：获取文件扩展名：
+        os.path.splitext(path)：直接返回文件的扩展名
+    8：获取路径名：
+        os.path.dirname()
+    9：获取文件名：
+        os.path.basename()
+    
+文件操作：
+    检测类：
+    os.path.isfile()    检测是否是文件
+    os.path.isdir()     检测是否是目录
+    os.path.isabs()     检测目录或者文件是否是绝对路径
+    os.path.exists()    检测文件或者目录是否存在
+    文件信息获取类：
+    os.path.getsize()   获取文件大小
+    os.path.stat()      获取文件属性
+    os.path.getatime(filePath)  :获取文件访问时间
+    os.path.getctime(filePath)  :获取文件创建时间
+    os.path.getmtime(filePath)  :获取文件修改时间
+    
+    1：删除文件：
+        os.remove(path)：删除文件
+    2：重命名文件：
+        os.rename(from,to)重命名文件；
+    3：移动文件
+        import shutil 
+        shutil.move("oldpath","newpath")
+    4：复制文件：
+        shutil.copy("oldpath","newpath")
+    
