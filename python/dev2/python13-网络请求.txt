@@ -1,0 +1,68 @@
+python---网络请求
+1：python3发起网络请求使用urllib包；python2发起网络请求使用urllib和urllib2包；
+2：python3使用urllib发起请求：
+    1：通过urlopen直接发起简单请求：(仅仅包括请求地址，请求数据，超时时间)
+        1：导入request模块：from urllib import request
+        2：请求方式：   request.urlopen(url,data=None,timeout)
+        3：参数：
+                url：请求地址
+                data：需要发送的请求数据；
+                timeout：本次请求的超时时间
+
+        4：data说明：
+            1：如果data是空值，则为GET请求，如果data不为空，则为post请求；
+            2：data只能是byte类型的数据
+            3：一般有两种数据格式：
+                1：字典：处理方式：parse.urlencode(dict).encode("utf-8")；(需要from urllib import parse模块)
+                2：查询字符串：处理方式："a=a&b=b".encode("utf-8)即可；
+        
+        5：返回值：返回一个response对象
+
+        6：获取返回值：
+            对数据操作：responce.read()/readline()/readlines()/fileno()
+            获取响应头信息：responce.info()
+            获取http状态码：responce.getcode()
+            获取发起请求的url：responce.geturl()
+            获取某个具体的请求头信息：responce.getheader()
+            返回请求头信息列表：responce.getheaders()
+
+        7：数据读取的异同：
+            对于读json字符串：read()/readline()/readlines()/fileno()完全一样;
+            对于普通的字符串：read()返回所有内容
+                            readline()返回一行内容
+                            readlines()读取所有内容，存放在dict中一个项存放一行；
+                            fileno()返回响应字符串的个数
+            读取到的数据都需要使用decode("utf-8")来解码，否则是字节类型的数据
+    
+    2：通过request模块的Request对象使用urlopen发送复杂请求：(请求地址，请求数据，请求头信息，请求方法)
+        1：使用方式：
+            导入需要使用的模块
+                1：from urllib import request
+                2：from urllib import prase
+            创建request对象：
+                requestObj = request.Request(url,data,headers,method)
+                参数：url：请求地址；
+                     data：需要发送的请求数据，处理方式同1；
+                     headers：请求头信息，使用dict;headers={"Cookie":"a=1;b=2"}
+                     method：'POST'/'GET'
+            发送请求：
+                response = request.urlopen(requestObj);
+                返回值：返回响应对象
+            获取返回值：
+                对数据操作：responce.read()/readline()/readlines()/fileno()
+                获取响应头信息：responce.info()
+                获取http状态码：responce.getcode()
+                获取发起请求的url：responce.geturl()
+                获取某个具体的请求头信息：responce.getheader()
+                返回请求头信息列表：responce.getheaders()
+                (同1中的数据获取)
+            示例：
+                reqData = {"name":"tom","age":233}
+                req_data = parse.urlencode(reqData).encode("utf-8")
+                cookies = {"Cookie":"a=1;b=2"}
+                req = request.Request("http://a.com/a.php",data=req_data,headers=cookies,method="POST")
+                res = request.urlopen(req)
+                print(res.read().decode("utf-8"))
+            
+            
+
