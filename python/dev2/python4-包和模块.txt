@@ -40,10 +40,10 @@
         1：方便对模块文件组织管理，
         2：包可以产生的新的作用域；减少变量名模块名的冲突
     导入包中的模块：
-        import pack1.pack2.pack3.模块名.py  
+        import pack1.pack2.pack3.模块名 
             此时访问模块的方法需要使用全名去访问
             如：pack1.pack2.pack3.模块名.fun
-        from pack1.pack2 import 模块名.py 
+        from pack1.pack2 import 模块名
             此时访问模块的方法和直接导入模块时访问方法的方式一致；
             如：模块名.fun
         from pack1.pack2.模块名 import fun
