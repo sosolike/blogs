@@ -86,6 +86,76 @@ python面向对象1：
         3：对于__name的属性和方法如果类外需要访问推荐采用set和get方法；
 
         4：注意：python中对于__name__的属性则和__name的属性不同；在python中以__name__格式的属性或者方法是特殊的，在类外部可以访问；所以如果需要对类属性加限制不要使用__name__的格式！
+    类之间的继承关系：
+        1：python中的继承需要在类名后面的括号中填写需要继承的类，如果继承多个类，则多个类名之间使用,隔开；
+        2：python中是支持多继承的，如：class ClassName(ParentClassA,ParentClassB)
+        3：继承的结果：子类一旦继承父类之后，将会拥有父类所有的实例属性以及方法；
+        4：子类访问父类属性以及方法：
+          在类内部访问：
+            1：对于属性：
+                静态属性：
+                    ParentClassName.attr_name  即可获取父类属性；
+            2：对于方法：
+                实例方法：
+                    ParentClassName.fun_name(self,params)
+                静态方法：
+                    ParentClassName.fun_name(params)
+                类方法：
+                    ParentClassName.fun_name(params)
+          在类外部：只能通过子类访问父类的实例属性和实例方法：
+                1：子类实例只能访问实例属性以及实例方法时会优先调用子类内部的实例属性和实例方法；
+                2：如果子类没有实例属性和实例方法，将会调用第一个父类的实例属性以及实例方法；
+        5：子类构造函数与父类构造函数：
+            1：如果子类没有声明构造函数，创建实例的时候将会调用第一个父类的构造函数；
+            2：如果子类有构造函数，将会直接调用子类的构造函数；
+            3：在子类中也可以通过ParentClassName.__init__(self)来调用父类的构造函数；
+        6：实例动态绑定属性：
+            1：在类外部可以通过实例动态为实例绑定属性以及方法，但是，通过这种方式绑定的属性以及方法只对该实例有效，对其他实例无效；如：
+                绑定属性：sobj.attr_name = 'name_value'
+                绑定方法：from types import MethodType
+                         sobj.fun_name = MethodType(bind_fun_name,sobj)
+            2：在类外部也可以通过类为类本身绑定方法或者属性：
+                绑定属性：ClassName.attr_name = "name_value"
+                绑定方法：ClassName.fun_name = bind_fun_name
+            4：通过__solts__可以限制通过实例动态添加的属性：如：
+                class Student(object):
+                    __slots__ = ('attr_a','attr_b')
+                至此，通过该类的实例仅仅能够添加attr_a属性和attr_b属性
+        7：@property将为属性添加geter和seter方法：
+            如果需要限制一个属性的设置和调用过程可以通过两种方式：
+                1：将该属性设置为私有属性；并单独提供set方法和get方法；实例仅能通过get个set方法来设置该属性的值；
+                2：通过@property装饰器，该装饰器可以将一个方法修饰为同名属性的get方法；并同时产生一个方法名.setter的装饰器，通过方法名.setter装饰器可以将同名方法修饰为set方法；如：
+                    class Worker(object):
+                        @property
+                        def age(self):
+                            return self.age
+                        @age.setter
+                        def age(self,age_data):
+                            return self.age = age_data
+                    
+                如果只提供了@property修饰的方法，则相当于只为该属性提供了只读属性；
+        8：定制类----特殊属性的使用  
+            __str__：
+                python中打印一个对象时默认显示该对象的详细信息(类名,id等)，如果在打印时需要显示自定义信息，可以实现__str__方法，该方法的返回值即是打印对象时的值；如：
+                    class Test(object):
+                        def __str__():
+                            return "object info"
+                    t = Test()
+                    print(t)   #object info
+            __repr__：
+                python中直接调用实例对象，同样也会打印对象的详细信息(类名，id等)，如果在打印时需要显示自定义信息，可以实现__repr__方法，该方法的返回值即是打印对象时的值；如：
+                    class Test(object):
+                        def __repr__():
+                            return "object info"
+                    t = Test()
+                    t        #object info
+
+
         
+        
+        
+                
+    
+
 
 
