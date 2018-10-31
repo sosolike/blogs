@@ -14,6 +14,9 @@ python操作日期时间有三个模块：time,datetime,Calendar
         time.ctime(time_stamp)  ：时间戳转英文格式字符串（本地时间字符串）
         time.asctime(localtime) :本地时间信息元祖转英文字符串
         time.strftime("%Y-%m-%d, %H:%M:%S, %w", local_time)：本地时间信息元祖转格式化字符串
+    
+    4：程序休眠：
+        time.sleep(seconds) ：程序将会休眠sencods秒
 
 2:datetime模块：
     1：datetime.date类：
