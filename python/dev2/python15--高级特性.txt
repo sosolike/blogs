@@ -1,0 +1,82 @@
+切片：序列的截取：
+    即对于字符串（string），列表（list）,元祖（tuple）,字典（dict）截取区间元素的方法：
+    name[n]：取第n个元素
+    name[n:]：从第n个元素开始取到最后
+    name[n:m]：从第n个元素取到第m个元素
+    name[:m]：从第0个元素取到第m个元素
+    name[n:m:span]：从第n个元素取到第m个元素，每隔span个元素取一次；
+    注意：索引从左向右起始值是0，从右向左起始值是-1；
+range函数：range函数是一个生成器，可以生成指定整数范围的数据迭代对象
+    python2.x中 range返回一个整数列表:range(start,stop,step)
+    python3.x中 range返回一个整数列表对象：range(start,stop,step)
+
+列表生成式：
+    目的：可以用来生成列表或者元祖；
+    使用： 
+        生成列表：
+            list(range(1,12))：可以通过遍历创建列表
+            list(tuple)：可以将元祖转换为列表
+        生成元祖：
+            tuple(range(1,12))：可以通过遍历创建元祖
+            tuple(list)：可以将列表转换为元祖
+
+数据集合：
+    数据集合：1：将一系列的已经存在的数据聚集在一起就称为一个数据集合，如list,dict,set,tuple，str等
+             2：能够产生一系列数据的产生规则,执行规则可以生产一系列的数据，也称为数据集合,又名生成器
+生成器：
+    数据集合的创建：
+        1：有的数据集合中的每一个元素是已经创建好的，可以根据元素的位置拿取元素本身；
+        2：有的数据集合中的每一个元素并没有创建好，但是每一个元素的创建规则是已知的，则可以通过执行创建规则来创建每一个元素；这种创建元素的规则就称为生成器；
+    python中的生成器：
+        1：通过(x表达式 for x in range(start,stop,step))来创建生成器，数据即为x表达式的计算值；如：
+            g = (x+x for x in range(1,6,2))
+        2：通过yield关键字创建生成器，利用yield关键字的特性，在需要返回每一个计算结果的地方使用yield返回即可：如：
+            def fib(max):
+                n,a,b = 0,0,1
+                while n < max:
+                    yiled b
+                    a,b = b,a+b;
+                    n=n+1
+                return 'done'
+
+    生成器生成的结果的获取：
+        1：通过next(g)来获取下一个值；每次到用next(g)就会返回下一个元素，如果没有元素时将会抛出StopIteration错误；
+        2：通过for循环遍历生成器，因为生成器本质上也是可迭代对象；
+
+可迭代对象：
+    如果一个数据集合能够使用for循环将其中的每一个数据遍历出来，那么数据集合就称为可迭代对象(Iterable)；
+    python中可以通过isinstance()来判断一个对象是否是Iterable对象；
+迭代器：
+    可以被next函数调用，并不断返回下一个值的对象称为迭代器：Iterator
+    可以使用isinstance()来判断一个对象是否是Iterator对象；
+备注：
+    1：生成器都是Iterator对象；但是list,dict,tuple,str是Iterable对象，并非Iterator对象；
+    2：将Iterable对象转换为Iterator对象可以使用iter()函数；
+    3：Iterator下一个值的计算是惰性的，只有不断调用next函数才能获取下一个值，但是Iterable则代表的是一个完整的数据集合；
+
+yield关键字
+    yield关键字和return本质上一样，都是结束当前程序的运行；但是有以下几个不同点：
+        1：yield关键字是'暂停'函数的执行，即使用yield之后可以返回需要返回的值，但是同时也会记住程序执行的位置，下次执行时将会在yield后面紧接着执行，直至下一次遇到yield再次暂停；
+        2：return是终止函数的执行并返回值，即return会将需要返回的值返回，并彻底终止函数的运行，下次执行从头开始！
+        3：yield不光可以返回指定的值，yield还可以接收一个值，并返回；
+
+generator函数的两个方法：
+    生成器对象有两个方法：
+        next():
+            如：n=0
+                yield n
+
+            next(creater);
+                不断调用next方法即可获取下一个元素n！
+                也可以使用for循环来获取每一个元素n
+        send():
+            如： n=0
+                x = yield n
+            creater.send(value)
+                调用send方法可以将值发送给迭代器的yield关键字，此时yield n将会作为一个整体被替换成value,"---并唤醒程序，继续向下执行直到结束或者再次被挂起---"（重要！！）;
+                但是n依然是0;
+                注意：send发送参数时，生成器必须处于挂起的状态(程序必须已经运行到yield处)，此时传入的参数才能够被yield接收到，否则将会报错；
+            使程序处于挂起的方式：
+                1：调用next()：next(creater)
+                2：使用send()：creater.send(None)
+                注意：第一次调用send使程序进入挂起状态时必须传入None值，不能传入其他非None值；
