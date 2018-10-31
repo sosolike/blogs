@@ -1,0 +1,59 @@
+python多进程编程：
+    1：python中提供了 multiprocessing 模块来实现多进程编程；
+    2：multiprocessing模块包含了两个类：Process 和 Pool；
+    3：Process为进程类，用来创建子进程以及管理子进程；Pool为进程池类，用来创建进程池以提高进程利用率；
+Process多进程编程：
+    1：Pocess可以继承之后使用，也可以直接导入之后使用；
+    2：主要操作：
+        创建子进程：
+            原型：Process([group,[target,[name,[args,[kwargs]]]]])
+            参数：target表示子进程需要执行的方法，传入方法名即可；
+                 args表示需要给子进程执行的方法传入的参数，需传入tuple;(使用上述两个参数即可)
+                 kwargs表示调用对象的字典，
+                 name为别名
+                 group实质上不用
+            返回：返回子进程实例对象；processer
+        
+        启动子进程：
+            原型：processer.start()
+            参数：无
+            返回值：无
+        
+        阻塞当前进程，等待子进程结束：
+            原型：processer.join()
+            参数：无
+            返回值：无
+        
+        检测当前子进程是否在运行：
+            原型：processer.is_alive()
+            参数：无
+            返回值：如果正在运行返回True，如果没有运行，返回False；
+
+        结束子进程：
+            原型：processer.close()
+            参数：无
+            使用该函数会抛出异常
+        
+        设置进程作为守护进程运行：
+            processer.daemon = True 进程将会以守护进程的方式运行
+
+    3：子进程和父进程通讯单向通讯：
+        multiprocessing提供了Queue作为父进程和子进程之间的消息队列，通过queue即可实现子进程和父进程之间的通信；
+        1：子进程向queue中添加数据：q.put(data) 
+            备注：q是父进程创建的消息队列，并以参数的方式传入子进程；
+                 data既可以是字符串也可以是对象
+        2：父进程创建queue并读取数据：
+            创建队列：q = Queue()
+            读取数据：while not q.empty():
+                        q.get()
+    4：子进程和父进程之间互相通信：
+        multiprocessing提供了Pipe类实现父子进程之间互相通信：
+        1：创建管道：
+            parent_pipe,child_pipe = Pipe()
+            child_pipe 需要通过args传入子进程；
+        2：读取管道数据：
+            parent_pipe.recv()
+            child_pipe.recv()
+        3：发送管道数据：
+            child_pipe.send(data) data可以是字符串也可以是对象
+            parent_pipe.send(data) data可以是字符串也可以是对象
