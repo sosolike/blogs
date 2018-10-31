@@ -275,6 +275,121 @@
     函数的名称：
         每个函数都有一个__name__属性，可以拿到函数的名称；
 
+    高阶参数函数：
+        1：以函数作为形参的函数称作高阶参数函数；
+    高阶返回函数：
+        1：以函数做为返回值的函数称为高阶返回函数，在高阶函数内部定义的函数被称为闭包函数；如：
+                def account():
+                    a = [0]
+                    def addCount():
+                        a[0]=a[0]+1
+                        print(a[0])
+
+                return addCount
+        备注：
+            1：account函数称为高阶返回函数，addCount称作闭包函数；
+            2：调用高阶返回函数的时候会将闭包函数返回，但是并不会执行闭包函数，只有在调用返回的闭包函数时才会真正执行闭包函数；
+            3：高阶返回函数的变量如果被闭包函数引用，该变量在高阶函数返回之后并不会立即销毁，而是依旧保存在内存中，因此通过闭包函数可以实现函数变量的保护以及函数内部变量的访问；
+            4：闭包函数如果引用高阶返回函数内部的变量，在执行闭包函数时，该变量的值是高阶返回函数执行完毕前对该变量最后一次修改后的值；
+            5：由于高阶函数会修改闭包函数所引用的外部变量，因此，闭包函数尽量避免引用高阶返回函数的可变对象；
+        示例：
+                def count():
+                    fs = []
+                    for i in range(1,4):
+                        def f():
+                            return i*i
+                        fs.append(f)
+                    return fs
+
+                res = count()
+                f1 = res[0]
+                f2 = res[1]
+                print(f1())9
+                print(f2())9
+            由于闭包函数所引用的变量值是高阶返回函数结束前最后一次对变量做的修改，因此多次调用闭包函数，其i值都是固定的3；
+    装饰器：
+        1：装饰器功能：在不改变函数本身代码的情况下，可以为函数添加功能，或者修改函数原先的执行动作；
+        2：装饰器的要求：
+            1：不改变函数原有的代码逻辑；
+            2：只装饰函数，不执行被装饰之后的函数，具体何时执行，取决于调用；
+        3：装饰器的实现：
+            装饰器通过高阶返回函数实现；
+            原因在于：高阶返回函数中可以定义闭包函数，可以在闭包函数中装饰指定函数，高阶返回函数执行之后将会返回被装饰之后的函数，因此可以起到装饰的作用，但不会立即执行被装饰的函数；如：
+                #装饰函数
+                    def writeLog(func):
+                        def log():
+                            #对目标函数的装饰要在闭包中进行，可以在调用目标函数之前与之后添加对应代码，实现不改变目标函数源代码的情况下为目标函数增加功能；并将函数的执行结果返回；
+                            print("开始执行函数")
+                            res = func()
+                            print("函数已执行完)
+                            return res
+                        return log
+
+                    #目标函数
+                    def bar():
+                        print("bar")
+                        return "end"
+
+                    #获取装饰后的函数
+                    bar = writeLog(bar);
+
+                    #执行装饰后的函数，本质上是执行装饰器中的log函数；
+                    bar()
+        4：装饰器的本质：
+            装饰器本质上是在被装饰函数之前或者之后添加代码，组装成一个新的函数，通过执行这个心的函数实现对函数的装饰！
+        5：python中为装饰器提供的语法糖：
+            1：python中通过@符号来装饰指定函数；如：
+                @writeLog
+                def bar():
+                    pass
+            2：@符号本质上是代替调用高阶返回函数，返回被装饰之后的函数；
+        6：常见的装饰器模式：
+            1：简单装饰：
+                #装饰器函数
+                def decorate(funed):
+                    def decorate_fun():
+                        print("装饰指定函数")
+                        funed()
+                        print("装饰指定函数")
+                    return decorate_fun
+                #被装饰函数
+                @decorate
+                def bar():
+                    pass
+            2：带有参数的装饰器：
+                 #装饰器函数
+                 def decorateParam(param):
+                    def decorate(funed):
+                        def decorate_fun():
+                            print("param")
+                            print("装饰指定函数")
+                            funed()
+                            print("装饰指定函数")
+                        return decorate_fun
+                    return decorate
+                #被装饰函数
+                @decorateParam(value)
+                def bar():
+                    pass 
+            3：带有参数的装饰器且被装饰函数带有参数
+                 #装饰器函数
+                 def decorateParam(param):
+                    def decorate(funed):
+                        def decorate_fun(param1,param2):
+                            print("param")
+                            print("装饰指定函数")
+                            funed(param1,param2)
+                            print("装饰指定函数")
+                        return decorate_fun
+                    return decorate
+                #被装饰函数
+                @decorateParam(value)
+                def bar(param1,param2):
+                    pass  
+        7：同一个函数可以被多个函数装饰；
+
+
+
         
         
     
