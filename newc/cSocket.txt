@@ -181,3 +181,44 @@ c---socket编程：
                         SHUT_RDWR:同时断开I/O流，相当于分两次调用shutdown();一次以SHUT_RD为参数，一次以SHUT_WR为参数；
             备注：1：shutdown只是用来关闭连接，而不是套接字，无论调用多少次shutdown套接字也还是在内存中保存着，并不会清除掉；直到调用close/closesocket()之后socket关键字才会清除；
                 2：无论是调用close还是closesocket还是shutdown都会向对方发送FIN包；但是shutdown将会在缓冲区中的数据发送完成之后才会发送FIN包；
+3：socket编程实现---UDP：
+    UDP的可靠性不如和TCP，但是一般情况下UDP的速度要快于TCP；
+    UDP相比TCP之所以快的原因主要有以下两点：
+        1：收发数据前后进行的连接设置以及清除过程；
+        2：收发数据过程中为保证可靠性而添加的流控制；
+    UDP编程流程：
+        1：创建socket套接字
+        2：发送消息
+        3：接收消息
+    UDP编程实例：
+        1：创建套接字：
+            原型：int socket_server = socket(int af,int type,int protocol);
+            参数：
+                af：ip协议类型；
+                    IPV4：AF_INET/PF_INET;
+                    IPV6：AF_INET6/PF_INET6;
+                type：连接方式；
+                    SOCK_STREAM：面向连接的数据传输方式,一般用在TCP协议上；
+                    SOCK_DGRAM：面向无连接的数据传输方式，一般用在UDP协议上；
+                protocol：采用的网络传输协议；
+                    IPPROTO_TCP协议
+                    IPPROTO_UDP协议
+            返回值：创建成功返回socket标识；
+        2：发送消息：
+            原型：ssize_t sendto(int sock,void *buff,size_t nbytes,int flags,struct sockaddr *to,socklen_t addrlen)
+            参数：
+                sock：socket标识符号；
+                buff：待发送数据地址值；
+                nbytes：待发送数据长度；
+                flags：可选参数，若没有则传递0；
+                to：保存有目标地址信息的结构体；
+                addrlen：保存有目标地址信息结构体的长度；
+        3：接收数据：
+            原型：ssize_t recvfrom(int sock,void *buff,size_t nbytes,int flags,struct sockaddr * from,socklen_t *addrlen);
+            参数：
+                sock：UDP套接字标识；
+                buff：保存接收到的数据的缓冲区地址
+                nbytes：可接收的最大字节数，不能超过buff的长度；
+                flags：可选参数，若没有则传入0；
+                from：存有发送端地址信息的sockaddr结构体
+                addrlen：存有发送端地址信息的sockaddr结构体的长度；
