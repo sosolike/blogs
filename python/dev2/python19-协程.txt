@@ -63,6 +63,15 @@
             4：yield from可以自动捕获子生成器的StopInteration异常并处理，如果是其他异常将会向上冒泡；
     3：通过asyncio.coroutine来修饰生成器：
         在python3.4中新增了asyncio.coroutine修饰器，通过该修饰器修饰生成器，可以在语义上将协程和生成器予以区分；明确生成器和协程；
+
+    4：通过async和await定义协成：
+        在python3.5中又新增了async和await来定义协成：如：
+            async def fun_gen():
+                code...
+        1：协程只能通过async定义，反之，由async修饰的函数被称为协成函数，又称之为异步函数；
+        2：由async定义的协程函数内部，不能出现任何形式的yield表达式，如果需要等待其他协成，只能通过await来等待；
+        3：await可以用来等待另外一个协程；
+
     
 
 协程的运行方式：
