@@ -1,0 +1,148 @@
+python--记录日志信息
+1：记录日志方式：
+    1：自定义日志记录函数写文件记录日志信息；
+    2：使用python的loggin模块记录日志；
+2：通过自定义函数记录日志：
+    import datetime,time,os
+
+    def log(level="info",content="",type="day"):
+        #设置记录时间
+        log_time = time.strftime("%Y%m%d %H%M%S",time.localtime())
+        #设置日志级别
+        log_level = level
+        #根据日志记录方式设置日志文件名称
+        log_name = "";
+        if type == "day" :
+            log_name = "log_" + log_level + "_" + datetime.date.today().isoformat() + ".log"
+        else:
+            log_name = "log_" + log_level + "_.log" 
+        
+        #设置日志记录目录
+        log_dir = "D:\like_python\log"
+        #检测日志目录是否存在
+        if not os.path.exists(log_dir) :
+            os.mkdir(log_dir)
+
+        #设置日志路径
+        log_path = os.path.join(log_dir,log_name)
+        #记录日志信息
+        f = open(log_path,"a+")
+        f.write(content + "\n")
+        f.close()
+3：通过loggin模块记录日志：
+    1：logging模块组成：
+        formatter：用于格式化日志信息
+        handler：用于设置io流
+        logger：用于记录日志
+        filter：用于过滤日志
+    2：logging功能特点：
+        1：记录日志时如果设置了日志级别，则日志只会将设置的级别以及级别以上的信息记录起来；
+        2：logging模块会把所有级别的信息记录在同一个文件；
+        3：logging的日志级别：
+              级别        代表值
+            # CRITICAL     50
+            # ERROR        40
+            # WARNING      30
+            # INFO         20
+            # DEBUG        10
+        4：日志格式化方式：
+            %(asctime)s     字符串形式的当前时间，默认格式是"YYYY-mm-dd HH:MM:SS.w"
+            %(name)s        Logger的名字，可以设置tag，根据tag区分不同的日志
+            %(levelname)s   字符串形式的日志级别
+            %(message)s     日志消息
+            %(pathname)s    调用日志输出函数所在模块的完整路径名，可能么有
+            %(filename)s    调用日志输出函数的模块文件名
+            %(lineno)s      调用日志输出函数的语句所指的代码行
+            %(thread)d      线程id，可能没有
+            %(threadName)s  线程名，可能没有
+    3：logging的使用：
+        1：通过单独创建loggers,handlers,formatters来记录日志；
+            1：创建logger：
+                logger = logging.getLogger("logger_name")   #创建logger并设置名称
+                logger.setLevel(logging.DEBUG)              #设置logger的日志级别
+            
+            2：创建handler：
+                handler = logging.StreamHandler(sys.stdout) #创建handler,参数可为标准输出，也可为文件句柄
+                handler.setLevel(logging.DEBUG)             #设置io流的日志级别
+            
+            3：创建formatter：
+                formatter = logging.Formatter("format_str")
+                handler.setFormatter(formatter)
+            
+            4：将logger和handler绑定：
+                logger.addHandler(handler)
+            
+            5：logger对应的记录日志的方式：
+                logger.debug(message);
+                logger.info(message);
+                logger.warn(message);
+                logger.error(message);
+                logger.critical(message);
+            6：几点说明：
+                1：通过这种方式记录日志如果不清除调用io流，io流中上次的信息会和后面的信息一起写入造成重复记录日志；因此在记录玩日志后要使用logger.removeHandler(handler)清除日志流；如：
+                    logger.debug(msg);
+                    logger.removeHandler(handler)
+                    logger.debug(msg2);
+                    按照上述方式将不会出现消息被累积在io流中；
+
+                2：handler的日志级别限制性大于logger的日志级别限制性!如：
+                    logger.setLevel(logging.DEBUG)
+                    handler.setLevel(logging.INFO)
+                    在记录日志时，只有INFO级别的信息才能记录到该io流中；
+
+                3：logger支持多种handler创建方式：
+                    StreamHandler: 输出到控制台
+                        handler = logging.StreamHandler(sys.stdout/file_handler)
+                        #参数是标准输出，或者文件句柄
+                    FileHandler:   输出到文件
+                        handler = logging.FileHandler(file_path)
+                        #参数是文件路径
+                    BaseRotatingHandler 可以按时间写入到不同的日志中。
+                    SocketHandler 用TCP网络连接写LOG
+                    DatagramHandler 用UDP网络连接写LOG
+                    SMTPHandler 把LOG写成EMAIL邮寄出去
+                4：logging写日志可以根据不同的级别写入不同的文件：
+                    handler1 = logging.StreamHandler(f1)
+                    handler1.setLevel(logging.DEBUG)
+
+                    handler2 = logging.StreamHandler(f2)
+                    handler2.setLevel(logging.Info)
+
+                    logger.addHandler(handler1)
+                    logger.addHandler(handler2)即可
+                5：logging写日志无法根据业务的不同写入不同的文件，如果需要根据业务的不同选择不同的日志文件可以：
+                    1：进行logging的封装：如：
+                        if work_type == 'a':
+                            handler = logging.StreamHandler(f1)
+                            handler.setLevel(logging.INFO)
+
+                        if work_type == 'b':
+                            handler = logging.StreamHandler(f2)
+                            handler.setLevel(logging.INFO)
+                        
+                        logger.addHandler(handler) 即可
+                    2：可以创建不同的logger添加新的handler达到写入不同文件的需求；
+        
+        2：通过logging.basicConfig()设置：
+            原型：logging.basicConfig([**kwargs]);
+            参数：
+                 filename ： 日志文件的保存路径，如果配置将信息写入目标文件，否则输出至标准输出台；
+                 filemode ： 日志文件的打开模式，默认是a，以追加的方式添加日志信息；
+                 format   ： 日志输出格式字符串，同logging.Formatter()中的参数；
+                 datefmt  ： 定义日期格式，同time.strftime()中的参数;
+                 level    ： 设置日志级别，低于该级别的日志将会忽略，默认是loggin.WARNING
+                 stream   ： 设置特定的流来初始化StreamHandler，默认是sys.stderr，同样可以通过该stream指定到
+                             sys.stdout或者文件(句柄)，当stream和filename同时被指定的时候忽略stream；
+            使用：
+                import logging
+                formatter_str = "%(name)s [%(asctime)s] %(levelname)s %(message)s";
+                logging.basicConfig(filename="D:\log\log_info.log",filemode="a+",level=logging.INFO,format=formatter_str) 
+            记录日志：
+                logging.debug()
+                logging.info()
+                logging.warn()
+                logging.error()
+                logging.cirtical()
+
+            
+                

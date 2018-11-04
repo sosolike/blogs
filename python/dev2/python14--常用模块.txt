@@ -1,0 +1,54 @@
+hash加密：
+    1：SHA1,SHA224,SHA256,SHA384,SHA512,MD5算法均在hashlib模块中；
+    2：MD5的使用：
+        导入 hashlib模块 ：import hashlib
+            1:
+                md = hashlib.md5()
+                md.update(arg)
+                md.hexdigest()
+            2:
+                md = hashlib.md5(arg)
+                md.hexdigest()
+            3： 
+                md = hashlib.new("md5",arg)
+                md5_res = md.hexdigest()
+            4：
+                md = hashlib.new("md5")
+                md.update(arg)
+                md5_res = md.hexdigest()
+        说明：1：hashlib.md5()可以直接添加需要计算hash的内容，也可以通过update()的方式添加；
+             2：hashlib.new()方法是公共方法，可以同时设置计算方式和计算内容；
+             3：update()方法用来设置需要计算的hash内容，如果使用多次，则会将内容叠加而非替换；并且只接受字节形式的参数！
+             4：arg参数必须是字节类型，即"内容".encode("utf-8"),不同的字节编码形式计算结果不同；
+    3：其他hash摘要使用方式与md5完全相同;
+
+添加salt的hash加密：
+    1：随机生成salt然后和需要计算的内容一起计算hash值；
+    2：通过hmac模块计算添加salt之后的hash值；
+        import hmac
+        h=hmac.new(key,message,digestmod="md5")
+        h.hexdigest()
+        备注：key,message必须是字节类型的数据；
+        
+base加密函数(base54,base32,base16)使用：
+    1：base64是一种基于64个可打印字符来表示二进制数据的方法；可打印字符包括A-Za-z0-9(62个可打印字符)以及+和/两个可打印字符；
+    2：编码之后的内容比原先的内容要长，为原来的4/3；且真实内容直接不可见，但是可以逆向解密获取真实内容；
+    3：python中的计算方式：
+        对字符串进行编码解码：
+            base64_str = base64.b64encode(origin_str)
+            origin_str = base64.b64decode(base64_str) 
+        或者：
+            base64_str = base64.encodestring(origin_str)
+            origin_str = base64.decodestring(base64_str)
+            备注：
+                1：origin_str必须是字节数据；依据编码不同，转换结果不同
+                2：base64_str仍然是字节数据；依据编码不同，转换结果不同
+                3：encodestring等同于b64encode
+
+        对url进行base64编码解码：
+            base64.urlsafe_b64encode()
+            base64.urlsafe_b64decode()
+            备注： 
+                1：由于base64编码之后+和-有可能出现在字符中，所以通过urlsafe方法把+转换为-，/转换为_；
+
+

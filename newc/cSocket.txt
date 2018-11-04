@@ -1,0 +1,224 @@
+c---socket编程：
+1：socket编程流程--TCP：
+    对于服务端:
+        1：创建socket；
+        2：绑定ip和端口
+        3：监听端口
+        3：阻塞等待客户端连接
+        4：阻塞接收客户端发送的消息
+        5：向客户端发送数据
+    对于客户端：
+        1：创建socket；
+        2：绑定服务端ip和端口
+        3：向服务端发起连接
+        4：向服务端发送数据
+        5：接收服务端返回的数据
+2：socket编程实现：
+    1：创建socket:
+        1：Linux系统中，为了统一和简化I/O编程接口，将一切硬件设备以及网络全部映射成为文件，因此Linux系统中网络数据的收发类似于读取文件中的数据和向文件中写入数据；
+        2：socket就是网络映射成文件的标识符，也可以代表两台互联的计算机之间的连接；通过socket即可实现互联的两台计算机之间互相通讯；
+        3：由于Linux将网络也映射成为文件，因此创建socket的过程类似于打开文件的过程，同样会返回一个int类型的标识符，代表该socket;
+        4：创建socket:
+            原型：int socket_server = socket(int af,int type,int protocol);
+            参数：
+                af：ip协议类型；
+                    IPV4：AF_INET/PF_INET;
+                    IPV6：AF_INET6/PF_INET6;
+                type：连接方式；
+                    SOCK_STREAM：面向连接的数据传输方式,一般用在TCP协议上；
+                    SOCK_DGRAM：面向无连接的数据传输方式，一般用在UDP协议上；
+                protocol：采用的网络传输协议；
+                    IPPROTO_TCP协议
+                    IPPROTO_UDP协议
+            返回值：创建成功返回socket标识；
+    2：绑定ip和端口：
+        1：计算机通信的本质是计算机上的软件互相通讯；其中ip地址可以唯一确定计算机所处的网络，mac地址可以唯一确定计算机在网络中的位置，端口则可以唯一确定计算机上进行通讯的软件；因此，socket通讯必须绑定ip和端口才能进行通讯；
+
+        2：绑定方式：
+            原型：int bind(int socket,struct sockaddr *addr,socket_t addrlen)
+            参数：
+                socket:socket标识；
+                addr:封装ip地址和端口的结构体；
+                addrlen:addr的长度，可以使用sizeof获取，sizeof(sockaddr);
+            参数说明：
+                sockaddr:用来封装ip地址和端口的结构体；
+                    结构：struct sockaddr{
+                            sa_familly_t sin_family;
+                            char         sa_data[14];
+                         }
+                    结构体成员：
+                        sin_familly：用来存放协议类型；
+                        sa_data:用来存放ip地址和端口号，但是c中并未提供任何方式来将ip地址和端口号绑定至sa_data中；但是，c中根据不同的ip协议提供了不同的结构体(sockaddr_in/sockaddr_in6)来存放IP地址和端口信息；
+                sockaddr_in以及sockaddr_in6:
+                    结构：
+                        IPV4：
+                        struct sockaddr_in{
+                            sa_familly_t   sin_family; //存放ip协议类型
+                            uint16_t       sin_port;   //存放16位端口号
+                            struct in_addr sin_addr;   //存放32位ip地址
+                            char           sin_zero[8];//8位填充值，一般填充0
+                         }
+                         IPV6：
+                         struct sockaddr_in6 { 
+                            sa_family_t     sin6_family;    //(2)地址类型，取值为AF_INET6
+                            in_port_t       sin6_port;      //(2)16位端口号
+                            uint32_t        sin6_flowinfo;  //(4)IPv6流信息
+                            struct in6_addr sin6_addr;      //(4)具体的IPv6地址
+                            uint32_t        sin6_scope_id;  //(4)接口范围ID
+                         };
+                    结构体成员说明(IPV4)：
+                        sin_familly : 
+                            ip协议类型：AF_INET/PF_INET
+                        sin_port    : 
+                            1：16位端口号，在赋值端口号的时候需要使用端序转换函数进行转换；
+                            2：大端序和小端序：
+                                大端序：
+                                    数据在内存中--高位字节放在低地址称为大端序
+                                小端序：
+                                    数据在内存中--高位字节放在高地址称为小端序
+                                (不同的cpu有不同的存储方式)
+                                网络字节序：
+                                    1：计算机网络以字节为单位传输数据，但是传输双方有可能存在CPU以不同的方式在内存中存储数据，而导致数据解析出错；因此需要转换成统一的存储方式进行传输，接收到消息以后再根据平台转换成指定的大端序或者小端序；这种在网络传输时采用的字节存储方式称为网络字节序；
+                                    2：网络字节序以大端序作为标准；
+                            3：字节序转换：
+                                unsigned short htons(unsigned short);
+                                unsigned short ntohs(unsigned short);
+                                unsigned short htonl(unsigned short);
+                                unsigned short ntohl(unsigned short);
+                                备注：
+                                    1：h代表当前主机的字节序，n代表网络字节序，to是转换的意思，s是short的意思，l是long的意思；
+                                    2：hton指把当前主机的字节序转换为网络字节序；ntoh指把网络字节序转换为当前主机的字节序！l/s指待转换的数据类型；
+                                    3：对于端口号port则需使用htons进行转换；
+                            4：端口的取值理论范围在0~65536，但是0~1023的端口一般由系统分配给特定的服务程序；应用程序的端口号尽量在1024~65536之间分配！
+                            5：TCP协议和UDP协议可以使用相同的端口号；同种协议之间不允许使用相同的端口号！
+
+                        sin_addr     :
+                            1：存储32位ip地址,是in_addr的结构体；
+                            2：in_addr:struct in_addr{
+                                        in_addr_t s_addr;//32位IP地址
+                                       }
+                                       in_addr_t在<netinet/in.h>中定义，等价于unsigned long，长度为四个字节！
+                            3：ip地址一般以点分十进制表示法表示，在网络通信的时候需要转换为32位整数；
+                            4：转换方式：
+                                int inet_addr(const char *string);
+                                    该函数可以将点分十进制表示法表示的ip地址转换成32位整数；
+                                int inet_aton(const char *string,struct in_addr *s_addr);
+                                    该函数可以将点分十进制表示法表示的ip地址转换成32位整数；并存储在in_addr的结构体中
+                            5：除过手动填写ip地址以外，也可以直接填写INADDR_ANY，INADDR_ANY可以自动获取本机地址，推荐在服务器端使用INADDR_ANY,在客户端填写具体的ip地址；
+        3：示例：
+            struct sockaddr_in server_addr;
+            memset(&server_addr,0,sizeof(server_addr));
+            server_addr.sin_familly = AF_INET;
+            server_addr.sin_port = htons(1234);
+            server_addr.sin_addr.s_addr = inet_addr("192.108.3.102");
+            bind(socket,(sockaddr *)&server_addr,sizeof(serve_addr));
+    3：监听端口：
+        1：绑定IP和端口之后需要监听端口；
+        2：监听方式：
+            原型：int listen(int socket,int backlog);
+            参数： 
+                1：socket：需要监听的socket；
+                2：backlog：请求队列的长度；
+            请求队列：当socket正在处理客户端请求时，新来的请求将会放在缓存中，如果有多个将会在缓存中排队等待socket处理；
+                     backlog即可设置该缓存队列的长度，用来确定最多可以存放多少个客户端请求；
+                     backlog的值可以设置为整数，也可以填写SOMAXCONN，由系统来确定该队列的最大长度；
+                     当队列占满的时候，服务端将会返回ECONNREFUSED错误；
+    4：阻塞等待客户端连接：
+        1：socket处于监听状态之后需要阻塞等待客户端的连接请求：
+        等待方式：int accept(int sock,struct sockaddr *addr,socklen_t *addrlen);
+        参数：
+            sock :服务端socket标识；
+            addr :用来接收客户端ip和端口信息的结构体；
+            addrlen:存储客户端ip和端口信息的结构体长度，是socklen_t的指针；该值可以通过sizeof(addr)获取；
+        返回值：如果接收到客户端的链接，将会返回客户端socket标识；int类型!
+    5：向客户端发起连接：
+        1：TCP协议中，客户端需要先和服务端建立连接之后才能收发数据；
+        2：连接方式：int connect(int sock,struct sockaddr *serv_addr,socklen_t addrlen)
+            参数：
+                sock：client端创建的socket标识符；
+                serv_addr：封装了服务端ip地址和端口的结构体；
+                addrlen：封装了服务端ip地址和端口的结构体的长度，可以通过sizeof()获取；
+    6：数据的接收和发送：
+        1：Linux中将网络映射为文件，因此网络中数据的接收和发送类似于文件的读取和写入；
+        2：数据的发送：
+            原型：ssize_t write(int sock,const void *buf,size_t nbytes);
+            参数：
+                sock：
+                    socket标识，
+                    对于服务端该值为客户端的socket(accept接收连接请求成功后会返回客户端socket)
+                    对于客户端该值为服务端的socket,服务端的socket由客户端创建；
+                buf：要写入数据的缓冲区地址；
+                nbytes：要写入的数据的字节数；
+            ssize_t和size_t：
+                ssize_t：signed int;
+                size_t: unsigned int;
+            功能：该函数将会向socket中写入buf中的nbytes个字节存；
+        3：数据的读取：
+            原型：ssize_t read(int sock,void *buf,size_t nbytes);
+            参数：
+                sock：
+                    socket标识，
+                    对于服务端该值为客户端的socket(accept接收连接请求成功后会返回客户端socket)
+                    对于客户端该值为服务端的socket,服务端的socket由客户端创建；
+                buf：要存储接收到的数据的缓冲区地址；
+                nbytes：要读取的数据的字节数；
+            ssize_t和size_t：
+                ssize_t：signed int;
+                size_t: unsigned int;
+            功能：该函数将会从socket中读取nbytes个字节存储缓冲区buf中；
+    7：关闭套接字：
+        1：完全断开连接：close();
+            备注：1：该函数意味着服务器和客户端将会完全断开连接，即系统将会把socket套接字从内存中清楚，之后将再无法使用该套接字，既不能发送数据也不能再接收数据；
+                2：close被调用之后会立即向对方发送FIN包，这将导致即便输出缓冲区中还有数据，对方也不会再收到了；
+        2：不完全断开：只断开一条数据通道，而保留另一条数据通道的方式：shutdown()函数；
+            原型：shutdown(int sock,int howto);
+                参数：sock,需要断开的socket标识，
+                    howto,需要断开的方式；
+                取值：sock：代表int类型的标识；
+                    howto：有以下取值方式：
+                        SHUT_RD：断开输入流，即套接字将无法接收数据（即使数据输入到缓冲区中也将会被抹去），关闭之后将无法调用输入相关函数(read/recv)；
+                        SHUT_WR：断开输出流，套接字无法发送数据，但是如果缓冲区中还有数据，这些数据将会被继续发送至网络；
+                        SHUT_RDWR:同时断开I/O流，相当于分两次调用shutdown();一次以SHUT_RD为参数，一次以SHUT_WR为参数；
+            备注：1：shutdown只是用来关闭连接，而不是套接字，无论调用多少次shutdown套接字也还是在内存中保存着，并不会清除掉；直到调用close/closesocket()之后socket关键字才会清除；
+                2：无论是调用close还是closesocket还是shutdown都会向对方发送FIN包；但是shutdown将会在缓冲区中的数据发送完成之后才会发送FIN包；
+3：socket编程实现---UDP：
+    UDP的可靠性不如和TCP，但是一般情况下UDP的速度要快于TCP；
+    UDP相比TCP之所以快的原因主要有以下两点：
+        1：收发数据前后进行的连接设置以及清除过程；
+        2：收发数据过程中为保证可靠性而添加的流控制；
+    UDP编程流程：
+        1：创建socket套接字
+        2：发送消息
+        3：接收消息
+    UDP编程实例：
+        1：创建套接字：
+            原型：int socket_server = socket(int af,int type,int protocol);
+            参数：
+                af：ip协议类型；
+                    IPV4：AF_INET/PF_INET;
+                    IPV6：AF_INET6/PF_INET6;
+                type：连接方式；
+                    SOCK_STREAM：面向连接的数据传输方式,一般用在TCP协议上；
+                    SOCK_DGRAM：面向无连接的数据传输方式，一般用在UDP协议上；
+                protocol：采用的网络传输协议；
+                    IPPROTO_TCP协议
+                    IPPROTO_UDP协议
+            返回值：创建成功返回socket标识；
+        2：发送消息：
+            原型：ssize_t sendto(int sock,void *buff,size_t nbytes,int flags,struct sockaddr *to,socklen_t addrlen)
+            参数：
+                sock：socket标识符号；
+                buff：待发送数据地址值；
+                nbytes：待发送数据长度；
+                flags：可选参数，若没有则传递0；
+                to：保存有目标地址信息的结构体；
+                addrlen：保存有目标地址信息结构体的长度；
+        3：接收数据：
+            原型：ssize_t recvfrom(int sock,void *buff,size_t nbytes,int flags,struct sockaddr * from,socklen_t *addrlen);
+            参数：
+                sock：UDP套接字标识；
+                buff：保存接收到的数据的缓冲区地址
+                nbytes：可接收的最大字节数，不能超过buff的长度；
+                flags：可选参数，若没有则传入0；
+                from：存有发送端地址信息的sockaddr结构体
+                addrlen：存有发送端地址信息的sockaddr结构体的长度；
