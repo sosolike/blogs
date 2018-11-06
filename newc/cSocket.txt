@@ -1,4 +1,11 @@
 c---socket编程：
+需要引入的头文件：
+    #include <stdio.h>
+    #include <string.h>
+    #include <stdlib.h>
+    #include <arpa/>inet.h>
+    #include <sys/>socket.h>
+    #include <nectinet/>in.h>
 1：socket编程流程--TCP：
     对于服务端:
         1：创建socket；
