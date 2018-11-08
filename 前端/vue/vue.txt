@@ -1,13 +1,16 @@
 vue.js：
     mvvm前端框架；
-    m：      模型，数据修改与操作的逻辑部分；
-    v:       视图，即html+css+js组成的前端组件
+    m：      模型，功能在于进行处理数据；反应在代码上应该为具体处理数据的js代码；
+    v:       视图，功能在于显示数据与捕获用户输入；反应在代码上即html+css组成的前端组件；
     vm:      view model ，是一个联通view和model的通道；
 
     mvvm架构特点：
-        1：View只管显示数据以及捕获用户输入的数据；Model只管处理数据；ViewModel则是Model和View之间的双向数据通道，View和Model之间的数据是通过ViewModel进行互通的；
-        2：ViewModel不仅仅是View和Model之间数据互通的一个通道，数据在View和Model之间是被双向绑定起来的，即View中数据的变化会立即同步到Model中，Model中数据的变化也会立即反应到View上；
+        1： View只管显示数据以及捕获用户输入的数据；
+            Model只管处理数据；
+            ViewModel则是Model和View之间的双向数据通道，View和Model之间的数据可以通过ViewModel进行互通的；
+        2：ViewModel是View和Model之间数据互通的一个通道，数据在View和Model之间是被双向绑定起来的，即View中数据的变化会立即同步到Model中，Model中数据的变化也会立即同步到View上；
 
+        3：vue在mvvm框架中的角色：
             View:                                    Model:
                 |--角色：数据显示中心                       |--角色：数据处理中心             
                 |--组成：html+css+js；                     |--组成：处理数据的js代码         
@@ -351,112 +354,84 @@ Vue基本语法：
                         }
                     }
                 })
-        创建单文件组件：
-            test.vue    #单文件组件的名称必须以.vue结尾；
+            创建单文件组件：
+                test.vue    #单文件组件的名称必须以.vue结尾；
 
-            <template>
-                #放置html代码
-            </template>
+                <template>
+                    #放置html代码
+                </template>
 
-            <script>
-                #js代码
-                #export default是必备的，通过import向外暴露该组件；
-                export default {
-                    name:"Test",    #该组件的名称
-                    props:[
-                        #在这里声明需要接收的父组件参数
-                    ],
-                    data:function(){
-                        return {
-                            #在这里声明属性
-                            attr:name,
-                        }
-                    },
-                    methods:{
-                        #在这里声明函数
-                        fun1:function(){
+                <script>
+                    #js代码
+                    #export default是必备的，通过import向外暴露该组件；
+                    export default {
+                        name:"Test",    #该组件的名称
+                        props:[
+                            #在这里声明需要接收的父组件参数
+                        ],
+                        data:function(){
+                            return {
+                                #在这里声明属性
+                                attr:name,
+                            }
+                        },
+                        methods:{
+                            #在这里声明函数
+                            fun1:function(){
 
-                        }
-                    },
-                    watch:{
-                        #在这里声明监控属性
-                        attr1:function(){
+                            }
+                        },
+                        watch:{
+                            #在这里声明监控属性
+                            attr1:function(){
 
-                        }
-                    },
-                    computed:{
-                        #在这里声明计算属性
-                        attr:function(){
+                            }
+                        },
+                        computed:{
+                            #在这里声明计算属性
+                            attr:function(){
 
-                        }
-                    }
-                }
-            </script>
-
-            <style>
-                #css代码
-            </style>
-
-        父子组件：
-            组件：就是包含了html,css,js的一段代码；
-
-            父子组件：如果某个组件中包含了其他组件，其他组件就称为子组件，该组件就称为父组件；
-
-            如：<div id="app" message="hellow">
-                    <roub></roub>
-                </div>
-            此时<roub>被引用，roub就是子组件，对应的div就是父组件；
-
-            组件是一个相对的概念
-
-        父子组件之间的通信：
-            父子组件之间通过props来通信：
-            通信方式有两种：静态prop和动态prop
-            静态通信：
-                <body>
-                    <div id="app" message="hellow">
-                        <roub message="hello"></roub>
-                    </div>
-                    
-                </body>
-                <script type="text/javascript">
-                    var vm = new Vue({
-                        el:"#app",
-                        components:{
-                            'roub':
-                            {
-                                template: "<h2>{{ message }}局部组件</h2>",
-                                props:["message"],
                             }
                         }
-                    });
+                    }
+                </script>
 
-                roub就是一个子组件， hello就是传递给子组件roub的内容，内容的名称是message；roub中想要使用hello就必须在component中通过props显示声明需要接收的参数：props:["message"], 意思就是子组件roub要接收名为message的参数；接着，template中就可以使用message这个参数了
-            动态通信：
-                动态通信和静态通信一样，只不过传递到子组件中的值是动态可变的；
-                如下例：传入子组件的参数名依然是message，依然需要在子组件中通过props声明出需要接收的参数名；
-                        动态则体现在通过v-bind指令绑定了message的值，其值由Vue实例的parentMsg属性决定而已；v-model='parentMsg'只是为了获取input输入的值而已；
-                    <div id="app">
-                        <div>
-                            <input v-model="parentMsg">
-                            <br>
-                            <child v-bind:message="parentMsg"></child>
-                        </div>
+                <style>
+                    #css代码
+                </style>
+
+        组件的父子关系
+
+            父子组件：比如A组件中使用了B组件，那么A组件就是B组件的父组件，B组件就是A组件的子组件；
+
+                如：<div id="app" message="hellow">
+                        <roub></roub>
                     </div>
-                    
-                    <script>
-                        // 注册
-                        Vue.component('child', {
-                        // 声明 props
-                        props: ['message'],
-                        // 同样也可以在 vm 实例中像 "this.message" 这样使用
-                        template: '<span>{{ message }}</span>'
-                    })
-            
+                此时<roub>被引用，roub就是子组件，对应的div就是父组件；
 
+            组件的父子关系是一个相对的概念；
 
-            
-
+        父子组件之间的通信：
+            父组件向子组件通信：
+                1：静态通信：
+                    向子组件传递数据：如：<roub message="hello"></roub>；此时message就是父组件向子组件传递的数据
+                    子组件接收数据：子组件需要通过props来声明需要接收哪些参数，如：
+                        Vue.component("test",{
+                            template:"<h1>html</h1>",
+                            props:['param1','param2'], #props数组中的参数就是子组件能够获取到的参数
+                        })
+                    子组件使用参数：
+                        Vue.component("test",{
+                            template:"<h1>html {{ param1 }}</h1>", 子组件中可以把参数当data属性来使用；
+                            props:['param1','param2'], #props数组中的参数就是子组件能够获取到的参数
+                        })
+                2：动态通信：
+                    动态通信和静态通信完全一样，仅仅只是传入子组件的参数是一个可变的值：如：
+                        <roub v-bind:message="hello"></roub>；
+                        此时message的值和父组件中的hello属性绑定，hello属性值的改变也会同步通知到子组件；
+                    其余流程和静态通信完全相同
+            子组件向父组件通信：
+                子组件向父组件通信需要通过子组件触发父组件的事件来向父组件传递数据；
 
 
         
