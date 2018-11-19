@@ -3,9 +3,12 @@ c---socket编程：
     #include <stdio.h>
     #include <string.h>
     #include <stdlib.h>
-    #include <arpa/>inet.h>
-    #include <sys/>socket.h>
-    #include <nectinet/>in.h>
+    #include <unistd.h>
+    #include <arpa/inet.h>
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+常用的两种socket编程方式：TCP、UDP
+
 1：socket编程流程--TCP：
     对于服务端:
         1：创建socket；
@@ -23,7 +26,7 @@ c---socket编程：
 2：socket编程实现：
     1：创建socket:
         1：Linux系统中，为了统一和简化I/O编程接口，将一切硬件设备以及网络全部映射成为文件，因此Linux系统中网络数据的收发类似于读取文件中的数据和向文件中写入数据；
-        2：socket就是网络映射成文件的标识符，也可以代表两台互联的计算机之间的连接；通过socket即可实现互联的两台计算机之间互相通讯；
+        2：socket就是将网络映射成文件的标识符，也可以代表两台互联的计算机之间的连接；通过socket即可实现互联的两台计算机之间互相通讯；
         3：由于Linux将网络也映射成为文件，因此创建socket的过程类似于打开文件的过程，同样会返回一个int类型的标识符，代表该socket;
         4：创建socket:
             原型：int socket_server = socket(int af,int type,int protocol);
@@ -39,7 +42,7 @@ c---socket编程：
                     IPPROTO_UDP协议
             返回值：创建成功返回socket标识；
     2：绑定ip和端口：
-        1：计算机通信的本质是计算机上的软件互相通讯；其中ip地址可以唯一确定计算机所处的网络，mac地址可以唯一确定计算机在网络中的位置，端口则可以唯一确定计算机上进行通讯的软件；因此，socket通讯必须绑定ip和端口才能进行通讯；
+        1：计算机通信的本质是计算机上的软件互相通讯；其中ip地址可以唯一确定通信的计算机，端口则可以唯一确定计算机上进行通讯的软件；因此，socket通讯必须绑定ip和端口才能进行通讯；
 
         2：绑定方式：
             原型：int bind(int socket,struct sockaddr *addr,socket_t addrlen)
@@ -48,6 +51,8 @@ c---socket编程：
                 addr:封装ip地址和端口的结构体；
                 addrlen:addr的长度，可以使用sizeof获取，sizeof(sockaddr);
             参数说明：
+                socket:代表需要将ip和端口绑定至指定的socket;
+                
                 sockaddr:用来封装ip地址和端口的结构体；
                     结构：struct sockaddr{
                             sa_familly_t sin_family;
@@ -305,5 +310,7 @@ TCP编程---使用epoll多路复用：
                     EPOLLERR：在发生错误的情况下；
                     EPOLLET：以边缘触发的方式得到事件通知；
                     EPOLLONESHORT：发生一次事件以后，响应的文件描述符不再收到事件通知，之后将需要向epoll_ctl函数的第二个参数传递EPOLL_CTL_MOD，再次设置事件；
+    4：获取就绪的文件描述符：epoll_wait()
+
                 
                 
