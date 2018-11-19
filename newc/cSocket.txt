@@ -40,7 +40,7 @@ c---socket编程：
                 protocol：采用的网络传输协议；
                     IPPROTO_TCP协议
                     IPPROTO_UDP协议
-            返回值：创建成功返回socket标识；
+            返回值：创建成功返回socket标识；失败返回-1；
     2：绑定ip和端口：
         1：计算机通信的本质是计算机上的软件互相通讯；其中ip地址可以唯一确定通信的计算机，端口则可以唯一确定计算机上进行通讯的软件；因此，socket通讯必须绑定ip和端口才能进行通讯；
 
@@ -50,6 +50,7 @@ c---socket编程：
                 socket:socket标识；
                 addr:封装ip地址和端口的结构体；
                 addrlen:addr的长度，可以使用sizeof获取，sizeof(sockaddr);
+            返回值：绑定成功返回0，绑定失败返回-1；
             参数说明：
                 socket:代表需要将ip和端口绑定至指定的socket;
 
@@ -135,6 +136,7 @@ c---socket编程：
                      backlog即可设置该缓存队列的长度，用来确定最多可以存放多少个客户端请求；
                      backlog的值可以设置为整数，也可以填写SOMAXCONN，由系统来确定该队列的最大长度；
                      当队列占满的时候，服务端将会返回ECONNREFUSED错误；
+            监听成功返回0；
     4：阻塞等待客户端连接：
         1：socket处于监听状态之后需要阻塞等待客户端的连接请求：
         等待方式：int accept(int sock,struct sockaddr *addr,socklen_t *addrlen);
@@ -150,6 +152,7 @@ c---socket编程：
                 sock：client端创建的socket标识符；
                 serv_addr：封装了服务端ip地址和端口的结构体；
                 addrlen：封装了服务端ip地址和端口的结构体的长度，可以通过sizeof()获取；
+            连接成功返回0；
     6：数据的接收和发送：
         1：Linux中将网络映射为文件，因此网络中数据的接收和发送类似于文件的读取和写入；
         2：数据的发送：
@@ -165,6 +168,7 @@ c---socket编程：
                 ssize_t：signed int;
                 size_t: unsigned int;
             功能：该函数将会向socket中写入buf中的nbytes个字节存；
+            返回值：发送成功返回nbytes;
             注意：该函数是阻塞式函数，如果缓冲区已满，无法发送数据，该函数会一直阻塞，直至可以发送数据时将数据发送完毕然后返回；
         3：数据的读取：
             原型：ssize_t read(int sock,void *buf,size_t nbytes);
@@ -175,6 +179,7 @@ c---socket编程：
                     对于客户端该值为服务端的socket,服务端的socket由客户端创建；
                 buf：要存储接收到的数据的缓冲区地址；
                 nbytes：要读取的数据的字节数；
+            返回值：读取成功返回nbytes;
             ssize_t和size_t：
                 ssize_t：signed int;
                 size_t: unsigned int;
