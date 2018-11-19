@@ -52,7 +52,7 @@ c---socket编程：
                 addrlen:addr的长度，可以使用sizeof获取，sizeof(sockaddr);
             参数说明：
                 socket:代表需要将ip和端口绑定至指定的socket;
-                
+
                 sockaddr:用来封装ip地址和端口的结构体；
                     结构：struct sockaddr{
                             sa_familly_t sin_family;
@@ -165,6 +165,7 @@ c---socket编程：
                 ssize_t：signed int;
                 size_t: unsigned int;
             功能：该函数将会向socket中写入buf中的nbytes个字节存；
+            注意：该函数是阻塞式函数，如果缓冲区已满，无法发送数据，该函数会一直阻塞，直至可以发送数据时将数据发送完毕然后返回；
         3：数据的读取：
             原型：ssize_t read(int sock,void *buf,size_t nbytes);
             参数：
@@ -178,6 +179,7 @@ c---socket编程：
                 ssize_t：signed int;
                 size_t: unsigned int;
             功能：该函数将会从socket中读取nbytes个字节存储缓冲区buf中；
+            注意：该函数是阻塞式函数，如果缓冲区中暂时没有数据可供读取，该函数将会阻塞直至有数据读取将数据读取到之后返回！
     7：关闭套接字：
         1：完全断开连接：close();
             备注：1：该函数意味着服务器和客户端将会完全断开连接，即系统将会把socket套接字从内存中清楚，之后将再无法使用该套接字，既不能发送数据也不能再接收数据；
