@@ -20,7 +20,7 @@ python常见的两种错误：
             3：可以在except中处理捕获到的错误异常，也可以使用raise继续向上抛出异常；
             4：如果发生错误异常并且被except捕获则进入except中执行错误异常处理代码，否则会一直上抛，直至被python解释器捕获；
 
-        2：try..except..可以带上else：
+        3：try..except..可以带上else：
             try:
                 normal_code...
             except error as e:
@@ -29,9 +29,9 @@ python常见的两种错误：
                 some_code...
         如果未发生任何异常时，执行完try代码块将会进入else代码块继续执行：
     
-        3：try..except还可以带上finally语句块，无论是否发生错误，try...except语句块执行完成后总会进入finally中执行；
+        4：try..except还可以带上finally语句块，无论是否发生错误，try...except语句块执行完成后总会进入finally中执行；
 
-        4：python中的异常都是class，均直接或间接继承自BaseException;except捕获到的是一个错误异常类对象；
+        5：python中的异常都是class，均直接或间接继承自BaseException;except捕获到的是一个错误异常类对象；
 
         5：由于错误异常种类较多，因此可以使用多层except来捕获不同的错误异常信息，由上至下，错误类型范围应该逐渐增大；否则错误范围较小的永远无法被捕获；也可使用Exception类来捕获任意可能的错误异常
 
