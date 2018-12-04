@@ -16,9 +16,9 @@
             5：组合列表：list1+list2
             6：重复列表：list*n
             7：检测是否存在指定元素：a in list、a not in list
+            8：list[2:]/list[2:4]/list[start:end:span]：截取
             
         3：其余操作：
-            list[2:]/list[2:4]/list[start:end:span]：截取
             list.sort();对列表进行排序；直接对列表本身进行排序，会更改原数据；
             list.reverse(),反向列表中的元素
             list.pop();删除列表中的一个元素（默认是最后一个）,并返回改元素
