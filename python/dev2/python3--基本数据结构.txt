@@ -11,7 +11,7 @@
             0：声明：[arg1,arg2,arg3,...]
             1：取值：list[index]
             2：赋值：list[index] = value
-            3：删除：del list[index]
+            3：删除：del list[index] 或者 list.pop(n) 或者 list.remove(arg1)
             4：获取长度：len(list)
             5：组合列表：list1+list2
             6：重复列表：list*n
