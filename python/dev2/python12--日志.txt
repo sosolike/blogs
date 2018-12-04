@@ -28,6 +28,7 @@ python--记录日志信息
         #记录日志信息
         f = open(log_path,"a+")
         f.write(content + "\n")
+        f.flush()
         f.close()
 3：通过loggin模块记录日志：
     1：logging模块组成：
