@@ -13,12 +13,14 @@ python中操作目录或者文件需要使用os模块
         import shutile
         shutile.rmtree(path)：递归删除指定位置的目录（可以删除非空目录）
 
-    3：读取目录：
-        os.listdir(path)：返回指定路径指向的文件夹包含的文件或者文件夹的名字列表；
-    4：获取当前的工作目录：
-        os.getcwd();返回当前的工作目录
-    5：重命名当前目录
+    3：重命名当前目录
         os.rename("oldname","newname")
+
+    4：读取目录：
+        os.listdir(path)：返回指定路径指向的文件夹包含的文件或者文件夹的名字列表；
+    5：获取当前的工作目录：
+        os.getcwd();返回当前的工作目录
+    
 
     5：连接路径：
         os.path.join(path1,path2)：尽量不要直接拼路径，而是使用这个函数来适应各种不同的操作系统；
