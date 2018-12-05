@@ -5,10 +5,10 @@ hash加密：
             1:
                 md = hashlib.md5()
                 md.update(arg)
-                md.hexdigest()
+                md5_res = md.hexdigest()
             2:
                 md = hashlib.md5(arg)
-                md.hexdigest()
+                md5_res = md.hexdigest()
             3： 
                 md = hashlib.new("md5",arg)
                 md5_res = md.hexdigest()
@@ -30,7 +30,7 @@ hash加密：
         h.hexdigest()
         备注：key,message必须是字节类型的数据；
         
-base加密函数(base54,base32,base16)使用：
+base加密函数(base64,base32,base16)使用：
     1：base64是一种基于64个可打印字符来表示二进制数据的方法；可打印字符包括A-Za-z0-9(62个可打印字符)以及+和/两个可打印字符；
     2：编码之后的内容比原先的内容要长，为原来的4/3；且真实内容直接不可见，但是可以逆向解密获取真实内容；
     3：python中的计算方式：
