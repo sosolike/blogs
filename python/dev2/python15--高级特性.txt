@@ -31,7 +31,10 @@ yield关键字：
             yield返回值之后将会暂停程序的执行，等待下一次激活后继续向后执行；
         2：在Python2.5中，又添加了新的特性：数据可以发送至yield暂停处，即：yield不仅可以返回一个值，还可以从外部接收一个值；接收到的值将会把 = 右侧的yield表达式整体替换掉；
     yield from：
-        1：python3.3中添加了yield from;通过yield from即可实现对生成器的再封装；
+        1：python3.3中添加了yield from;通过yield from即可实现一下三个功能：
+            1：对生成器的再封装；即在不改变目标生成器的情况下可以在生成器前加上新的代码，实现再封装；
+            2：实现生成器的串联，铜鼓oyield from可以实现生成器的接力调用；进而实现串联；
+            3：yield from代码后面的代码会在yield from的生成器return结束返回之后执行，在结构上，yield from后面的代码等同于yield from后面生成器的回调；
         2：yield from 的基本用法：yield from generater_fun()
         3：yield from用法：
             1：使用了yield from的代码称之为委派生成器；
