@@ -1,0 +1,94 @@
+python 操作mysql是通过 pymysql扩展来进行的；
+
+安装pymysql：
+    pip install pymysql
+
+使用pymysql：
+    import pymysql              #导入pymysql模块
+
+    #创建mysql数据库连接：po
+    link = pymysql.Connect(host="127.0.0.1",port=3306,user="username",passwd="password",db="dbname",charset="utf8");
+
+    #创建游标：
+    cur = link.cursor()
+
+    #执行查询操作：
+    cur.execute("select * from example where uid=%s",(1001))
+
+    #获取结果集：
+    #获取结果集的第一条数据
+    data = cur.fetchone()
+
+    #获取结果集的所有数据
+    data = cur.fetchall()
+
+    #获取结果集的指定条数数据
+    data = cur.fetchmany(n)
+
+    /**
+    执行查询操作-备注：
+        1：execute方法中放置需要被执行的sql语句；
+        2：sql语句中的参数部分全部使用%s作为占位符；(无论参数是何种数据类型，均使用%s作为占位符！)
+        3：具体的参数值需要在第二个参数中通过tuple按顺序给出；
+    */
+
+    #执行增删改操作：
+        #执行增加操作：增加一条数据
+            issuccess = cur.execute("insert into example(att1,att2) values(%s,%s)",('value1','value2'))
+            添加成功返回1，失败返回0
+        #执行增加操作：增加多条数据：
+            issuccess = cur.executemany("insert into example(att1,att2) values(%s,%s)",[('v1','v2'),('v1','v2'),('v1','v2')]   
+        #执行删除操作：
+            num = cur.execute("delete from example where uid = %s",(1001))
+        #执行更新操作：
+            num = cur.execute("update example set uname= %s where uid = %s",("abc",1001))
+        #num是返回被影响的行数；
+        
+    #对于增删改操作，执行完sql之后必须使用cur.commit()来提交；
+            link.commit()
+    #关闭cursor:
+            cur.close()
+    #关闭连接：
+            link.close()
+游标的相关操作：
+    cur.scroll(n,mode="relative")       相对当前位置移动
+    cur.scroll(n,mode="absolute")       相对起始位置移动
+
+使用with简化连接过程：
+    import pymysql
+    import contextlib
+
+    @contextlib.contextmanager
+    def mysql_connect(host="127.0.0.1",port=3306,user="username",passwd="password",db="dbname",charset="utf8"):
+        connection = pymysql.Connect(host=host, port=port, user=user, passwd=passwd, db=db, charset=charset)
+
+        cursor = connection.cursor()
+
+        try:
+            yield (connection,cursor)
+        except Exception as e:
+            pritn(e)
+        finally:
+            cursor.close()
+            connection.close()
+
+    将上述代码单独存储在一个文件中，需要使用mysql的时候import引入即可
+        使用方式：
+            with mysql_connect as link:
+                con = link[0]
+                cur = link[1]
+                cur.execute(sql)
+pymysql中的事务
+        with mysql_connect as link:
+            try:
+                con = link[0]
+                cur = link[1]
+                res1 = cur.execute(sql1)
+                res2 = cur.execute(sql2)
+                res3 = cur.execute(sql3)
+                con.commit()
+            except Exception as e:
+                con.rollback()
+                
+    
+
