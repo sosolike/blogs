@@ -34,5 +34,17 @@
     是否全大写：str.isupper()
 8:分割字符串：
     按指定字符分割字符串为数组：str.split(' ')
+9：url编码与解码：
+    import urllib
+    urllib.parse.urlencode("url")   #对url进行编码
+    urllib.parse.urldecode("url")   #对url进行解码
 
+10：html标记转换：
+    import HTMLParser
+    txt = '&lt;abc&gt;'
+    html_parser = HTMLParser.HTMLParser()
+    html = html_parser.unescape(txt)   #将html实体转换为html标记:'&lt;abc&gt;' => '<abc>'
+
+    import cgi
+    txt = cgi.escape(html)     #将html标记转换为html实体  '<abc>' => '&lt;abc&gt;'
 

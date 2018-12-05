@@ -1,4 +1,4 @@
-python---网络请求
+python---网络请求---同步库
 1：python3发起网络请求使用urllib包；python2发起网络请求使用urllib和urllib2包；
 2：python3使用urllib发起请求：
     1：通过urlopen直接发起简单请求：(仅仅包括请求地址，请求数据，超时时间)
@@ -155,5 +155,8 @@ python---网络请求
         4：若请求超过了设定的最大重定向次数，则会抛出一个 TooManyRedirects 异常。
         
         5：所有Requests显式抛出的异常都继承自 requests.exceptions.RequestException 。
+
+网络请求----aiohttp----异步请求库：
+    
             
 

@@ -27,6 +27,7 @@
             list.count(item),统计某个元素在列表中出现的次数；
             list.append(item);在列表的末尾添加新元素；
             list(tuple);可以将tuple转换为list列表；
+            "split".join(list) ：使用分隔符split连接list中的每一项；
     元组---tuple---不可变对象：
         1：特征：
                 1：元祖只能存储值本身；不能存储k-v；
@@ -75,6 +76,7 @@
                     5：dict.get(key);
                     6：dict.clear();删除字典内的所有元素
                     7：dict.pop(key)
+                    8：dict.has_key(key) 检测dict中是否有key
     集合：set
         1：特征：   
                 1：set集合只能存储元素，没有索引,不能存储k-v；
