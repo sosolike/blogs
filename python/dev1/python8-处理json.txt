@@ -6,5 +6,9 @@
     json.loads()
 4：备注：
    1：python支持多种数据类型转换为json;
+        list/tuple  ===json.dumps()>>>  str格式的list/tuple   ===json.loads()>>>   list
+        number/str  ===json.dumps()>>>  str格式的number/str   ===json.loads()>>>   number/str
+        dict        ===json.dumps()>>>  json格式的字符串       ===json.loads()>>>   dict
+        
    2：推荐实际应用中只转换dict字典，其他转换为json并无任何实际意义；
 
