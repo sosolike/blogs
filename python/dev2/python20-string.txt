@@ -1,0 +1,38 @@
+1：获取字符串长度：
+    len(str)
+2：截取字符串：
+    str[n];  str[n:];  str[n:m];  str[:m]  str[n:m:step]
+3：检测子串：
+    in                     #检测子串是否在目标字符串中
+    not in                 #检测子串是否不在标字符串中
+    str.find("child_str")  #检测子串是否在标字符串中，如果存在返回第一次找到的索引，如果找不到返回-1
+    str.find("child_str",start_position)#指定起始位置查找子串，存在返回第一次找到的索引，不存在返回-1
+    str.find("child_str",start_position,stop_position)#指定起始位置和终止位置查找；
+    #上述find函数均是从左侧开始查找；
+    str.rfind("child_str") #在目标字符串中从右侧查找指定子串；
+
+4：字符串替换：
+    str.replace("old_str","new_str")    #在目标字符串中替换掉指定子串，全部替换
+    str.replace("old_str","new_str","maxReplaceTimes") #在目标字符串中替换掉指定子串，替换指定次数,从左向右替换；
+5：大小写处理：
+    str.upper()
+    str.lower()
+    str.swapcase()
+    str.title()
+    str.capitalize()
+6：字符串处理空格：
+    str.strip()
+    str.lstrip()
+    str.rstrip()
+7：字符串检测：
+    是否以start开头：str.startswith('start')
+    是否以end结尾：str.endswith('end')
+    是否全为字母或数字：str.isalnum()
+    是否全字母：str.isalpha()
+    是否全数字：str.isdigit()
+    是否全小写：str.islower()
+    是否全大写：str.isupper()
+8:分割字符串：
+    按指定字符分割字符串为数组：str.split(' ')
+
+
