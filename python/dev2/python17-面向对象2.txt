@@ -1,0 +1,76 @@
+python面向对象：
+    一：类的特殊成员：
+        __doc__: 用来表示类的描述信息：
+            如：
+            class Foo:
+                """cliass description info"""
+            
+            print(Foo.__doc__) 即输出：cliass description info
+        
+        __module__：用来表示当前操作的对象在哪个模块
+            如：
+                print(obj.__module__)   #输出对象所属类的模块
+
+        __class__：用来表示当前操作的对象在哪个模块
+            如：
+                print(obj.__class__)    #输出对象所属类
+            
+
+        __del__：析构方法，当对象在内存中被释放的时候，自动触发执行，python在对象被销毁时会自动进行调用，无需手动调用；
+        
+        __call__：直接调用对象时执行；
+        如：
+            class Foo:
+                def __call__(self,*args,**kwargs):
+                    print("__call__)
+            foo = Foo()
+            foo()    => __call__
+
+        __dict__：获取类或者对象的属性及方法名
+            如：Foo.__dict__：打印类属性及类方法
+                foo.__dict__：打印对象的属性及对象的方法
+            
+        __str__：如果类中定义了__str__方法，那么在打印对象的时候，默认会输出该方法的返回值；
+
+将对象封装成dict:
+    __getitem__ :根据key值获取value
+    __setitem__ :为某个key设置value
+    __delitem__ ：删除某个key
+    class Foo(object):
+        def __getitem__(self,key)
+            print("the key value")
+        
+        def __setitem__(self,key,value):
+            print("set key value")
+        
+        def __delitem__(self,key):
+            print("delete key")
+    
+    foo = Foo();    
+    foo['key1'] = "value1"              #设置key-value
+    print(foo['key1']) => "valu e1"     #获取key的值
+    del obj['key1]                      #删除key的值
+
+将对象设置为列表：
+    __getslice__ :根据i索引获取value
+    __setslice__ :为i索引设置value
+    __delslice__ ：删除i索引
+    class Foo(object):
+        def __getslice__(self,i)
+            print("the i value")
+        
+        def __setslice__(self,i,value):
+            print("set i value")
+        
+        def __delslice__(self,i):
+            print("delete i")
+    
+    foo = Foo();    
+    foo[i] = "value1"              #设置key-value
+    print(foo[i]) => "valu e1"     #获取key的值
+    del obj[i]                      #删除key的值
+
+将对象设置为可迭代器
+    即在对象内部定义__iter__，并在__iter__内部调用iter()将待返回列表转换为迭代器；
+
+
