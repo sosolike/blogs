@@ -134,21 +134,7 @@ python面向对象1：
                             return self.age = age_data
                     
                 如果只提供了@property修饰的方法，则相当于只为该属性提供了只读属性；
-        8：定制类----特殊属性的使用  
-            __str__：
-                python中打印一个对象时默认显示该对象的详细信息(类名,id等)，如果在打印时需要显示自定义信息，可以实现__str__方法，该方法的返回值即是打印对象时的值；如：
-                    class Test(object):
-                        def __str__():
-                            return "object info"
-                    t = Test()
-                    print(t)   #object info
-            __repr__：
-                python中直接调用实例对象，同样也会打印对象的详细信息(类名，id等)，如果在打印时需要显示自定义信息，可以实现__repr__方法，该方法的返回值即是打印对象时的值；如：
-                    class Test(object):
-                        def __repr__():
-                            return "object info"
-                    t = Test()
-                    t        #object info
+
 
 
         
