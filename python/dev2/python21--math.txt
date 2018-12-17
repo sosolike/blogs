@@ -20,7 +20,7 @@
         pow(x,y)：求x的y次幂
         log10(x)：求x的以10位底的对数
         sqrt(x)：求x的平方根
-        math.isnan(x)：若x不是数组返回True,否则返回False
+        math.isnan(x)：若x不是数值返回True,否则返回False
 2：获取随机数
     import random
     random.random() #获取随机大于0，且小于1之间的小数
