@@ -44,7 +44,7 @@ python 操作mysql是通过 pymysql扩展来进行的；
             num = cur.execute("update example set uname= %s where uid = %s",("abc",1001))
         #num是返回被影响的行数；
         
-    #对于增删改操作，执行完sql之后必须使用cur.commit()来提交；
+    #对于增删改操作，执行完sql之后必须使用link.commit()来提交；
             link.commit()
     #关闭cursor:
             cur.close()
