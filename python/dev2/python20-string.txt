@@ -15,11 +15,11 @@
     str.replace("old_str","new_str")    #在目标字符串中替换掉指定子串，全部替换,不改变源字符串，只替换得到的结果
     str.replace("old_str","new_str","maxReplaceTimes") #在目标字符串中替换掉指定子串，替换指定次数,从左向右替换；不改变源字符串，只替换得到的结果
 5：大小写处理：
-    str.upper()
-    str.lower()
-    str.swapcase()
-    str.title()
-    str.capitalize()
+    str.upper()        #转换成大写
+    str.lower()        #转换成小写
+    str.swapcase()     #大小写切换
+    str.title()        #每个单词的首字母大写
+    str.capitalize()   #整个字符串的首字母大写
 6：字符串处理空格：
     str.strip()
     str.lstrip()
