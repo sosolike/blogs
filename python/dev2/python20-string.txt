@@ -12,8 +12,8 @@
     str.rfind("child_str") #在目标字符串中从右侧查找指定子串；
 
 4：字符串替换：
-    str.replace("old_str","new_str")    #在目标字符串中替换掉指定子串，全部替换
-    str.replace("old_str","new_str","maxReplaceTimes") #在目标字符串中替换掉指定子串，替换指定次数,从左向右替换；
+    str.replace("old_str","new_str")    #在目标字符串中替换掉指定子串，全部替换,不改变源字符串，只替换得到的结果
+    str.replace("old_str","new_str","maxReplaceTimes") #在目标字符串中替换掉指定子串，替换指定次数,从左向右替换；不改变源字符串，只替换得到的结果
 5：大小写处理：
     str.upper()
     str.lower()
