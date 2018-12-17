@@ -74,10 +74,12 @@ python 操作mysql是通过 pymysql扩展来进行的；
 
     将上述代码单独存储在一个文件中，需要使用mysql的时候import引入即可
         使用方式：
-            with mysql_connect as link:
+            with mysql_connect() as link:
                 con = link[0]
                 cur = link[1]
                 cur.execute(sql)
+    
+    #特别注意：执行语句的代码必须放置在with块内，一旦出了with语句块，将会立即执行finally中的代码！
 pymysql中的事务
         with mysql_connect as link:
             try:
