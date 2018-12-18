@@ -11,7 +11,7 @@ python面向对象：
             如：
                 print(obj.__module__)   #输出对象所属类的模块
 
-        __class__：用来表示当前操作的对象在哪个模块
+        __class__：用来表示当前操作的对象在哪个类
             如：
                 print(obj.__class__)    #输出对象所属类
             
