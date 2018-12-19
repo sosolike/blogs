@@ -9,6 +9,10 @@
 range函数：range函数是一个生成器，可以生成指定整数范围的数据迭代对象
     python2.x中 range返回一个整数列表:range(start,stop,step)
     python3.x中 range返回一个整数列表对象：range(start,stop,step)
+    range使用方式：
+        range(stop)
+        range(start,stop)
+        range(start,stop,step)
 
 列表生成式：
     目的：可以用来生成列表或者元祖；
@@ -21,7 +25,7 @@ range函数：range函数是一个生成器，可以生成指定整数范围的�
             tuple(list)：可以将列表转换为元祖
 
 yield关键字：
-    在python中，yield关键字在实现迭代协议中作用，使得函数成为一个生成器；
+    在python中，yield关键字在实现迭代协议中作用，使得函数成为一个生成器；使用yield创建协程则是使用yield的副作用！
     yield关键字特征：
         1：函数运行到yield处时，可以暂停函数的执行，并保存函数的运行状态，将值返回；
         2：在函数下一次被激活时将会从暂停处开始执行，直至运行结束或者遇到下一个yield，继续暂停；
