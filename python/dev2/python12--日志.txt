@@ -46,7 +46,7 @@ python--记录日志信息
             # WARNING      30
             # INFO         20
             # DEBUG        10
-        4：日志格式化方式：
+    3：日志格式化方式：
             %(asctime)s     字符串形式的当前时间，默认格式是"YYYY-mm-dd HH:MM:SS.w"
             %(name)s        Logger的名字，可以设置tag，根据tag区分不同的日志
             %(levelname)s   字符串形式的日志级别
@@ -56,7 +56,7 @@ python--记录日志信息
             %(lineno)s      调用日志输出函数的语句所指的代码行
             %(thread)d      线程id，可能没有
             %(threadName)s  线程名，可能没有
-    3：logging的使用：
+   4：logging的使用：
         1：通过单独创建loggers,handlers,formatters来记录日志；
             1：创建logger：
                 logger = logging.getLogger("logger_name")   #创建logger并设置名称
