@@ -1,0 +1,41 @@
+beautifulsoup基本安装：
+
+BS4安装：
+    1:通过pip安装：
+        pip install beautifulsoup4
+    2:通过源码安装：
+        wget http://www.crummy.com/software/BeautifulSoup/download/4.x/    #下载bs4源码
+        python setup.py install
+
+解析器安装：
+    Python标准库	
+        使用方法：BeautifulSoup(markup, "html.parser")	
+        优势：Python的内置标准库
+             执行速度适中
+             文档容错能力强
+        劣势：Python 2.7.3 or 3.2.2前 的版本中文档容错能力差
+    
+    lxml HTML 解析器	
+        使用方法：BeautifulSoup(markup, "lxml")	
+        优势：速度快
+             文档容错能力强
+        劣势：需要安装C语言库
+
+    html5lib 解析器
+        使用方法：BeautifulSoup(markup, "html5lib")
+        优势：最好的容错性
+             以浏览器的方式解析文档
+             生成HTML5格式的文档
+        劣势：速度慢
+              不依赖外部扩展
+
+    lxml XML 解析器
+        使用方法：BeautifulSoup(markup, ["lxml", "xml"])
+                或者
+                BeautifulSoup(markup, "xml")	
+        优势：速度快
+             唯一支持XML的解析器
+        劣势：需要安装C语言库
+    
+    推荐使用lxml解析器
+安装lxml解析器：pip install lxml --target=install_path

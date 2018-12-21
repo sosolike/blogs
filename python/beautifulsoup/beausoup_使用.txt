@@ -1,0 +1,83 @@
+1：引入beautifulsoup：
+    from bs4 import BeautifulSoup
+
+2：创建指定html文档对象：
+    soup = BeautifulSoup("html代码","lxml")
+    或者
+    soup = BeautifulSoup(open("html文件"),"lxml")
+
+    soup代表当前html文档本身，本质上也是一个Tag对象；
+    soup同样也有name属性，其值为[document];
+
+3：从html文档对象中解析具体的节点对象：
+    BeautifulSoup对于HTML文档的解析核心在于操作各个DOM结点，每一个DOM结点在BeautifulSoup中都是一个Tag对象；
+    3.1：获取当前节点所有的子节点和子孙节点（如果当前节点是文档对象，将会在当前文档中查找）：
+        1：tagobj = soup.tag:
+            可获取当前文档中的第一个指定tag标签的对象，
+            如：soup.img ：将会获取文档中第一个img标签作为tag对象；
+
+        2：tagobj = soup.find_all():
+            （查找方式：1：根据tag名称查找；2：根据tag属性来查找，3：根据名称和属性来查找）
+
+            1：根据tag名称查找：tagobj_list = soup.find_all('img'):
+                可获取当前文档中的所有指定img标签的对象，并以list的形式返回；
+            
+            2:根据tag属性来查找：tagobj_list = soup.find_all(attrs={"attr_name":"attr_value"})
+                          tagobj_list = soup.find_all(href='href_value',id='id_value')
+                可获取当前文档中所有的存在attr_name属性的且值为attr_value的dom节点对象，并以list返回；
+                特别注意：如果指定多个属性，多个属性之间是且的关系；
+
+            3:根据名称和属性来查找：tagobj_list = soup.find_all('img',aname1='avalue',aname1='avalue')
+                可获取当前文档中的所有指定img标签且属性名是aname1值是avalue的dom节点对象；并以list的形式返回；
+                特别注意：如果是指定class属性，则属性名应该写为class_
+
+            4:find_all其他参数：
+
+
+                recursive：指定是否遍历子节点，如果recursive为True将会办理当前tag的所有子孙节点，如果只想要tag的直接子节点，则可以将recursive设置为False;
+            
+                limit：限制返回查找结果的数量，类似SQL中的limit;
+
+                特别注意：每一个tag对象可以直接当做find_all来查找；
+            
+        3：tagobj = soup.find()
+            1:find函数查找tag标签的方式和find_all一致：1：根据tag名称查找；2：根据tag属性来查找，3：根据名称和属性来查找
+            2：区别在于find返回查找到的第一个标签，find_all则返回一个list包含了所有查找到的标签；
+        
+    3.2：根据tag对象查找父级tag对象：
+        1：parent_tag = find_parents()
+        2：parent_tag = find_parent()
+
+        备注：1：find_parent将会返回目标节点的直接父节点，find_parents将会返回目标节点的所有父节点
+             2：该函数的使用方式和find函数一样：1：根据tag名称查找；2：根据tag属性来查找，3：根据名称和属性来查找
+    3.3：根据tag对象查找兄弟节点对象：
+        1：nsiblings = soup_tag.find_next_sibilings()
+           nsibiling = soup_tag.find_next_sibiling()
+
+        2：psibilings = soup_tag.find_previous_sibilings()
+           psibiling = soup_tag.find_previous_sibiling()
+        
+        备注：1：上述函数和find函数的参数一致；1：根据tag名称查找；2：根据tag属性来查找，3：根据名称和属性来查找
+             2：s结尾会返回所有的兄弟节点，非s的则只返回最近的一个兄弟节点对象；
+    3.4：css选择器的形式查找：
+        1：查找方式：tag = soup_tag.select("css选择器")
+    
+    3.5：通过属性来获取：
+        .parent获取当前节点的直接父节点
+        .parents获取当前节点的所有父节点
+        .next_sibiling获取下一个兄弟节点
+        .next_sibilings获取后面的所有兄弟节点
+        .previous_sibiling获取前一个兄弟节点
+        .previous_sibilings获取前面的所有兄弟节点
+
+4：根据标签tag对象获取内容：
+    1：name：可以获取tag对象的名称
+    2：attrs:将会返回一个list，包含标签的属性名和值
+    3：contents：将会把该节点的子节点以list的形式返回
+    4：children：作用同contents,但是返回的是一个迭代器，可以使用for循环迭代每一个子节点；
+    5：descendants：可以获取目标节点的所有子孙节点；返回一个迭代器；
+    6：string：如果tag对象只有一个string类型的子节点，那么直接返回该string,如果包含一个子节点，则直接返回当前子节点；如果包含多个子节点，将会返回None；
+
+
+               
+
