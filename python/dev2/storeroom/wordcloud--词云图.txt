@@ -1,0 +1,65 @@
+wordcloud--生成词云图的第三方模块
+
+安装：pip install wordcloud
+    备注：wordcloud依赖matplotlib
+
+导入:from wordcloud import WordCloud
+
+使用：
+    1：从jieba已经分好的词库中回执云图：
+        seg_list = jieba.cut(file_content)      #从文件中切割出分词库
+        seg_list = "\\".join(seg_list)          #将分词库拼装成字符串
+
+    2：使用wordcloud.WordCloud类创建词云图：
+       1: wordcloud = WordCloud(
+            # 设置字体，不指定就会出现乱码，文件名不支持中文
+            font_path="./fonts/msyh.ttf",
+
+            # 设置背景色，默认为黑，可根据需要自定义为颜色
+            background_color='white',
+
+            # 词云形状，词云可以根据导入的图片设置成图片中的形状
+            mask=color_mask,
+
+            # 允许最大词汇
+            max_words=400,
+
+            # 最大号字体，如果不指定则为图像高度
+            max_font_size=150,
+
+            # 最小号字体
+            min_font_size=10,
+
+            #输出的画布宽度，默认为400像素,如果设置了mask则width和height设置的宽高不会生效
+            width=500
+            #输出的画布高度，默认为200像素,如果设置了mask则width和height设置的宽高不会生效
+            height=400
+            
+            #水平方向排版概率，竖直方向拍呗概率=1-水平方向排版概率
+            prefer_horizontal=0.5
+
+            #安装比例进行画布放大
+            scale=1.2
+
+            #需要屏蔽的词
+            stopwords=''
+
+            #设置背景透明
+            mode='RGBA'
+        )
+
+        2:从文本中获取词语：
+            1:wordcloud.generate(text) 或者 wordcloud.generate_from_text(text) 从字符串中获取
+            2:wordcloud.generate_from_frequencies() 从词频中获取，词频信息应该是dict:{'word':3.11,'word2':3.12}类似这种
+        
+        3：保存词云图：
+            #输出到图片:
+            image = wordcloud.to_image()              
+            image.save(file_handler)
+
+            #输出到图像文件:
+            image = wordcloud.to_file("file_path")    
+
+
+
+
