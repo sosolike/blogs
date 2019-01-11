@@ -1,0 +1,37 @@
+jieba：中文分词第三方库，github地址：https://github.com/fxsjy/jieba.git
+jieba特征：
+    1：可以对中文进行分词，并支持三种分词模式；
+    2：三种分词模式：
+        1：精确分词：尽量将局子最精确的分开，适用于文本分析
+        2：全模式：可以把局子中所有可以成词的词语都扫描出来，不能解决歧义，
+        3：搜索引擎模式：在精确分词模式的基础上对长次再次切分，适合用于搜索引擎分词
+    3：支持繁体分词
+    4：支持自定义词典
+
+jieba安装：
+    自动按照：pip install jieba
+    手动安装：将 jieba 目录放置于当前目录或者 site-packages 目录
+
+jieba使用：
+    import jieba
+    jieba.cut(str string_content)  :精确分词
+    jieba.cut(str string_content,Bool cut_all=True/False)  True：全模式、False：精确模式
+    jieba.cut_for_search(str string_content) :搜索引擎模式
+    #上述方法军返回一个可迭代对象，可以通过循环遍历出每一个分词
+
+    jieba.lcut(str string_content)  :精确分词
+    jieba.lcut(str string_content,Bool cut_all=True/False)  True：全模式、False：精确模式
+    #上述方法直接返回一个list
+jieba调节词频：
+    jieba.add_word(str word,freq=None,tag=None) 可以在成语中动态添加词组
+    jieba.del_word(str word,freq=None,tag=None) 可以在成语中动态删除词组
+
+    jieba.suggest_freq(segment,tune=True) 可以调节单个词语的词频，使其能或者不能被分出来
+    ### 注意：自动计算的词频在使用 HMM 新词发现功能时可能无效。
+jieba并行分词(不支持windows)
+    原理：将目标文本按行分隔后，把各行文本分配到多个 Python 进程并行分词，然后归并结果，从而获得分词速度的可观提升
+    基于python自带的multiprocessing模块
+    用法：jieba.enable_parallel(n)  开启并行分词模式，并制定并行的进程个数
+         jieba.disable_parallel()  关闭并行分词模式
+         
+
