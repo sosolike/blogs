@@ -66,9 +66,9 @@
                 fcvt()：指定位数为转换精度
 
 3：转ASCII码：
-    toascii(int c)
+    int toascii(int c)
         功能：用来将整数转换为ascii码值；
         参数：需要被转换的整数；
-        返回值：返回转换成功的ASCII码；
+        返回值：返回转换成功的ASCII码,是一个整数，范围在0~255；
     
 
