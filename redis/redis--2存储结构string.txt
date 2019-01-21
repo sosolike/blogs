@@ -71,7 +71,46 @@ redis--string存储结构：
                 原型: DEL key1 key2 key3... keyn
                 参数: key*:  键名
               返回值:  返回删除成功的key的个数
-        
+        4：其他操作：
+            1: INCRBY 
+                功能: 如果key存在，将Redis中某个key的值加上增量increment；如果key不存在，则在0的基础上运算之后设置一个key-value键值对！
+                原型: INCRBY key increment
+                参数:      key*:  键名
+                      increment:  自增值 
+              返回值:  返回自增完成后的数值；
+            2: DECRBY 
+                功能: 如果key存在，将Redis中某个key的值减去增量increment；如果key不存在，则在0的基础上运算之后设置一个key-value键值对！
+                原型: DECRBY key increment
+                参数:      key*:  键名
+                      increment:  自增值 
+              返回值:  返回自增完成后的数值；
+            3: APPEND 
+                功能: 如果key存在，将Redis中某个key的值末尾追加上指定的内容；如果key不存在，则在空的基础上运算之后设置一个key-value键值对！
+                原型: APPEND key value
+                参数:      key*:  键名
+                          value:  追加值 
+              返回值:  返回追加完成之后的字符串长度
+            4: STRLEN 
+                功能: 返回指定key的值长度，如果key不存在直接返回0
+                原型: STRLEN key
+                参数:   key:  键名
+              返回值:  返回指定key对应键值的长度！
+            5: GETRANGE 
+                功能: 获取指定key中字符串的子串[start,end]
+                原型: GETRANGE key start end
+                参数:   key:  键名
+                        start:  起始位 
+                        end:  结束位 
+              返回值:  返回指定key指定区间的字符串值；
+            6: SETRANGE 
+                功能: 覆写指定key中指定起始位置往后的值；如果key不存在，那么start之前的位置将会用\x00填充！
+                原型: SETRANGE key start value
+                参数:     key:  键名
+                        start:  起始位 
+                        value:  需要覆写的值 
+              返回值:  返回指定key的长度
+            
+            
 
                 
 
