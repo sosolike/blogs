@@ -1,0 +1,29 @@
+redis--string存储结构：
+    一: string结构特征：(值是字符串)
+        1: 基于key-vlaue式的存储方式；
+        2: key：可以是任意字符组成的字符串；
+           value：可以是任意字符组成的字符串；
+        3: 每增加一条string,Redis即会在内存中增加一条key-value键值对；如下：
+            key1 => value1
+            key2 => value2
+                .
+                .
+    二: string支持的操作命令：
+        1: 设置类指令：
+            1: SET:
+                功能: 向Redis中添加一条string结构的key-value键值对；
+                原型: SET key value [ex秒数][px毫秒数][nx/xx]
+                参数:   key:  键名(任意字符组成的字符串)
+                      value:  键值(待存储的字符串内容)
+                         ex:  设置键值对过期时间(以秒为单位) 
+                         px:  设置键值对过期时间(以毫秒为单位)
+                      nx/xx:  xx:指定只有key存在时才能对key进行设置操作；nx:指定只有key不存在时才能对key进行设置操作！
+              返回值:  如果设置成功返回ok,设置失败返回error以及错误原因！
+            
+                
+
+
+
+    
+    
+    
