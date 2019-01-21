@@ -109,6 +109,8 @@ redis--string存储结构：
                         start:  起始位 
                         value:  需要覆写的值 
               返回值:  返回指定key的长度
+    三：Redis中string存储结构的实现
+    四：Redis中string存储结构的使用
             
             
 
