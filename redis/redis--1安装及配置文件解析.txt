@@ -1,4 +1,4 @@
-Redis简介：
+一：Redis简介：
     Redis官网对Redis的介绍：
         1：Redis是一个开源的(BSD许可)，基于内存的数据存储结构；
         2：可以被用来做为数据库，缓存，或者消息中间件；
@@ -6,23 +6,14 @@ Redis简介：
         4：支持两种不同的方式并按照预设的条件，将数据持久化到磁盘上；
         5：具有内置的复制，Lua脚本，LRU回收算法以及事务；
         6：支持通过Redis Sentinel(Redis哨兵)和Redis集群来提供高可用性；
-Redis安装：
+二：Redis安装：
     linux: 
         $ wget http://download.redis.io/releases/redis-3.2.11.tar.gz
         $ tar xzf redis-3.2.11.tar.gz
         $ cd redis-3.2.11
         $ make
-    关键文件：
-        1：配置文件是目录redis-3.2.11下面redis.conf
-        2：启动文件是目录redis-3.2.11/src下面的redis-server
-        2：Redis客户端是目录redis-3.2.11/src下面的redis-cli
-    启动Redis:
-        使用默认的配置文件：  执行：./redis-server即可；
-        使用指定的配置文件：  执行：./redis-server ../redis.conf(任意redis配置文件)；
-    启动Redis客户端：
-        在src目录中：执行：./redis-cli -h redis-host -p redis-port -a password
 
-Redis配置文件详解：
+三：Redis配置文件详解：
     Redis---常规配置：
     daemonize no
         Redis默认不是以守护进程执行的，如果该项设置为on，则redis进程将会以守护进程执行；并且在启动守护进程以后，Redis会把pid写到一个pidfile里面，该文件位置在：/var/run/redis.pid
@@ -114,3 +105,14 @@ Redis配置文件详解：
             
     
     include /path/to/local.conf  设置包含指定的配置文件；  
+
+四：Redis的运行：
+    关键文件：
+        1：配置文件是目录redis-3.2.11下面redis.conf
+        2：启动文件是目录redis-3.2.11/src下面的redis-server
+        2：Redis客户端是目录redis-3.2.11/src下面的redis-cli
+    启动Redis:
+        使用默认的配置文件：  执行：./redis-server即可；
+        使用指定的配置文件：  执行：./redis-server ../redis.conf(任意redis配置文件)；
+    启动Redis客户端：
+        在src目录中：执行：./redis-cli -h redis-host -p redis-port -a password
