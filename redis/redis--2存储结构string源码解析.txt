@@ -1,0 +1,151 @@
+Redis中string存储结构的具体实现：
+    一：为了便于统一管理，Redis构建了对象系统，即使用redisObject(robj)的结构体来表示五种(string,set,zset,list,hash)数据存储结构,redisObject的声明在redis.h头文件中，结构如下：
+        typedef struct redisObject { 
+            unsigned type:4; 
+            unsigned encoding:4; 
+            unsigned lru:REDIS_LRU_BITS; /* lru time (relative to server.lruclock) */ 
+            int      refcount; 
+            void     *ptr; 
+        } robj;
+    二：redisObject结构体成员:
+        type:
+            1: 表示该结构体中存储的数据类型，unsigned int类型，并只占4个二进制位；
+            2: string存储解雇取值为：   
+                    OBJ_STRING 0  //string类型，是在server.h中定义的宏；
+        encoding:
+            1：在redis中，每一种存储结构在底层都不是唯一一种存储方式，因此，encoding代表某种存储结构在底层的存储方式；
+
+            2：对于string存储结构，取值为：
+                    OBJ_ENCODING_INT 1     /* integer类型(使用整数值存储字符串对象) */  
+                    OBJ_ENCODING_RAW 0     /* Raw类型(使用简单动态字符串实现字符串对象) */
+                    OBJ_ENCODING_EMBSTR 8  /* Embedded sds类型(使用embstr方式的简单动态字符串实现字符串对象) */是在server.h中定义的宏；
+
+        lru:
+            1：表示当内存超过限制时，将会按照LRU算法清除redisObject对象；
+
+        refcount：
+            1：表示对象的引用计数，对象每被引用一次即调用incrRefCount加1，对象每被释放一次即调用decrRefCount减1；如果对象的引用计数值为0时，该对象将会被销毁；
+
+        ptr:
+            1：指针类型，指向数据在底层真正的存储结构，通过该指针即可拿到数据；
+
+    三：创建string存储结构的redisObject:
+        1：Redis在底层会使用三种方式来存储string字符串，存储策略分别如下：
+            1：如果存储的字符串能够转换成为long long型数据，Redis将直接使用整数的形式存储字符串，并将robj中的ptr指向该整数存储地址；表示该方式的宏为：REDIS_ENCODING_INT
+
+            2：如果存储的字符串不能够转换成long long型数据，且字符串长度小于44，将会按照embstr的方式使用sds存储字符串；表示的宏为：REDIS_ENCODING_EMBSTR
+            
+            3：如果存储的字符串不能够转换成long long型数据，且字符串长度大于44，将会按照RAW的方式使用sds存储字符串；表示的宏为：REDIS_ENCODING_RAW
+
+        2：REDIS_ENCODING_EMBSTR和REDIS_ENCODING_RAW方式：
+            1：相同点在于两种方式都是使用sds来存储字符串内容的；
+            2：区别在于：
+                1：EMBSTR创建redisObject的时候只会申请一次内存分配：包括了redisObject本身占据的空间以及sds占据的空间；在释放redisObject时，也是调用一次内存释放函数即释放完成；具体代码如下：
+                    robj *o = zmalloc(sizeof(robj)+sizeof(struct sdshdr8)+len+1);
+                    (由上述代码可知，在EMBSTR方式中，Redis只调用一次zmalloc内存分配函数即可为redisObject和sdshdr同时分配内存)
+                    
+                2：RAW创建redisObjct的时候，会先为sdshdr申请分配内存空间，然后再为redisObject分配内存空间；释放内存空间时同样需要调用两次内存释放函数来释放内存空间；具体代码如下：
+                    createObject(OBJ_STRING,sdsnewlen(ptr,len));
+                    (由上述代码可知，Redis会先调用sdsnewlen创建sdshdr结构，然后再调用createObject创建redisObject结构)
+
+            3：相比较使用REDIS_ENCODING_RAW的方式，能够使用REDIS_ENCODING_EMBSTR和REDIS_ENCODING_INT的方式可以提高字符串的存储速度；
+
+        3：redisObject对象的相关创建代码在object.c中；除过上述三种方式创建字符串以外，Redis还有一种方式创建字符串对象：createStringObjectFromLongDouble()：即从long double类型的数值创建字符串，该方法只会用在INCRBYFLOAT以及HINCRBYFLOAT中；
+            
+        
+
+
+
+
+
+      
+    Redis中并非直接使用C语言传统的字符串来存储键名以及string类型的键值；而是针对字符串本身的不同做了不同的处理，具体情况如下：
+        
+
+    基本概况：
+        1：Redis中并未直接使用C语言中传统的字符串(字符数字)来存储键名以及字符串键值，而是构建了一种简单动态字符串的结构来存储键名以及字符串类型的键值；
+
+        2：简单动态字符串全称：simple dynamic string；简称为sds；是Redis中自行构建的一种结构体；包含了字符串本身以及字符串的属性信息；
+        
+        3：sds结构体：
+            在3.0版本及以下，sds结构体结构如下：
+                struct sdshdr {
+                    unsigned int len;
+                    unsigned int free;
+                    char buf[];
+                };
+            说明：
+                1：在3.0及以下版本，sds的结构体只有sdshdr这一个；
+                2：成员：
+                    buf：初始化sds分配的存储空间，用来存储真实的字符串内容，是柔性数组；
+                    len：代表buf中字符个数(字符串真实长度，不包括'\0')；unsigned int类型，占据4个字节
+                    free：表示buf中剩余可用空间大小；unsigned int类型，占据4个字节
+
+            在3.2版本及以上，sds结构体有多个，在创建sds结构体的时候会按照字符串的长度来选择合适的结构体，以减少内存空间的占用；基本结构体如下：
+                struct __attribute__ ((__packed__)) sdshdr5 {
+                    unsigned char flags; /* 3 lsb of type, and 5 msb of string length */
+                    char buf[];
+                };
+                struct __attribute__ ((__packed__)) sdshdr8 {
+                    uint8_t len; /* used */
+                    uint8_t alloc; /* excluding the header and null terminator */                             
+                    unsigned char flags; /* 3 lsb of type, 5 unused bits */
+                    char buf[];
+                };
+                struct __attribute__ ((__packed__)) sdshdr16 {
+                    uint16_t len; /* used */
+                    uint16_t alloc; /* excluding the header and null terminator */
+                    unsigned char flags; /* 3 lsb of type, 5 unused bits */
+                    char buf[];
+                };
+                struct __attribute__ ((__packed__)) sdshdr32 {
+                    uint32_t len; /* used */
+                    uint32_t alloc; /* excluding the header and null terminator */
+                    unsigned char flags; /* 3 lsb of type, 5 unused bits */
+                    char buf[];
+                };
+                struct __attribute__ ((__packed__)) sdshdr64 {
+                    uint64_t len; /* used */
+                    uint64_t alloc; /* excluding the header and null terminator */
+                    unsigned char flags; /* 3 lsb of type, 5 unused bits */
+                    char buf[];
+                };
+            说明： 
+                1：在3.2版本及以上，Redis针对sds结构体做了优化，声明了5中sds结构体，分别对应存储不同长度的字符串，可以减少内存空间的占用；
+                2：相比较原先的sds结构体而言，主要做出来以下改进：
+                    1：原先使用成员free表示buf中的可用空间，现在改成使用成员alloc表示buf的总空间；
+                    2：原先对于表示字符串实际长度的成员len以及表示buf可用空间的成员free均使用unsigend int类型表示，无论数值大小均占用4个字节的存储空间；
+                     现在改成使用位域来声明成员占据内存空间大小；更加节省空间；
+                3：增加了成员flags，来表示字符串使用sds结构体类型；
+                4：Redis使用sds结构体来存储字符串相比C语言传统字符串的优势：
+                     1：可以立即知道字符串的长度和剩余空间，无需再遍历字符数组计算长度！获取长度的时间复杂度是O(1);传统的字符串获取长度的时间复杂度是O(n)
+
+                     2：在修改字符串的时候，sds能够减少空间与分配的次数，提高运行效率；在为字符串本身append的时候，会先根据len和alloc判断可用空间大小，如果空间足够将不会从新分配内存，如果空间不足才会重新分配内存；
+                     
+                     3：c语言中都是根据\0来判断字符数串的结尾，sds结构体可以无视\0，可以直接根据len成员获取字符串内容，字符串内容的获取效率更高(可以直接根据len成员值截取字符串内容，无需遍历判断'\0')；
+                     
+                     4:二进制安全，传统C字符串符合ASCII编码，即遇到'\0' 即认为到达字符串结尾，停止读取后续字符串，如果传统字符串保存图片，视频等二进制文件，操作文件时就被截断了；但是sds会直接读取len成员存储的字符串长度；
+
+                     5：可以有效防止缓冲区溢出： sds中的alloc和len可以计算出可用空间，在追加字符串内容时，会优先判断当前空间是否足够，如果不够会先分配内存，然后追加，以避免缓冲区溢出！
+                5：劣势在于：
+                    1：存储一个字符串占用的内存空间是比C语言中原本的字符串占用的内存空间大！
+
+
+
+                
+
+                
+
+                
+            
+        5：字符串底层实现有三种编码：
+            REDIS_ENCODING_INT          使用整数值来实现字符串对象
+            REDIS_ENCODING_EMBSTR       使用embstr编码的简单动态字符串实现的字符串对象；
+            REDIS_ENCODING_RAW          使用简单动态字符串实现的字符串对象(sds)
+            使用情况：
+                1：如果一个字符串对象保存的是整数值， 并且这个整数值可以用 long 类型来表示， 那么字符串对象会将整数值保存在字符串对象结构的 ptr 属性里面（将 void* 转换成 long ）， 并将字符串对象的编码设置为 int 。
+                2：如果字符串对象保存的是一个字符串值， 并且这个字符串值的长度大于 39 字节， 那么字符串对象将使用一个简单动态字符串（SDS）来保存这个字符串值， 并将对象的编码设置为 raw 。
+                3：如果字符串对象保存的是一个字符串值， 并且这个字符串值的长度小于等于 39 字节， 那么字符串对象将使用 embstr 编码的方式来保存这个字符串值。（39字节时redis3.0之前的分割边界，3.2版本之后以44字节为边界）
+                embstr 编码是专门用于保存短字符串的一种优化编码方式， 这种编码和 raw 编码一样， 都使用 redisObject 结构和 sdshdr 结构来表示字符串对象， 但 raw 编码会调用两次内存分配函数来分别创建 redisObject 结构和 sdshdr 结构， 而 embstr 编码则通过调用一次内存分配函数来分配一块连续的空间， 空间中依次包含 redisObject 和 sdshdr 两个结构
+
+            这边采用int和embstr编码的原因是：相较于raw格式的2次分配内存， 这两种格式只需要一次分配内存空间就可以；并且在回收的时候，也只需要调用一次内存释放函数。在存储小的字符串的时候更有速度优势。   
