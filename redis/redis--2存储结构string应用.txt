@@ -1,0 +1,462 @@
+redis--string存储结构：
+    一: string结构特征：(值是字符串)
+        1: 基于key-vlaue式的存储方式；
+        2: key：可以是任意字符组成的字符串；
+           value：可以是任意字符组成的字符串；
+        3: 每增加一条string,Redis即会在内存中增加一条key-value键值对；如下：
+            key1 => value1
+            key2 => value2
+                .
+                .
+        4：每一个键值对都是唯一的，互相独立的；每一个string值由唯一的key确定！
+    二: string支持的操作命令：
+        1: 设置类指令：
+            1: SET:
+                功能: 如果key不存在：向Redis中添加一条string结构的key-value键值对；如果key已存在，则修改key的值，并重新设置过期时间；
+                原型: SET key value [ex秒数][px毫秒数][nx/xx]
+                参数:   
+                        key:  键名(任意字符组成的字符串)
+                      value:  键值(待存储的字符串内容)
+                         ex:  设置键值对过期时间(以秒为单位) 
+                         px:  设置键值对过期时间(以毫秒为单位)
+                      nx/xx:  xx:指定只有key存在时才能对key进行设置操作；nx:指定只有key不存在时才能对key进行设置操作！
+              返回值:  如果设置成功返回ok,设置失败返回error以及错误原因！
+            
+            2: SETEX:
+                功能:  如果key不存在：向Redis中添加一条string结构的key-value键值对,并以秒为单位指定该键值对的过期时间；如果key已存在，则修改key的值，并重新设置过期时间；
+                原型: SET key seconds value
+                参数:   
+                        key:  键名(任意字符组成的字符串)
+                    seconds:  设置键值对过期时间(以秒为单位)
+                      value:  键值(待存储的字符串内容)
+              返回值:  如果设置成功返回ok,设置失败返回error以及错误原因！
+
+            3: PSETEX
+                功能: 如果key不存在：向Redis中添加一条string结构的key-value键值对,并以毫秒为单位指定该键值对的过期时间；如果key已存在，则修改key的值，并重新设置过期时间；
+                原型: SET key milliseconds value
+                参数:   
+                        key:  键名(任意字符组成的字符串)
+               milliseconds:  设置键值对过期时间(以毫秒为单位)
+                      value:  键值(待存储的字符串内容)
+              返回值:  如果设置成功返回ok,设置失败返回error以及错误原因！
+
+            4: SETNX
+                功能: 当且仅当key不存在时，将key的值设置成value,并返回1；若给定key已经存在，则setnx不做任何动作，并返回0；
+                原型: SETNX key value
+                参数:   key:  键名(任意字符组成的字符串)
+                      value:  键值(待存储的字符串内容)
+                返回值: 设置成功返回1，设置失败或者未设置返回0；
+            
+            5: MSET
+                功能: 向Redis中添加一组string结构的key-value键值对；
+                原型: MSET key1 value1 key2 value2 .. keyN valueN
+                参数:   key*:  键名(任意字符组成的字符串)
+                      value*:  键值(待存储的字符串内容)
+              返回值:  如果设置成功返回ok,设置失败返回error以及错误原因！
+
+        2：获取类指令：
+            1: GET
+                功能: 从Redis中获取key的值
+                原型: GET key
+                参数: key:  键名
+              返回值:  如果获取成功返回该键名对应的值；
+
+            2: MGET
+                功能: 从Redis中获取一组key的值
+                原型: MGET key1 key2 key3 ... keyn
+                参数:  key*:  键名(任意字符组成的字符串)
+              返回值:  如果获取成功返回键值列表；
+        3：删除类指令：
+            1: DEL
+                功能: 从Redis中删除某个key或者一组key
+                原型: DEL key1 key2 key3... keyn
+                参数: key*:  键名
+              返回值:  返回删除成功的key的个数
+        4：其他操作：
+            1: INCRBY 
+                功能: 如果key存在，将Redis中某个key的值加上增量increment；如果key不存在，则在0的基础上运算之后设置一个key-value键值对！
+                原型: INCRBY key increment
+                参数:      key*:  键名
+                      increment:  自增值 
+              返回值:  返回自增完成后的数值；
+            2: DECRBY 
+                功能: 如果key存在，将Redis中某个key的值减去增量increment；如果key不存在，则在0的基础上运算之后设置一个key-value键值对！
+                原型: DECRBY key increment
+                参数:      key*:  键名
+                      increment:  自增值 
+              返回值:  返回自增完成后的数值；
+            3: APPEND 
+                功能: 如果key存在，将Redis中某个key的值末尾追加上指定的内容；如果key不存在，则在空的基础上运算之后设置一个key-value键值对！
+                原型: APPEND key value
+                参数:      key*:  键名
+                          value:  追加值 
+              返回值:  返回追加完成之后的字符串长度
+            4: STRLEN 
+                功能: 返回指定key的值长度，如果key不存在直接返回0
+                原型: STRLEN key
+                参数:   key:  键名
+              返回值:  返回指定key对应键值的长度！
+            5: GETRANGE 
+                功能: 获取指定key中字符串的子串[start,end]
+                原型: GETRANGE key start end
+                参数:   key:  键名
+                        start:  起始位 
+                        end:  结束位 
+              返回值:  返回指定key指定区间的字符串值；
+            6: SETRANGE 
+                功能: 覆写指定key中指定起始位置往后的值；如果key不存在，那么start之前的位置将会用\x00填充！
+                原型: SETRANGE key start value
+                参数:     key:  键名
+                        start:  起始位 
+                        value:  需要覆写的值 
+              返回值:  返回指定key的长度
+    三：Redis中string存储结构的实现
+        1：Redis中并未使用c语言传统的字符串(字符数组)表示，而是构建了一种名为简单动态字符串(simple dynamic string:sds)的抽象类型，并将sds作为默认的字符串表示；
+        2：Redis中所有的键都是用sds格式来保存的；
+        3：sds的声明在src/sds.h头文件中：typedef char *sds;并同时声明了5中sds结构体类型：
+            struct __attribute__ ((__packed__)) sdshdr5 {
+                unsigned char flags; /* 3 lsb of type, and 5 msb of string length */
+                char buf[];
+            };
+            struct __attribute__ ((__packed__)) sdshdr8 {
+                uint8_t len; /* used */
+                uint8_t alloc; /* excluding the header and null terminator */                             
+                unsigned char flags; /* 3 lsb of type, 5 unused bits */
+                char buf[];
+            };
+            struct __attribute__ ((__packed__)) sdshdr16 {
+                uint16_t len; /* used */
+                uint16_t alloc; /* excluding the header and null terminator */
+                unsigned char flags; /* 3 lsb of type, 5 unused bits */
+                char buf[];
+            };
+            struct __attribute__ ((__packed__)) sdshdr32 {
+                uint32_t len; /* used */
+                uint32_t alloc; /* excluding the header and null terminator */
+                unsigned char flags; /* 3 lsb of type, 5 unused bits */
+                char buf[];
+            };
+            struct __attribute__ ((__packed__)) sdshdr64 {
+                uint64_t len; /* used */
+                uint64_t alloc; /* excluding the header and null terminator */
+                unsigned char flags; /* 3 lsb of type, 5 unused bits */
+                char buf[];
+            };
+
+        4：每一个结构体中相比C语言本身的字符串，多了一个len成员和alloc成员以及flags成员；其中：
+            len成员：指的是字符串真正的长度，不包含终止字符！
+            alloc成员：表示字符串的最大容量，指的是buf的最大容量；而非结构体本身的最大容量；
+            flags成员：表示header的类型；
+            使用再封装一个结构体的方式保存字符串的优势在于
+                1：可以立即知道字符串的长度和剩余空间，无需再遍历字符数组计算长度！获取长度的时间复杂度是O(1);传统的字符串获取长度的时间复杂度是O(n)
+
+                2：在修改字符串的时候，sds能够减少空间与分配的次数，提高运行效率；在为字符串本身append的时候，会先根据len和alloc判断可用空间大小，如果空间足够将不会从新分配内存，如果空间不足才会重新分配内存；
+
+
+                3：c语言中都是根据\0来判断字符数串的结尾，sds结构体可以无视\0，可以直接根据len成员获取字符串内容；
+
+                4:二进制安全，传统C字符串符合ASCII编码，即遇到\0即认为到达字符串结尾，停止读取后续字符串，如果传统字符串保存图片，视频等二进制文件，操作文件时就被截断了；但是sds会直接读取len成员存储的字符串长度；
+
+                5：可以有效防止缓冲区溢出：
+                    sds中的alloc和len可以计算出可用空间，在追加字符串内容时，会优先判断当前空间是否足够，如果不够会先分配内存，然后追加，以避免缓冲区溢出！
+            劣势在于：
+                1：存储一个字符串占用的内存空间是比C语言中原本的字符串占用的内存空间大！
+        5：字符串底层实现有三种编码：
+            REDIS_ENCODING_INT          使用整数值来实现字符串对象
+            REDIS_ENCODING_EMBSTR       使用embstr编码的简单动态字符串实现的字符串对象；
+            REDIS_ENCODING_RAW          使用简单动态字符串实现的字符串对象(sds)
+            使用情况：
+                1：如果一个字符串对象保存的是整数值， 并且这个整数值可以用 long 类型来表示， 那么字符串对象会将整数值保存在字符串对象结构的 ptr 属性里面（将 void* 转换成 long ）， 并将字符串对象的编码设置为 int 。
+                2：如果字符串对象保存的是一个字符串值， 并且这个字符串值的长度大于 39 字节， 那么字符串对象将使用一个简单动态字符串（SDS）来保存这个字符串值， 并将对象的编码设置为 raw 。
+                3：如果字符串对象保存的是一个字符串值， 并且这个字符串值的长度小于等于 39 字节， 那么字符串对象将使用 embstr 编码的方式来保存这个字符串值。（39字节时redis3.0之前的分割边界，3.2版本之后以44字节为边界）
+                embstr 编码是专门用于保存短字符串的一种优化编码方式， 这种编码和 raw 编码一样， 都使用 redisObject 结构和 sdshdr 结构来表示字符串对象， 但 raw 编码会调用两次内存分配函数来分别创建 redisObject 结构和 sdshdr 结构， 而 embstr 编码则通过调用一次内存分配函数来分配一块连续的空间， 空间中依次包含 redisObject 和 sdshdr 两个结构
+
+            这边采用int和embstr编码的原因是：相较于raw格式的2次分配内存， 这两种格式只需要一次分配内存空间就可以；并且在回收的时候，也只需要调用一次内存释放函数。在存储小的字符串的时候更有速度优势。
+            
+    四：Redis中string存储结构的使用
+
+    五：php中操作Redis的string存储结构
+        phpredis地址：https://github.com/phpredis/phpredis#installation
+        @1：增加数据：
+                SET命令：
+                    $redis->set("key",value);
+                        功能：添加key，如果数据已存在，则重新设置数据的值；并且key永不过期；
+                    $redis->set("key",value,expire);
+                        功能：添加key，如果key已存在，则重新设置key的值；key的过期时间由expire指定，以秒为单位；
+                    $redis->set("key","value",array('nx','ex'=>10))
+                         功能：添加key,nx指定如果key不存在，则添加key,如果key已经存在不做任何操作，key的过期时间由ex指定，以秒为单位；
+                    $redis->set("key","value",array('xx','px'=>10))
+                         功能：添加key,nx指定如果key存在，则添加key,如果key不存在不做任何操作，key的过期时间由px指定，以毫秒为单位；
+                    备注：
+                        1: key：键名
+                        2: value：键值
+                        3：nx/xx：key不存在/key已经存在;
+                        4：ex/px：key的过期时间以秒为单位/以毫秒为单位;
+                    返回值：布尔值，设置成功返回true，设置失败返回false
+
+                $redis->setEx(key,ttl,value);
+                    功能：添加key，如果key已存在，则重新设置key的值；并且key的有效期为ttl秒
+                    参数：
+                        key：键名(string)
+                        ttl：过期时间(integer)秒
+                        value：键值(number,string)
+                    返回值：返回一个布尔值；
+
+                $redis->pSetEx(key,ttl,value);
+                    功能：添加key，如果key已存在，则重新设置key的值；并且key的有效期为ttl毫秒
+                    参数：
+                        key：键名(string)
+                        ttl：过期时间(integer)毫秒
+                        value：键值(number,string)
+                    返回值：返回一个布尔值；
+
+                $redis->setNx(key,value);
+                    功能：添加key,nx指定如果key不存在，则添加key,如果key已经存在不做任何操作；
+                    参数：
+                        key：键名(string)
+                        value：键值(number,string)
+                    返回值：返回一个布尔值；
+
+                $redis->mSet(array('key0' => 'value0', 'key1' => 'value1'));
+                    功能：批量设置key，且key不会过期；
+                    参数：
+                        array：一组键值对
+                    返回值：返回一个布尔值；
+
+        @2：获取数据：
+            GET指令:
+                $redis->get(key);
+                    功能：获取单个key的值
+                    参数：
+                        key:一个键名(string)
+                    返回值：返回键名对应的键值(string、bool)，如果存在返回键值，如果不存在返回布尔值！
+
+                $redis->mGet(array("key1","key2","key3"));
+                    功能：获取一组key的值
+                    参数：
+                        array:一组键名
+                    返回值：返回一个数组，包含了各个键名对应的键值，如果键值存在返回键值，如果不存在返回布尔值！
+        @3：删除数据：
+            DEL指令：
+                $redis->delete(keys);
+                    功能：删除指定键名
+                    参数：
+                        keys:一个或者多个键名、多个键名组成的数组！(string、array)
+                    返回值：返回成功删除的键的个数(integer)
+        @4：检测键值：
+            EXISTS指令
+                $redis->exists("key");
+                    功能：检测键名是否存在
+                    参数：
+                        key:键名(string)
+                    返回值：返回布尔值
+
+        @5：其他操作：
+            INCRBY指令：
+                $redis->incrBy(key,value);
+                    功能：将指定键名的值增加value
+                    参数：
+                        key:键名(string)
+                        value:待减数值(integer)
+                    返回值：增加操作之后的键值(integer)
+
+                $redis->incr(key);
+                    功能：将指定键名的值自增1
+                    参数：
+                        key:键名(string)
+                    返回值：增加操作之后的键值(integer)
+
+                $redis->incrByFloat(key,value);
+                    功能：将指定键名的值增加value
+                    参数：
+                        key:键名(string)
+                        value:待减数值(float)
+                    返回值：增加操作之后的键值(float)
+            DECRBY指令：
+                $redis->decrby(key,value)；
+                    功能：将指定键名的值减去指定数值
+                    参数：
+                        key:键名(string)
+                        value:待减数值(integer)
+                    返回值：自减操作之后的键值(integer)
+
+                $redis->decr("key")；
+                    功能：将指定键名的值自减1
+                    参数：
+                        key:键名(string)
+                    返回值：自减操作之后的键值(integer)
+            APPEND指令：
+                $redis->append(key,value);
+                    功能：获取指定键值某个索引区间的字符
+                    参数：
+                        key:键名(string)
+                        value:起始索引(number,string)
+                    返回值：追加之后键值的长度(integer)
+
+            GETRANGE指令：
+                $redis->getRange(key,start,end);
+                    功能：获取指定键值某个索引区间的字符
+                    参数：
+                        key:键名(string)
+                        start:起始索引(integer)
+                        end:终止索引(integer)
+                    返回值：截取到的字符串(string)
+
+            SETRANGE指令：
+                $redis->setRange(key,offset,value);
+                    功能：设置指定键值某个索引区间的字符
+                    参数：
+                        key:键名(string)
+                        offset:起始索引(integer)
+                        value:待替换值(number、string)
+                    返回值：键值长度(integer)
+
+            STRLEN指令：
+                $redis->strLen(key);
+                    功能：获取指定键值的长度；
+                    参数：
+                        key:键名(string)
+                    返回值：键值长度(integer)
+
+    六：python中操作Redis的string存储结构
+            项目地址：https://github.com/andymccurdy/redis-py
+            api地址：https://github.com/andymccurdy/redis-py/blob/master/redis/client.py
+        @1：增加数据：
+                SET命令：
+                r.set(name, value, ex=None, px=None, nx=False, xx=False)
+                    功能：添加key,如果key已存在，则重新设置key的值
+                    参数：
+                        nx指定如果key存在，则添加key,如果key不存在不做任何操作，
+                        xx指定如果key不存在，则添加key,如果key存在不做任何操作，
+                        px指定key的过期时间，以毫秒为单位
+                        ex指定key的过期时间，以秒为单位
+                        
+                r.setex(name,time,value);
+                    功能：添加key，如果key已存在，则重新设置key的值；并且key的有效期为time秒
+                    参数：
+                        name:键名
+                         value:键值
+                         time:过期时间，以秒为单位
+
+                r.psetex(name,time_ms,value);
+                    功能：添加key，如果key已存在，则重新设置key的值；并且key的有效期为time_ms毫秒
+                    参数：
+                        name:键名
+                        value:键值
+                        time:过期时间，以毫秒为单位
+
+                r.setnx(name,value);
+                    功能：添加key,nx指定如果key不存在，则添加key,如果key已经存在不做任何操作；
+                    参数：
+                        name:键名
+                        value:键值
+
+                r.mset(mapping);
+                    功能：批量设置key；且key永不过期；
+                    参数：
+                        mapping是一个字典；
+                    示例：mset({'k1': 'v1', 'k2': 'v2'})
+
+                r.msetnx(mapping);
+                    功能：批量设置key，如果key不存在则设置，如果存在则不作任何操作，且key永不过期；
+                    参数：
+                        mapping是一个字典；
+                    示例：msetnx({'k1': 'v1', 'k2': 'v2'})
+
+        @2：获取数据：
+            GET指令:
+                r.get(name);
+                    功能：获取单个key的值；
+                    参数：
+                        name:键名
+
+                r.mget(keys, *args);
+                    功能：获取一组key的值；
+                    参数：
+                        一组键名，或者一个键名组成的list
+                    示例：r.mget('testa', 'testb')
+                         或者
+                         r.mget(['testa', 'testb'])
+
+        @3：删除数据：
+            DEL指令：
+                r.delete(*names);
+                    功能：删除单个key或者多个key
+                    参数：键名或者键名列表
+
+        @4：检测键值：
+            EXISTS指令
+                $redis->exists(*names);
+                    功能：检测单个key或者多个key是否存在
+                    参数：键名或者键名列表
+
+        @5：其他操作：
+            INCRBY指令：
+                r.incrBy(name,amount=1);
+                    功能：指定键值加amount
+                    参数：
+                        name:键名
+                        amount:需要增加的数值，默认为1，如果key不存在，直接设置一个新的key，其值为amount;
+                    
+                r.incr(name,amount=1);
+                    功能：指定键值加amount
+                    参数：
+                        name:键名
+                        amount:需要增加的数值，默认为1，如果key不存在，直接设置一个新的key，其值为amount;
+
+                r.incrbyfloat(name,amount=1.0);
+                    功能：指定键值加浮点数amount
+                    参数：
+                        name:键名
+                        amount:需要增加的数值，默认为1.0，如果key不存在，直接设置一个新的key，其值为amount;
+            DECRBY指令：
+                r.incrBy(name,amount=1);
+                    功能：指定键值减amount
+                    参数：
+                        name:键名
+                        amount:需要增加的数值，默认为1，如果key不存在，直接设置一个新的key，其值为0-amount;
+                    
+                r.incr(name,amount=1);
+                    功能：指定键值减amount
+                    参数：
+                        name:键名
+                        amount:需要减去的数值，默认为1，如果key不存在，直接设置一个新的key，其值为0-amount;
+                备注：当key不存在时，和incr系列函数处理方式不一样！
+
+            APPEND指令：
+                r.append(key,value);
+                    功能：向指定键值追加指定的内容
+                    参数：
+                        key：键名
+                        value：待追加的数值
+
+            GETRANGE指令：
+                r.getrange(key, start, end)
+                    功能：获取指定键值某个索引区间的字符
+                    参数：
+                        key：键名
+                        start：起始位置
+                        end：终止位置
+
+            SETRANGE指令：
+                r.setrange(name, offset, value)
+                    功能：覆盖指定键某个索引之后的
+                    参数：
+                        key：键名
+                        start：起始位置
+                        value：待覆盖的内容
+
+            STRLEN指令：
+                r.strlen(name) 
+                    功能：获取某个键的值字符个数
+                    参数：
+                        name：键名
+
+
+                
+
+
+
+    
+    
+    
