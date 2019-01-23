@@ -400,6 +400,9 @@ redis--string存储结构：
                         name：键名
     
     五：Redis中string存储结构的常见使用场景
+        1：可以使用set/get系列指令实现基本字符串的存储；
+        2：使用incr/incrby/decr/decrby实现数值的计数；
+        2：可以使用setnx或者set作为分布式锁；
 
 
                 
