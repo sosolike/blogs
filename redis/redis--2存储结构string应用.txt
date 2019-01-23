@@ -9,6 +9,9 @@ redis--string存储结构：
                 .
                 .
         4：每一个键值对都是唯一的，互相独立的；每一个string值由唯一的key确定！
+
+            -------------------------------------分割线-------------------------------------
+
     二: string支持的操作命令：
         1: 设置类指令：
             1: SET:
@@ -110,74 +113,12 @@ redis--string存储结构：
                         start:  起始位 
                         value:  需要覆写的值 
               返回值:  返回指定key的长度
-    三：Redis中string存储结构的实现
-        1：Redis中并未使用c语言传统的字符串(字符数组)表示，而是构建了一种名为简单动态字符串(simple dynamic string:sds)的抽象类型，并将sds作为默认的字符串表示；
-        2：Redis中所有的键都是用sds格式来保存的；
-        3：sds的声明在src/sds.h头文件中：typedef char *sds;并同时声明了5中sds结构体类型：
-            struct __attribute__ ((__packed__)) sdshdr5 {
-                unsigned char flags; /* 3 lsb of type, and 5 msb of string length */
-                char buf[];
-            };
-            struct __attribute__ ((__packed__)) sdshdr8 {
-                uint8_t len; /* used */
-                uint8_t alloc; /* excluding the header and null terminator */                             
-                unsigned char flags; /* 3 lsb of type, 5 unused bits */
-                char buf[];
-            };
-            struct __attribute__ ((__packed__)) sdshdr16 {
-                uint16_t len; /* used */
-                uint16_t alloc; /* excluding the header and null terminator */
-                unsigned char flags; /* 3 lsb of type, 5 unused bits */
-                char buf[];
-            };
-            struct __attribute__ ((__packed__)) sdshdr32 {
-                uint32_t len; /* used */
-                uint32_t alloc; /* excluding the header and null terminator */
-                unsigned char flags; /* 3 lsb of type, 5 unused bits */
-                char buf[];
-            };
-            struct __attribute__ ((__packed__)) sdshdr64 {
-                uint64_t len; /* used */
-                uint64_t alloc; /* excluding the header and null terminator */
-                unsigned char flags; /* 3 lsb of type, 5 unused bits */
-                char buf[];
-            };
 
-        4：每一个结构体中相比C语言本身的字符串，多了一个len成员和alloc成员以及flags成员；其中：
-            len成员：指的是字符串真正的长度，不包含终止字符！
-            alloc成员：表示字符串的最大容量，指的是buf的最大容量；而非结构体本身的最大容量；
-            flags成员：表示header的类型；
-            使用再封装一个结构体的方式保存字符串的优势在于
-                1：可以立即知道字符串的长度和剩余空间，无需再遍历字符数组计算长度！获取长度的时间复杂度是O(1);传统的字符串获取长度的时间复杂度是O(n)
+            -------------------------------------分割线-------------------------------------
 
-                2：在修改字符串的时候，sds能够减少空间与分配的次数，提高运行效率；在为字符串本身append的时候，会先根据len和alloc判断可用空间大小，如果空间足够将不会从新分配内存，如果空间不足才会重新分配内存；
-
-
-                3：c语言中都是根据\0来判断字符数串的结尾，sds结构体可以无视\0，可以直接根据len成员获取字符串内容；
-
-                4:二进制安全，传统C字符串符合ASCII编码，即遇到\0即认为到达字符串结尾，停止读取后续字符串，如果传统字符串保存图片，视频等二进制文件，操作文件时就被截断了；但是sds会直接读取len成员存储的字符串长度；
-
-                5：可以有效防止缓冲区溢出：
-                    sds中的alloc和len可以计算出可用空间，在追加字符串内容时，会优先判断当前空间是否足够，如果不够会先分配内存，然后追加，以避免缓冲区溢出！
-            劣势在于：
-                1：存储一个字符串占用的内存空间是比C语言中原本的字符串占用的内存空间大！
-        5：字符串底层实现有三种编码：
-            REDIS_ENCODING_INT          使用整数值来实现字符串对象
-            REDIS_ENCODING_EMBSTR       使用embstr编码的简单动态字符串实现的字符串对象；
-            REDIS_ENCODING_RAW          使用简单动态字符串实现的字符串对象(sds)
-            使用情况：
-                1：如果一个字符串对象保存的是整数值， 并且这个整数值可以用 long 类型来表示， 那么字符串对象会将整数值保存在字符串对象结构的 ptr 属性里面（将 void* 转换成 long ）， 并将字符串对象的编码设置为 int 。
-                2：如果字符串对象保存的是一个字符串值， 并且这个字符串值的长度大于 39 字节， 那么字符串对象将使用一个简单动态字符串（SDS）来保存这个字符串值， 并将对象的编码设置为 raw 。
-                3：如果字符串对象保存的是一个字符串值， 并且这个字符串值的长度小于等于 39 字节， 那么字符串对象将使用 embstr 编码的方式来保存这个字符串值。（39字节时redis3.0之前的分割边界，3.2版本之后以44字节为边界）
-                embstr 编码是专门用于保存短字符串的一种优化编码方式， 这种编码和 raw 编码一样， 都使用 redisObject 结构和 sdshdr 结构来表示字符串对象， 但 raw 编码会调用两次内存分配函数来分别创建 redisObject 结构和 sdshdr 结构， 而 embstr 编码则通过调用一次内存分配函数来分配一块连续的空间， 空间中依次包含 redisObject 和 sdshdr 两个结构
-
-            这边采用int和embstr编码的原因是：相较于raw格式的2次分配内存， 这两种格式只需要一次分配内存空间就可以；并且在回收的时候，也只需要调用一次内存释放函数。在存储小的字符串的时候更有速度优势。
-            
-    四：Redis中string存储结构的使用
-
-    五：php中操作Redis的string存储结构
+    三：php中操作Redis的string存储结构
         phpredis地址：https://github.com/phpredis/phpredis#installation
-        @1：增加数据：
+        1：增加数据：
                 SET命令：
                     $redis->set("key",value);
                         功能：添加key，如果数据已存在，则重新设置数据的值；并且key永不过期；
@@ -223,7 +164,7 @@ redis--string存储结构：
                         array：一组键值对
                     返回值：返回一个布尔值；
 
-        @2：获取数据：
+        2：获取数据：
             GET指令:
                 $redis->get(key);
                     功能：获取单个key的值
@@ -236,14 +177,16 @@ redis--string存储结构：
                     参数：
                         array:一组键名
                     返回值：返回一个数组，包含了各个键名对应的键值，如果键值存在返回键值，如果不存在返回布尔值！
-        @3：删除数据：
+                    
+        3：删除数据：
             DEL指令：
                 $redis->delete(keys);
                     功能：删除指定键名
                     参数：
                         keys:一个或者多个键名、多个键名组成的数组！(string、array)
                     返回值：返回成功删除的键的个数(integer)
-        @4：检测键值：
+
+        4：检测键值：
             EXISTS指令
                 $redis->exists("key");
                     功能：检测键名是否存在
@@ -251,7 +194,7 @@ redis--string存储结构：
                         key:键名(string)
                     返回值：返回布尔值
 
-        @5：其他操作：
+        5：其他操作：
             INCRBY指令：
                 $redis->incrBy(key,value);
                     功能：将指定键名的值增加value
@@ -272,6 +215,7 @@ redis--string存储结构：
                         key:键名(string)
                         value:待减数值(float)
                     返回值：增加操作之后的键值(float)
+
             DECRBY指令：
                 $redis->decrby(key,value)；
                     功能：将指定键名的值减去指定数值
@@ -285,6 +229,7 @@ redis--string存储结构：
                     参数：
                         key:键名(string)
                     返回值：自减操作之后的键值(integer)
+
             APPEND指令：
                 $redis->append(key,value);
                     功能：获取指定键值某个索引区间的字符
@@ -318,10 +263,11 @@ redis--string存储结构：
                         key:键名(string)
                     返回值：键值长度(integer)
 
-    六：python中操作Redis的string存储结构
+            -------------------------------------分割线-------------------------------------
+    四：python中操作Redis的string存储结构
             项目地址：https://github.com/andymccurdy/redis-py
             api地址：https://github.com/andymccurdy/redis-py/blob/master/redis/client.py
-        @1：增加数据：
+        1：增加数据：
                 SET命令：
                 r.set(name, value, ex=None, px=None, nx=False, xx=False)
                     功能：添加key,如果key已存在，则重新设置key的值
@@ -363,7 +309,7 @@ redis--string存储结构：
                         mapping是一个字典；
                     示例：msetnx({'k1': 'v1', 'k2': 'v2'})
 
-        @2：获取数据：
+        2：获取数据：
             GET指令:
                 r.get(name);
                     功能：获取单个key的值；
@@ -378,19 +324,19 @@ redis--string存储结构：
                          或者
                          r.mget(['testa', 'testb'])
 
-        @3：删除数据：
+        3：删除数据：
             DEL指令：
                 r.delete(*names);
                     功能：删除单个key或者多个key
                     参数：键名或者键名列表
 
-        @4：检测键值：
+        4：检测键值：
             EXISTS指令
                 $redis->exists(*names);
                     功能：检测单个key或者多个key是否存在
                     参数：键名或者键名列表
 
-        @5：其他操作：
+        5：其他操作：
             INCRBY指令：
                 r.incrBy(name,amount=1);
                     功能：指定键值加amount
@@ -409,6 +355,7 @@ redis--string存储结构：
                     参数：
                         name:键名
                         amount:需要增加的数值，默认为1.0，如果key不存在，直接设置一个新的key，其值为amount;
+
             DECRBY指令：
                 r.incrBy(name,amount=1);
                     功能：指定键值减amount
@@ -451,6 +398,8 @@ redis--string存储结构：
                     功能：获取某个键的值字符个数
                     参数：
                         name：键名
+    
+    五：Redis中string存储结构的常见使用场景
 
 
                 
