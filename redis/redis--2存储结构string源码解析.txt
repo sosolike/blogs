@@ -37,6 +37,8 @@ Redis中string存储结构的具体实现：
             
             3：如果存储的字符串不能够转换成long long型数据，且字符串长度大于44，将会按照RAW的方式使用sds存储字符串；表示的宏为：REDIS_ENCODING_RAW
 
+            4：Redis中存储浮点数：Redis中使用%.17Lf格式符保存为sds字符串形式。具体使用EMBSTR还是RAW则根据浮点数长度而定！
+
         2：REDIS_ENCODING_EMBSTR和REDIS_ENCODING_RAW方式：
             1：相同点在于两种方式都是使用sds来存储字符串内容的；
             2：区别在于：
@@ -50,7 +52,9 @@ Redis中string存储结构的具体实现：
 
             3：相比较使用REDIS_ENCODING_RAW的方式，能够使用REDIS_ENCODING_EMBSTR和REDIS_ENCODING_INT的方式可以提高字符串的存储速度；
 
-        3：redisObject对象的相关创建代码在object.c中；除过上述三种方式创建字符串以外，Redis还有一种方式创建字符串对象：createStringObjectFromLongDouble()：即从long double类型的数值创建字符串，该方法只会用在INCRBYFLOAT以及HINCRBYFLOAT中；
+        3：redisObject对象的相关创建代码在object.c中；除过上述三种方式创建字符串以外，Redis还有一种方式创建字符串对象：createStringObjectFromLongDouble()：即从long double类型的数值创建字符串，该方法只会用在INCRBYFLOAT以及HINCRBYFLOAT中；并且该方法最终会调用createEmbeddedStringObject()或者createRawStringObject()来创建字符串对象；
+        
+
             
         
 
