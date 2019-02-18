@@ -24,6 +24,7 @@ redis--string存储结构：
                          px:  设置键值对过期时间(以毫秒为单位)
                       nx/xx:  xx:指定只有key存在时才能对key进行设置操作；nx:指定只有key不存在时才能对key进行设置操作！
               返回值:  如果设置成功返回ok,设置失败返回error以及错误原因！
+              备注: SET命令是原子性操作；
             
             2: SETEX:
                 功能:  如果key不存在：向Redis中添加一条string结构的key-value键值对,并以秒为单位指定该键值对的过期时间；如果key已存在，则修改key的值，并重新设置过期时间；
@@ -33,6 +34,7 @@ redis--string存储结构：
                     seconds:  设置键值对过期时间(以秒为单位)
                       value:  键值(待存储的字符串内容)
               返回值:  如果设置成功返回ok,设置失败返回error以及错误原因！
+              备注: 该操作是原子性操作；
 
             3: PSETEX
                 功能: 如果key不存在：向Redis中添加一条string结构的key-value键值对,并以毫秒为单位指定该键值对的过期时间；如果key已存在，则修改key的值，并重新设置过期时间；
@@ -42,6 +44,7 @@ redis--string存储结构：
                milliseconds:  设置键值对过期时间(以毫秒为单位)
                       value:  键值(待存储的字符串内容)
               返回值:  如果设置成功返回ok,设置失败返回error以及错误原因！
+              备注：该操作是原子性操作
 
             4: SETNX
                 功能: 当且仅当key不存在时，将key的值设置成value,并返回1；若给定key已经存在，则setnx不做任何动作，并返回0；
@@ -49,7 +52,8 @@ redis--string存储结构：
                 参数:   key:  键名(任意字符组成的字符串)
                       value:  键值(待存储的字符串内容)
                 返回值: 设置成功返回1，设置失败或者未设置返回0；
-            
+                备注：该操作是原子性操作
+                
             5: MSET
                 功能: 向Redis中添加一组string结构的key-value键值对；
                 原型: MSET key1 value1 key2 value2 .. keyN valueN
