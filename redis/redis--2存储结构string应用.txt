@@ -332,7 +332,7 @@ redis--string存储结构：
 
         4：检测键值：
             EXISTS指令
-                $redis->exists(*names);
+                r.exists(*names);
                     功能：检测单个key或者多个key是否存在
                     参数：键名或者键名列表
 
