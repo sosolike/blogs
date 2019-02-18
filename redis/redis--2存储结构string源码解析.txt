@@ -11,7 +11,7 @@ Redis中string存储结构的具体实现：
     二：redisObject结构体成员:
         type:
             1: 表示该结构体中存储的数据类型，unsigned int类型，并只占4个二进制位；
-            2: string存储解雇取值为：   
+            2: string存储结构取值为：   
                     OBJ_STRING 0  //string类型，是在server.h中定义的宏；
         encoding:
             1：在redis中，每一种存储结构在底层都不是唯一一种存储方式，因此，encoding代表某种存储结构在底层的存储方式；
@@ -53,9 +53,9 @@ Redis中string存储结构的具体实现：
 
             3：相比较使用REDIS_ENCODING_RAW的方式，能够使用REDIS_ENCODING_EMBSTR和REDIS_ENCODING_INT的方式可以提高字符串的存储速度；
 
-        3：redisObject对象的相关创建代码在object.c中；除过上述三种方式创建字符串以外，Redis还有一种方式创建字符串对象：createStringObjectFromLongDouble()：即从long double类型的数值创建字符串，该方法只会用在INCRBYFLOAT以及HINCRBYFLOAT中；并且该方法最终会调用createEmbeddedStringObject()或者createRawStringObject()来创建字符串对象；
+        3：redisObject对象的相关创建代码在object.c中；除过上述三种方式创建字符串以外，Redis还有一种方式创建字符串对象：createStringObjectFromLongDouble()：即从long double类型的数值创建字符串，该方法只会用在INCRBYFLOAT以及DECRBYFLOAT中；并且该方法最终会调用createEmbeddedStringObject()或者createRawStringObject()来创建字符串对象；
     四：sds结构介绍：    
-        1：Redis中并未直接使用C语言中传统的字符串(字符数字)来存储键名以及字符串键值，而是构建了一种简单动态字符串的结构来存储键名以及字符串类型的键值；
+        1：Redis中并未直接使用C语言中传统的字符串(字符数组)来存储键名以及字符串键值，而是构建了一种简单动态字符串的结构来存储键名以及字符串类型的键值；
 
         2：简单动态字符串全称：simple dynamic string；简称为sds；是Redis中自行构建的一种结构体；包含了字符串本身以及字符串的属性信息；
         
@@ -112,7 +112,7 @@ Redis中string存储结构的具体实现：
                 4：Redis使用sds结构体来存储字符串相比C语言传统字符串的优势：
                      1：可以立即知道字符串的长度和剩余空间，无需再遍历字符数组计算长度！获取长度的时间复杂度是O(1);传统的字符串获取长度的时间复杂度是O(n)
 
-                     2：在修改字符串的时候，sds能够减少空间与分配的次数，提高运行效率；在为字符串本身append的时候，会先根据len和alloc判断可用空间大小，如果空间足够将不会从新分配内存，如果空间不足才会重新分配内存；
+                     2：在修改字符串的时候，sds能够减少空间分配的次数，提高运行效率；在为字符串本身append的时候，会先根据len和alloc判断可用空间大小，如果空间足够将不会从新分配内存，如果空间不足才会重新分配内存；
                      
                      3：c语言中都是根据\0来判断字符数串的结尾，sds结构体可以无视\0，可以直接根据len成员获取字符串内容，字符串内容的获取效率更高(可以直接根据len成员值截取字符串内容，无需遍历判断'\0')；
                      
