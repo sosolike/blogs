@@ -357,13 +357,13 @@ redis--string存储结构：
                         amount:需要增加的数值，默认为1.0，如果key不存在，直接设置一个新的key，其值为amount;
 
             DECRBY指令：
-                r.incrBy(name,amount=1);
+                r.decrBy(name,amount=1);
                     功能：指定键值减amount
                     参数：
                         name:键名
                         amount:需要增加的数值，默认为1，如果key不存在，直接设置一个新的key，其值为0-amount;
                     
-                r.incr(name,amount=1);
+                r.decr(name,amount=1);
                     功能：指定键值减amount
                     参数：
                         name:键名
