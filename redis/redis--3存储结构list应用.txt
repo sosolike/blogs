@@ -1,0 +1,288 @@
+redis--list存储结构：
+    一：list存储结构特征：(值是一个列表)
+        1：redis中对于list存储结构仍然采用的时候key-value键值对的方式管理；
+        2：key：任意字符组成的字符串；
+           value：一系列数据组成的一个列表；
+        3: 每增加一list,Redis即会在内存中增加一条key-value键值对；如下：
+            key1 => list1
+            key2 => list2
+                .
+                .
+        4: 每一个键值对都是唯一的，独立的，每一个list都由唯一的一个key来确定；
+        5：列表中的元素有序，按照插入顺序排序，索引从左向右由0开始；
+
+    二：list支持的操作命令：
+        1：向列表中添加数据：
+            1：从左侧向列表中添加数据：
+                LPUSH key value...
+
+                LPUSHX key value
+            
+            2：从右侧向列表中添加数据：
+                RPUSH key values...
+
+                RPUSH key value
+            
+            3：删除数据操作
+                从左侧删除并返回指定key的第一个元素：
+                    LPOP key  
+                从右侧删除并返回指定key的第一个元素：
+                    RPOP key
+                从左侧阻塞式删除并返回指定key的第一个元素
+                    BLPOP key... timeout
+                从右侧阻塞式删除并返回指定key的第一个元素
+                    BRPOP key... timeout
+                删除某个区间的元素并返回
+                    LTRIM key start   
+                删除n个A元素
+                    LREM key count value  
+            4：设置某个索引值
+                LSET key index value           
+            5：获取列表长度
+                LLEN key
+            
+
+    三：php中操作redis中的list存储结构：
+        phpredis地址：https://github.com/phpredis/phpredis#installation
+        1：左侧增加/删除数据：
+            $redis->lPush("key","value"):
+                功能：向列表key的左侧添加一个数据
+                参数：
+                    key：键名(string)
+                    value：列表中的元素
+                返回值：插入成功返回list长度，插入失败返回false；
+
+            $redis->lPushx("key","value"):
+                功能：如果列表key存在，向列表key的左侧添加一个数据，如果列表key不存在，不做任何操作；
+                参数：
+                    key：键名(string)
+                    value：列表中的元素
+                返回值：插入成功返回list长度，插入失败返回false；
+            
+            $redis->lPop("key")
+                功能：从左侧删除一个元素，并返回该元素；
+                参数：
+                    key：键名(string)
+                返回值：如果成功删除，则返回该元素，如果删除失败或者列表为空，则返回false；
+
+        2：右侧增加/删除数据：
+            $redis->rPush("key","value"):
+                功能：向列表key的右侧添加一个数据
+                参数：
+                    key：键名(string)
+                    value：列表中的元素
+                返回值：插入成功返回list长度，插入失败返回false；
+            
+            $redis->rPushx("key","value"):
+                功能：如果列表key存在，向列表key的右侧添加一个数据，如果列表key不存在，不做任何操作；
+                参数：
+                    key：键名(string)
+                    value：列表中的元素
+                返回值：插入成功返回list长度，插入失败返回false；
+            
+            $redis->rPop("key")
+                功能：从右侧删除一个元素，并返回该元素；
+                参数：
+                    key：键名(string)
+                返回值：如果成功删除，则返回该元素，如果删除失败或者列表为空，则返回false；
+        
+        2：删除数据(在链表本身进行删除操作，而非副本)：
+            1：删除整个列表
+            $redis->delete("key")
+                功能：删除整个列表key(将会彻底删除列表key)；
+                参数：
+                    key：键名(string)
+                返回值：删除成功返回true，删除失败返回false；
+
+            2：阻塞式删除列表单个元素：
+                blPop("key",timeout)
+                功能：由左侧删除单个元素并返回，如果列表为空，则阻塞，直到有元素返回时返回左侧第一个元素；
+                参数：
+                    key组成的数组：blPop(array("key1","key2"))
+                    或者key列表:blPop("key1","key2")
+                    最后一个参数可以设置超时时间
+                返回值：以数组的形式返回左侧删除的第一个元素array("key",'element')
+
+                brPop("key",timeout)
+                功能：由右侧删除单个元素并返回，如果列表为空，则阻塞，直到有元素返回时返回右侧第一个元素；
+                参数：
+                    key组成的数组：blPop(array("key1","key2"))
+                    或者key列表:blPop("key1","key2")
+                    最后一个参数可以设置超时时间
+                返回值：以数组的形式返回右侧删除的第一个元素array("key",'element')
+            
+            3：删除指定个数的元素：
+                lRem("key","A",n)/lRemove("key","A",n)
+                功能：从左侧开始删除n个指定的A元素
+                参数：
+                    key：列表键名
+                    A：待删除的元素
+                    n：待删除的元素个数
+                返回值：如果删除成功，返回被删除的元素个数，如果列表为空或者不存在，返回false
+            
+            4：截取链表：
+                lTrim("key",start_index,stop_index)/listTrim("key",start_index,stop_index)
+                功能：由左至右，删除第start_index到stop_index区间的元素，并返回；(索引由左向右从0开始)
+                参数：
+                    key：列表键名
+                    start_index：起始地址(索引)
+                    stop_index：终止地址(索引)
+                返回值：删除成功返回该被删区间的值，如果返回失败，返回false;
+            
+        3：获取数据：
+            1：获取区间数据：
+                lRange("key",start_index,stop_index)/lGetRange("key",start_index,stop_index)
+                功能：返回列表中指定索引区间的数据；
+                参数：
+                    key：列表key
+                    start_index：起始索引
+                    stop_index：终止索引
+                返回值：以数组返回指定区间的值；
+        
+        4：获取列表长度：
+            lLen("key")/lSize("key")
+            功能：返回指定列表的长度；
+            参数：key：指定列表键名
+            返回值：如果列表存在返回列表长度，如果不存在返回false
+        
+        5：修改列表中的元素值：
+            lSet("key",index,value)
+            功能：修改列表中某个索引的值；
+            参数：
+                key：指定列表键名
+                index：指定索引
+                value：修改后的值
+            返回值：修改成功赶回true，修改失败返回false;
+        6：其他操作：
+            rPopLPush(key_src,key_dist)
+            功能：从key_src的右侧删除并返回一个值，然后添加至key_dist的左侧；
+            参数：
+                key_src:源列表键名
+                key_dist:目标列表键名
+    四：python中操作redis中的list存储结构：
+        项目地址：https://github.com/andymccurdy/redis-py
+        api地址：https://github.com/andymccurdy/redis-py/blob/master/redis/client.py
+        1：左侧增加/删除数据：
+            r.lpush("key",*values):
+                功能：向列表key的左侧添加一个数据
+                参数：
+                    key：键名(string)
+                    value：列表中的元素,一次可以插入一个或者多个元素
+                返回值：插入成功返回list长度，插入失败返回false；
+
+            r.lpushx("key",value):
+                功能：如果列表key存在，向列表key的左侧添加一个数据，如果列表key不存在，不做任何操作；
+                参数：
+                    key：键名(string)
+                    value：列表中的元素
+                返回值：插入成功返回list长度，插入失败返回false；
+            
+            r.lPop("key")
+                功能：从左侧删除一个元素，并返回该元素；
+                参数：
+                    key：键名(string)
+                返回值：如果成功删除，则返回该元素，如果删除失败或者列表为空，则返回false；
+
+        2：右侧增加/删除数据：
+            r.rpush("key",*values):
+                功能：向列表key的右侧添加一个数据
+                参数：
+                    key：键名(string)
+                    value：列表中的元素
+                返回值：插入成功返回list长度，插入失败返回false；
+            
+            r.rpushx("key",value):
+                功能：如果列表key存在，向列表key的右侧添加一个数据，如果列表key不存在，不做任何操作；
+                参数：
+                    key：键名(string)
+                    value：列表中的元素
+                返回值：插入成功返回list长度，插入失败返回false；
+            
+            r.rpop("key")
+                功能：从右侧删除一个元素，并返回该元素；
+                参数：
+                    key：键名(string)
+                返回值：如果成功删除，则返回该元素，如果删除失败或者列表为空，则返回false；
+        
+        2：删除数据(在链表本身进行删除操作，而非副本)：
+            1：删除整个列表
+            r.delete("key")
+                功能：删除整个列表key(将会彻底删除列表key)；
+                参数：
+                    key：键名(string)
+                返回值：删除成功返回true，删除失败返回false；
+
+            2：阻塞式删除列表单个元素：
+                r.blpop("key",timeout=0)
+                功能：由左侧删除单个元素并返回，如果列表为空，则阻塞，直到有元素返回时返回左侧第一个元素；
+                参数：
+                    key列表:blpop("key1","key2")
+                    timeout参数可以设置超时时间
+                返回值：以数组的形式返回左侧删除的第一个元素array("key",'element')
+
+                r.brpop("key",timeout)
+                功能：由右侧删除单个元素并返回，如果列表为空，则阻塞，直到有元素返回时返回右侧第一个元素；
+                参数：
+                    key列表:blpop("key1","key2")
+                    timeout参数可以设置超时时间
+                返回值：以数组的形式返回右侧删除的第一个元素array("key",'element')
+            
+            3：删除指定个数的元素：
+                r.lrem("key",count,value)
+                功能：从左侧开始删除n个指定的A元素
+                参数：
+                    key：列表键名
+                    A：待删除的元素
+                    count：待删除的元素个数,大于0时，从左向右删除，小于0时，从右向左删除，等于0时，删除所有指定元素；
+                返回值：如果删除成功，返回被删除的元素个数，如果列表为空或者不存在，返回false
+            
+            4：截取链表：
+                r.ltrim("key",start_index,stop_index)
+                功能：由左至右，删除第start_index到stop_index区间的元素，并返回；(索引由左向右从0开始)
+                参数：
+                    key：列表键名
+                    start_index：起始地址(索引)
+                    stop_index：终止地址(索引)
+                返回值：删除成功返回该被删区间的值，如果返回失败，返回false;
+            
+        3：获取数据：
+            1：获取区间数据：
+                r.lrange("key",start_index,stop_index)
+                功能：返回列表中指定索引区间的数据；
+                参数：
+                    key：列表key
+                    start_index：起始索引
+                    stop_index：终止索引
+                返回值：以数组返回指定区间的值；
+        
+        4：获取列表长度：
+            r.llen("key")
+            功能：返回指定列表的长度；
+            参数：key：指定列表键名
+            返回值：如果列表存在返回列表长度，如果不存在返回false
+        
+        5：修改列表中的元素值：
+            r.lset("key",index,value)
+            功能：修改列表中某个索引的值；
+            参数：
+                key：指定列表键名
+                index：指定索引
+                value：修改后的值
+            返回值：修改成功赶回true，修改失败返回false;
+        6：其他操作：
+            r.rpoplpush(key_src,key_dist)
+            功能：从key_src的右侧删除并返回一个值，然后添加至key_dist的左侧；
+            参数：
+                key_src:源列表键名
+                key_dist:目标列表键名
+        
+        
+
+
+
+
+
+            
+            
+            
+            
