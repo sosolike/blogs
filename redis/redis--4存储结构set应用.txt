@@ -56,7 +56,14 @@ redis--set存储结构：
             功能：返回set集合中元素的个数
             参数：key:set数据集合
             返回值：返回元素个数
-        6：交并差操作：
+            
+        6：移动操作：
+            sMove("key_src","key_dist",'member')
+            功能：将key_src中的member移动到key_dist中
+            参数：key_src:源数据集合；key_dist数据集合,member需要移动的元素；
+            返回值：操作成功返回true，操作失败返回false；
+
+        7：交并差操作：
             获取两个数据集合的并集并返回：
                 sUnion("key1","key2","key3"...)
                 功能：将多个集合的数据合并到一个集合中，并去重之后返回
