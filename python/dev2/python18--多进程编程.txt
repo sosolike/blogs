@@ -5,24 +5,35 @@ python多进程编程：
 Process多进程编程：
     1：Pocess可以继承之后使用，也可以直接导入之后使用；
     2：主要操作：
+        
         创建子进程：
-            原型：Process([group,[target,[name,[args,[kwargs]]]]])
-            参数：target表示子进程需要执行的方法，传入方法名即可；
-                 args表示需要给子进程执行的方法传入的参数，需传入tuple;(使用上述两个参数即可)
-                 kwargs表示调用对象的字典，
-                 name为别名
-                 group实质上不用
-            返回：返回子进程实例对象；processer
+            1：通过原型：Process创建子进程：
+                原型：Process([group,[target,[name,[args,[kwargs]]]]])
+                参数：target：表示子进程需要执行的方法，传入方法名即可；
+                    args：表示需要给子进程执行的方法传入的参数，需传入tuple;(使用上述两个参数即可)
+                    kwargs：表示传入一个字典参数，
+                    name：为子进程起一个别名
+                    group：实质上不用
+                返回：返回子进程实例对象；processer
+            2：通过自定义类继承Process创建子进程：
+                class SelfProcess(Process):
+                    def run(self):
+                        #重写run方法即可
+                        pass
         
         启动子进程：
             原型：processer.start()
             参数：无
             返回值：无
         
-        阻塞当前进程，等待子进程结束：
-            原型：processer.join()
-            参数：无
+        设置进程作为守护进程运行：
+            processer.daemon = True 进程将会以守护进程的方式运行
+        
+        阻塞当前主进程，等待指定子进程结束：
+            原型：processer.join(timeout)
+            参数：timeout:超时时间
             返回值：无
+            备注：需要在子进程(processer)start之后调用；
         
         检测当前子进程是否在运行：
             原型：processer.is_alive()
@@ -34,11 +45,22 @@ Process多进程编程：
             参数：无
             使用该函数会抛出异常
         
-        设置进程作为守护进程运行：
-            processer.daemon = True 进程将会以守护进程的方式运行
+        
 
-    3：子进程和父进程通讯单向通讯：
-        multiprocessing提供了Queue作为父进程和子进程之间的消息队列，通过queue即可实现子进程和父进程之间的通信；
+    4：子进程和父进程通讯单向通讯：Queue
+        1：Queue是python在multiprocessing包中提供的模块
+        2：使用时需要先创建Queue实例：queue = multiprocessing.Queue(n)；#n指定队列的长度
+        3：Queue中常用的方法：
+            q.put()向队列中写入消息
+            q.get()从队列中读取消息，如果没有消息可读将会阻塞；
+            q.nowait(),从队列中读取消息，如果没有消息将会抛出一个Empty异常；
+            q.qsize()：返回队列的大小
+            q.empty()：检测队列是否为空
+            q.full()：如果队列已满将会返回True，否则返回False
+
+
+        python中可以通过Queue即可实现子进程和父进程之间的单向通信；
+        q = Queue()
         1：子进程向queue中添加数据：q.put(data) 
             备注：q是父进程创建的消息队列，并以参数的方式传入子进程；
                  data既可以是字符串也可以是对象
@@ -46,7 +68,8 @@ Process多进程编程：
             创建队列：q = Queue()
             读取数据：while not q.empty():
                         q.get()
-    4：子进程和父进程之间互相通信：
+
+    5：子进程和父进程之间互相通信：
         multiprocessing提供了Pipe类实现父子进程之间互相通信：
         1：创建管道：
             parent_pipe,child_pipe = Pipe()
@@ -57,6 +80,7 @@ Process多进程编程：
         3：发送管道数据：
             child_pipe.send(data) data可以是字符串也可以是对象
             parent_pipe.send(data) data可以是字符串也可以是对象
+            
 Pool进程池类：
     Pool类可以创建一个进程池类，通过有限的进程处理大量的任务；
     1：基本操作：
