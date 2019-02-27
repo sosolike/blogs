@@ -1,6 +1,6 @@
 Redis中string存储结构的具体实现：
     一：redisObject：
-        为了便于统一管理，Redis构建了对象系统，即使用redisObject(robj)的结构体来表示五种(string,set,zset,list,hash)数据存储结构,redisObject的声明在redis.h头文件中，结构如下：
+        为了便于统一管理，Redis构建了对象系统，即使用redisObject(robj)的结构体来表示五种(string,set,zset,list,hash)数据存储结构,redisObject的声明在server.h头文件中，结构如下：
         typedef struct redisObject { 
             unsigned type:4; 
             unsigned encoding:4; 
