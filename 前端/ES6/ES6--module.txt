@@ -108,17 +108,18 @@ export default命令：
 
     模块的继承：
         一个模块可以继承另一个模块：如a继承了A：则可以在模块a中使用：
-           1：export * from 'A';
-           2：export {attr} from 'A';
-           3：export {attr as at} from 'A';
+           1：export * from 'A';             #导出模块A的所有可导出项
+           2：export {attr} from 'A';        #只导出模块A的attr属性
+           3：export {attr as at} from 'A';  #只导出模块A的attr属性，并重命名为at
         来继承模块A；
+        本质上所谓的继承只是在当前模块中导出了指定模块所有的导出接口而已；也可以只导出指定模块的指定属性；
+
     跨模块常量：
         1：可以直接在模块中export常量：
             export const a=123;
-        2：可以将每一个常量写入一个js文件：
+        2：如果需要导入的常量文件较多，可以通过继承的方式将常量合并到一个文件中，然后仅导出指定文件即可：
                 //user.js   export const user = "user_v";
                 //db.js     export const db = "db_v";
-                
           然后通过名为const_index.js的文件继承多个常量文件：
                //const_index.js
                export {user} from "user.js";
