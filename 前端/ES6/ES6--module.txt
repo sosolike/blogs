@@ -1,32 +1,35 @@
 module---模块
+    ES5标准中是没有模块的概念的；ES6标准中才新加了模块的概念，通过模块，可以更好的对代码进行管理；
     1：模块本质上就是一个js脚本文件；但是并非任何脚本文件都是模块
     2：只有使用export抛出指定选项的js文件才能成为模块
     3：模块名就是js文件名；
     4：ES6的模块是编译时加载的，即ES6在编译时即可构建模块的依赖关系，并完成模块加载，效率要比commonJS的方式要高；
     5：ES6模块自动采用严格模式，无论是否加上"use strict"都将使用严格模式！
     6：ES6模块中顶层的this指向undefined，即不应该在顶层使用this；
-    7：模块的优势：可以将大段程序拆分为多个子程序，这些子程序称为模块，在需要的地方可以直接导入模块即可使用模块中定义的函数，变量，类；
-严格模式：
-    变量必须声明后再使用
-    函数的参数不能有同名属性，否则报错
-    不能使用with语句
-    不能对只读属性赋值，否则报错
-    不能使用前缀 0 表示八进制数，否则报错
-    不能删除不可删除的属性，否则报错
-    不能删除变量delete prop，会报错，只能删除属性delete global[prop]
-    eval不会在它的外层作用域引入变量
-    eval和arguments不能被重新赋值
-    arguments不会自动反映函数参数的变化
-    不能使用arguments.callee
-    不能使用arguments.caller
-    禁止this指向全局对象
-    不能使用fn.caller和fn.arguments获取函数调用的堆栈
-    增加了保留字（比如protected、static和interface）
+    7：模块的优势：以更小的粒度，更合理的方式来管理代码块；
+
+模块中自动采用严格模式：
+    1：变量必须声明后再使用
+    2：函数的参形参不能有同名属性，否则报错
+    3：不能使用with语句
+    4：不能对只读属性赋值，否则报错
+    5：不能使用前缀 0 表示八进制数，否则报错
+    6：不能删除不可删除的属性，否则报错
+    7：不能删除变量delete prop，会报错，只能删除属性delete global[prop]
+    8：eval不会在它的外层作用域引入变量
+    9：eval和arguments不能被重新赋值
+    10：arguments不会自动反映函数参数的变化
+    11：不能使用arguments.callee
+    12：不能使用arguments.caller
+    13：禁止this指向全局对象
+    14：不能使用fn.caller和fn.arguments获取函数调用的堆栈
+    15：增加了保留字（比如protected、static和interface）
 
 导出模块 ：export
-    ES6中使用export来导出模块的对外接口；并且只有使用export导出的接口才能被导入该模块的外部代码使用，其余没有使用export的函数、变量、类等均不能被外部代码使用；
+    1：ES6中使用export来导出模块的对外接口(变量)；
+    2：只有使用export导出的接口(变量)，才能被其他模块导入并使用，其余没有使用export的变量均不能被外部代码使用；
 
-    导出语法：
+    3：导出语法：
         1：直接通过添加export前缀导出：即直接在变量、函数、类名前加上export关键字即可导出该接口；
 
             export function a(){}
@@ -36,18 +39,16 @@ module---模块
 
             export {a,b}  
         
-        3：为接口添加别名：接口添加别名之后再导入的时候就需要使用别名；
+        3：为接口添加别名：接口添加别名之后再导入的时候就需要使用别名导入；
             export {a as aa,b as bb}
     
     特性：
-        ES6的导出是可以获取接口的实时值的；即调用了模块的接口a,如果a值发生变化，同样调用方也会变化；
+        ES6的导出是可以获取接口的实时值的；即调用了模块的接口a,如果a值发生改变，同样调用方也会改变；
         CommonJS模块的输出值则是值的缓存，不存在动态更新；
         export命令可以处于模块文件的任意位置，但是必须在模块的顶层，不能出现在代码块中，否则将会报错！
 
 导入模块：
-    ES6中使用import来导入模块的接口；只有使用import导入的模块接口才能被调用！
-
-    导入语法：
+    在模块中可以通过export将需要给外部暴露的接口导出之后，其他模块就可以使用import来导入被导出的模块接口：
         1：导入指定的模块接口：
             import {a,b} from "module_name.js";  
                 #注意a,b都是模块中的接口名；
@@ -71,7 +72,7 @@ module---模块
 export default命令：
     export default特征：
 
-        1：export default 本质上是导出一个名为 default 的 变量接口；改变量接口可以接收函数，可以接收具体的值；
+        1：export default 本质上是导出一个名为 default 的 变量接口；该变量接口可以接收函数，也可以接收具体的值，但是不能接收变量；
             eg:
                 export default function funName(){}
                 或者
@@ -107,7 +108,7 @@ export default命令：
 
     模块的继承：
         一个模块可以继承另一个模块：如a继承了A：则可以在模块a中使用：
-           1： export * from 'A';
+           1：export * from 'A';
            2：export {attr} from 'A';
            3：export {attr as at} from 'A';
         来继承模块A；
