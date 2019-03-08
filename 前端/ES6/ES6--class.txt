@@ -46,6 +46,21 @@ ES--class
             1：每一个对象都会有一个原型对象，但是原型对象本质上任然是一个普通的js对象，所以原型对象也会有自己的原型对象，以此类推，将会形成一条原型链，代表继承的链条；
             2：原型链的顶端是object.prototype,而object.prototype的值是object对象，object对象的__proto__的值则是null;因此，原型链的顶端是null;
         检测对象所属类：instanceof, 该运算符用来检测左侧的构造函数的原型对象是否在右侧对象的原型链上；如果在则返回true,否则返回false;
+
+        继承：
+            构造函数的继承：
+                1：构造函数绑定：可以使用call或者apply方法将父对象的构造函数绑定在子对象上即可：
+                    实现方式如：
+                        function A(){
+                            this.name='parent attr';
+                        }
+                        function a(){
+                            this.name = 'children attr';
+                            A.apply(this,arguments);
+                        }
+                    备注：
+                        1：通过apply或者call的方式实现继承，本质上是改变继承语句之后this关键字的指向；
+                        2：由于改变了子对象中this关键字的指向，将会导致属性的访问不会按照预料之中的方式出现：如上，子对象的构造函数中，this.name声明在继承之前，那么通过子对象访问name属性将会获取父对象的name属性；如果this.name声明在继承之后，那么通过子对象访问name属性将会获取子对象的name属性；
     
     ES5中的对象属性：
         1：在ES5标准中，对象只有属性一个元素；属性的值可以为任意数据类型的常数、变量、函数、其他对象或者其他合法嵌套；
