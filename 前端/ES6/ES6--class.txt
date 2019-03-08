@@ -75,7 +75,24 @@ ES--class
                         a.prototype.constructor = a;
                     实现方式说明：
                         1：a.prototype = new A()：是指为构造函数a的prototype属性直接重新赋值为一个新的对象A；完成这一步操作之后，a实例化的实例对象的原型对象为A的实例对象，那么a的实例对象将会继承A的实例对象的一切的属性和方法；
-                        2：a.proptotype.constructor = a：是指将a实例对象的原型对象的constructor属性赋值为构造函数a;每一个原型对象都会有一个constructor属性，其值为原型对象的构造函数；如果没有这一步操作，那么a构造函数的原型对象的constructor的值是a，但是原型对象却是A，显然不符合事实，因此需要这一步进行修正;
+                        2：a.proptotype.constructor = a：是指将a实例对象的原型对象的constructor属性赋值为构造函数a;原因在于：每一个原型对象都会有一个constructor属性，表示原型对象和子对象构造函数的关系，其值为必须子对象的构造函数；如果没有这一步操作，那么a构造函数的原型对象的constructor的值是A，但是原型对象的子对象的构造函数却是a，显然不符合事实，因此需要这一步进行修正;
+                        3：每一个对象也会有一个constructor属性，默认调用构造函数的prototype属性所指向的对象的constructor属性；从规范上看，a对象的构造函数必须是a，而不是A，如果不修改a.prototype.constructor值的话，也是不符合规范的；
+                    
+                3：直接通过prototype继承：原理在于跳过需要继承的父对象，直接继承父对象的原型对象即可，但是需要将子对象要用的属性添加至父对象的原型对象上；本质上不能在认为子对象继承的父对象，而是子对象继承的父对象的原型对象；
+                    实现方式如：
+                        function A(){
+                            
+                        }
+                        A.prototype.name = "parent name";  #需要将属性添加至原型对象上，子对象才能够获取得到该属性；
+
+                        function a(){
+                            this.name='children name';
+                        }
+
+                        a.prototype = A.prototype;
+                        a.prototype.constructor = a;#修改了原型对象之后，必须同时修改原型对象的constructor属性值；
+                4：使用空对象作为中介：其原理和第三种方式完全一样
+                5：使用拷贝的方式实现继承：本质上是将父对象的所有属性以及方法全部拷贝一份，添加给子对象；
 
 
 
