@@ -196,7 +196,47 @@ string.h:字符串处理
         说明：首次调用时，s必须指向要分解的字符串，随后调用要把s设成NULL。
         返回值：返回指向下一个标记串的指针；
     
-内存操作：
+内存操作：需要引入stdlib.h头文件
     https://blog.csdn.net/pfgmylove/article/details/3212179
-        
+    内存空间申请：malloc/calloc
+        原型：void *malloc(size_t size);
+            void *calloc(size_t num,size_t size);
+        参数：szie:内存空间大小(以字节为单位);
+            num:分配内存块的个数
+        返回值：返回分配好的内存空间的首地址
+        区别：malloc一次只能分配一块内存空间，calloc一次可以分配多块内存空间；
+            malloc不会对分配好的内存空间初始化，calloc会将分配好的内存空间初始化为0；
+    
+    内存空间释放：free
+        原型：void *free(void *ptr);
+           
+        参数：ptr:使用malloc或calloc等内存分配函数所返回的内存指针 ;
+
+        返回值：无
+
+        备注：如果ptr指向的内存已被释放或者是未知的内存地址，则可能有无法预料的情况发生；若参数为NULL则free不会有任何动作；
+    
+    内存初始化：memset
+        原型：void *memset(void *buffer,int c,int count);
+           
+        参数：buffer:需要初始化的内存空间的首地址;
+             c：初始化内容
+             count:初始化的字节个数
+
+        返回值：指向buffer的指针
+
+        备注：在函数中声明的局部变量(数组，结构体，联合体等)，以防出错尽量使用memset进行初始化；
+    
+    内存拷贝：memcpy/memmove
+        原型：void *memcpy(void *dest,void *src,int count);
+             void *memmove(void *dest,void *src,int count);
+        参数：dest       目标内存区
+             src　　　　原内存区
+             count      要复制的字节数
+        返回值：指向dest的指针
+
+        备注：memcpy只负责拷贝，不负责处理空间重叠的问题；
+             memmove除过拷贝以外，会主动处理空间重叠的问题；
+
+
         
