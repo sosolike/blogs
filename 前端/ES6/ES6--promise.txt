@@ -52,26 +52,35 @@ Promise使用：
          http://www.cnblogs.com/geyouneihan/p/9127324.html
 
     Promise处理异步执行结果：
-        Promise通过then方法来处理异步执行结果：
+        Promise通过then方法来处理异步执行结果(为Promise实例添加状态改变时的回调函数)：
             promise.then(function(value){},function(error){})
             说明：
                 1：两个参数均为回调函数；
                 2：第一个回调函数接收resolve的结果，value即为执行成功后的异步执行结果；
                 3：第二个回调函数接收reject的结果，error即为执行失败后的错误信息；
                 4：第一个参数是必备参数，第二个参数是可选参数；
+                5：then方法的原型为：Promise.prototype.then();即then方法是定义在原型对象上的；
         Promise也可以通过catch来处理错误信息：
             promise.catch(function(error){})
             说明： 
                 1：error和then方法中的第二个回调函数的参数一样，都是reject返回的错误信息；
-                2：该catch方法不仅会捕获promise对象也会捕获到then方法中的错误；
+                2：该catch方法不仅会捕获promise对象中的错误，也会捕获到then方法中的错误；
                 3：推荐使用该方法捕获错误，而不是实现then方法的第二个参数，原因在于then方法的第二个参数仅仅只能捕获promise对象的错误，不能捕获到then方法的错误；
                 4：可以使用多个catch捕获错误；
+                5：catch方法的原型为：Promise.prototype.catch();即catch方法是定义在原型对象上的；
+                6：如果Promise状态已经变成resolved，再次抛出错误是无效的；
+                7：如果外层并未指定catch方法的回调函数，Promise中的错误不会传递到外层，现象上不会有任何反应；
 
         Promise可以通过finally来设置必须要执行的代码：
             promise.finally(function(){})
             说明： 
                 1：该方法无论promise中的异步操作执行成功或者失败都会执行；
                 2：finally方法无参数；
+        
+        需要将现有对象转换成Promise对象时，可以使用Promise.resolve方法：
+            Promise.resolve(object) #即可将一个对象转换为一个Promise对象；
+        
+        
         
 
 
