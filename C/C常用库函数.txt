@@ -196,6 +196,7 @@ string.h:字符串处理
         说明：首次调用时，s必须指向要分解的字符串，随后调用要把s设成NULL。
         返回值：返回指向下一个标记串的指针；
     
-
+内存操作：
+    https://blog.csdn.net/pfgmylove/article/details/3212179
         
         
