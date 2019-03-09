@@ -22,16 +22,26 @@ Promise使用：
             }
         });
         说明：
-            1：Promise创建实例时需要封装异步操作逻辑；
+            1：Promise创建实例时需要封装异步操作逻辑；Promise创建实例对象时需要一个函数作为参数，该函数中即为异步操作逻辑；
+
             2：Promise实例对象的状态不受外界影响，Promise对象代表一个异步操作，有三种状态：pending(执行中)、fulfilled(已成功)、rejected(已失败)；只有异步操作的结果才能决定当前是哪一种状态，任何其他操作都无法改变这个状态；
+
             3：Promise实例对象的状态一旦改变就不会再次发生改变，状态的改变只有两种可能：pending->fullfilled和pending->rejected;
+
             4：Promise一旦建立就会立即执行，中途无法取消；如果不设置回调函数，内部发生的错误不会反映到外部，并且，当处于pending状态时，无法得知目前的进展；
+
             5：Promise构造函数接受一个函数作为参数，该函数的两个参数分别是resolve和reject,这两个参数本质上是两个函数，有Javascript引擎提供；
+
             6：resolve函数的作用是在异步执行完成且成功时的回调；reject函数的作用是在异步执行完成且失败时的回调；
+
             7：resolve函数在异步执行成功时会将异步操作结果作为参数传递出去；
+
             8：reject函数在异步执行失败时将异步操作报出的错误作为函数参数传递出去；
+
             9：如果在resolve和reject后面还有执行代码，那么这些代码执行完毕之后，resolve和reject方法才会调用，因为立即 resolved 的 Promise 是在本轮事件循环的末尾执行，总是晚于本轮循环的同步任务；一般不将结果处理代码放在resolve和reject后面执行；
+
             10：无论是resolve还是reject都会返回一个新的promise实例；
+
             11：promise内部的错误不会影响到外面，无论promise发生何种错误，只要能进入resolve和reject就不会影响外部的处理；
 
     Promise执行顺序：
@@ -40,8 +50,6 @@ Promise使用：
         3：脚本中剩余的同步代码执行完毕之后，将会执行Promise中的回调；
         4：如果脚本中有setTimeout宏任务，那么该宏任务将会最后执行；
          http://www.cnblogs.com/geyouneihan/p/9127324.html
-
-
 
     Promise处理异步执行结果：
         Promise通过then方法来处理异步执行结果：
