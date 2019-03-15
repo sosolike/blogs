@@ -115,29 +115,40 @@ Linux上pthread线程之间的运行关系：
 
     取消线程：
         取消线程：线程的运行可由外部其他线程来发送取消命令，进而终止指定线程的运行；
-        取消特征：取消线程的运行命令只能由外部的线程下达，取消线程并不等同于直接终止线程的运行；仅仅只是向目标线程发出取消通知；具体如何处理该通知则由目标线程决定；
+        取消特征：
+            1：取消线程的运行命令只能由外部的线程下达；
+            2：线程取消的方法是向目标线程发送Cancle信号，取消线程并不等同于直接终止线程的运行；仅仅只是向目标线程发出取消通知；具体如何处理该通知则由目标线程决定；
+            3：目标线程接收到取消通知之后的处理由线程自己决定，可以是忽略，继续允许；可以是立即终止；可以是继续运行至取消点在处理；
+            4：目标线程处理取消通知退出时的操作相当于pthread_exit(PTHREAD_CANCELED)
+            5：线程取消和线程的状态无关，线程可以是joinable也可以是unjoinable；
+
         取消线程函数：
             int pthread_cancel(pthread thread):
                 1：发送终止信号给thread线程，如果发送成功返回0，发送失败则返回非0值；发送成功仅仅只能代表信号被发往指定线程；但并不等同于thread会被终止；
+                2：信号发往目标线程之后，线程会根据预设的应对取消信号的方式来做出动作；
+
             int pthread_setcancelstate(int state,int *oldstate):
                 1：设置本线程对于cancel信号的处理方式；state有两种值：PTHREAD_CANCEL_ENABLE(默认值)和PTHREAD_CANCE_DISABLE;
-                2：PTHREAD_CANCEL_ENABLE ：接收到信号之后将当前线程设置为cancel的状态；
+                2：PTHREAD_CANCEL_ENABLE ：接收到信号之后将当前线程设置为cancel的状态(默认值)；
                 3：PTHREAD_CANCEL_DISABLE : 忽略接收到的信号，继续运行；
                 4：old_state如果不为NULL则存入cancel状态以便恢复；
+
             int pthread_setcanceltype(int type,int *oldtype)
-                1：设置本线程取消动作的时机，type有两种值：PTHREAD_CANCEL_DEFFERED和PTHREAD_CANCEL_ASYCHRONOUS；
+                1：设置本线程取消动作的时机，type有两种值：PTHREAD_CANCEL_DEFERRED和PTHREAD_CANCEL_ASYNCHRONOUS；
                 2：该函数设置的处理方式仅在cancel为enable时有效；
-                3：PTHREAD_CANCEL_DEFFERED表示收到信号之后继续运行到下一个取消点再退出；
+                3：PTHREAD_CANCEL_DEFERRED表示收到信号之后继续运行到下一个取消点再退出；
                 4：PTHREAD_CANCEL_ASYCHRONOUS表示立即执行取消动作；
                 3：oldtype如果不为NULL则存入用来存储取消动作类型值
-            void pthread_testcancel(void):
+            取消点：
+                void pthread_testcancel(void):
                 1：该函数用于在不包含取消点，但是又需要一个取消点的地方创建一个取消点；
+                
         取消点：
             1：线程外部向线程发送取消信号之后，是否终止线程的执行，由线程本身决定，可以忽略，可以立即执行取消动作，或者继续运行至取消点；
             2：线程的默认处理是运行到取消点，然后退出；
             3：pthread指定的取消点：
                 pthreads标准指定了几个取消点，其中包括：
-                (1)通过pthread_testcancel调用以编程方式建立线程取消点。
+                (1)通过pthread_testcancel(void):调用以编程方式建立线程取消点；于在不包含取消点，但是又需要一个取消点的地方创建一个取消点
                 (2)线程等待pthread_cond_wait或pthread_cond_timewait()中的特定条件。
                 (3)被sigwait(2)阻塞的函数
                 (4)一些标准的库调用。通常，这些调用包括线程可基于阻塞的函数。 
