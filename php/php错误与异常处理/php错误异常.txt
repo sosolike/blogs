@@ -1,14 +1,19 @@
 1：php中的错误和异常：
     1：php中的错误和异常不同，内部php函数主要使用错误报告，只有现代面向对象的扩展使用异常；
+
     2：php中的异常Exception继承自Throwable;在php5中Exception为所有Exceptions的基类；在php7中为所有用户异常类的基类；在php7之前，Exception并未实现Throwable;
     3：php中Error的层次结构并不继承自Exception，而是同样继承自Throwable接口；
 
 2：php中错误和异常的抛出：
-    1：php中的代码如果发生异常，是无法自动抛出的，需要依靠手动抛出；
-    2：手动抛出异常：throw new Exception('msg'); 即需要通过throw关键字抛出一个异常类的实例；
-    3：手动抛出错误：trigger_error(string $error_msg[,int $error_type=E_USER_ERROR]):bool；该函数可以手动抛出一个用户级别的error、waring、notice
+    异常的抛出：
+        1：php中的代码如果发生异常，是无法自动抛出的，需要依靠手动抛出；
+        2：手动抛出异常：throw new Exception('msg'); 即需要通过throw关键字抛出一个异常类的实例；
+        
+    错误的抛出：
+        1：如果php内部函数发生错误(运行期间，编译期间等)，会自动抛出错误；
+        2：也可以使用trigger_error(string $error_msg[,int $error_type=E_USER_ERROR]):bool；来抛出用户级别的错误；$type可选为E_USER_ERROR、E_USER_WARING、E_USER_NOTICE
 
-3：php中的错误常量(整数)：
+3：php中的错误级别(值为整数，只有错误才有级别可言，异常不谈级别)：
     E_ERROR     :致命的运行时错误，会导致停止执行脚本
     E_WARNING   :运行时警告，不会导致停止执行脚本
     E_NOTICE    :运行时通知，不会导致停止执行脚本
@@ -29,15 +34,16 @@
 
     E_PARSE：编译时语法解析错误；解析错误只应该由解析器生成；
 
-    上述错误代号可以使用"|"、"~"、"!"、"^"和"&"来组合声明需要报告或者不需要报告的错误类型；
+    上述错误级别可以使用"|"、"~"、"!"、"^"和"&"来组合，声明需要报告或者不需要报告的错误类型；
 
 php中错误和异常的处理：
-    错误处理原则：
-        一定要让PHP报告错误
-        在开发环境中要显示错误
-        在生产环境中不能显示错误
-        在开发环境和生产环境中都要记录错误
+    错误和异常处理原则：
+        一定要让PHP报告错误异常
+        在开发环境中要显示错误异常
+        在生产环境中不能显示错误异常
+        在开发环境和生产环境中都要记录错误异常
 
+    对于错误的处理：
     1：设置相关配置来指导php的错误报告方式：
         是否报告错误信息：
             1：display_errors:
@@ -57,11 +63,12 @@ php中错误和异常的处理：
                    在php5.3版本之前。默认值是E_ALL&~E_NOTICE&E_STRICT
                    在php4中默认为E_ALL&~E_NOTICE
                 
-            2：ini_set("error_reporting",E_ALL&~E_NOTICE):
+            2：ini_set("error_reporting",E_ALL):
                 1：通过该函数可以在当前php脚本中设置当前脚本报告错误的级别；
                 2：其值为php指定的错误常量和位运算符号的组合
                 3：通过init_set()的方式设置的效果仅仅在当前脚本中有效；
-           
+                4：error_reporting(E_ALL)等价于ini_set('error_reporting',E_ALL);
+
         记录错误日志：
                 1:log_errors:
                     1：需要在php.ini配置文件中设置该项；设置是否将错误信息记录到日志中；
@@ -91,9 +98,10 @@ php中错误和异常的处理：
                 ignore_repeated_source :忽略重复消息的消息源
                 track_errors :如果启用，则最后一条错误消息将始终存在于变量$_php_errormsg中；
                 display_startup_errors :如果设置为true 即使启用了display_errors也不会显示PHP启动期间发生的错误,除了调试之外，强烈建议关闭display-startup_errors；
-            
+    对于异常的处理：
     2：使用try...catch...来捕获异常信息：
-        1：try...catch...仅仅能够捕获手动抛出的异常信息，对于未手动抛出的异常信息则捕获不到；对于错误信息Error，由于Error层次结构不从Exception继承，因此使用try...catch(Exception $e)无法捕获到错误信息；如果需要使用try...catch...捕获错误信息则需要使用catch(Error $e)的方式；
+        1：由于php不会自动抛出异常，因此使用try...catch...来捕获异常信息时需要手动在try块中抛出；
+        
         2：语法结构：
             try{
                 
@@ -110,8 +118,10 @@ php中错误和异常的处理：
                 $e->getFile():返回发生异常的文件名；
                 $e->getLine():返回发生异常的代码行号
                 $e->getTrace():返回错误栈；
+        
+        备注：对于php7：由于部分Error和Exception均继承自Throwable，因此可以使用try...catch(Error $e)...的方式来捕获错误对象；
 
-    3：使用自动以函数来捕获处理未错误和异常信息：
+    3：使用自定义函数来捕获处理未错误和异常信息：
         1：自定义错误处理函数：
             语法：set_error_handler("my_error_function_name",$type);
             参数：my_error_function_name：参自定义的错误处理函数名称；
@@ -128,9 +138,8 @@ php中错误和异常的处理：
                 2：声明了该函数之后，error_reporting的配置将会失效，所有的错误将会全部交给该自定义错误处理函数处理；
 
         2：自定义异常处理函数：
-            语法：set_exception_handler("my_exception_function_name",$type);
+            语法：set_exception_handler("my_exception_function_name");
             参数：my_exception_function_name：自定义的异常处理函数名称；
-                  $type:允许自定义异常处理器处理的级别；
             异常处理函数：
                 function my_exception_handler($exception){}
                 参数说明：
@@ -149,6 +158,8 @@ php中错误和异常的处理：
             备注：
                 1：该函数只能捕获运行时发生的错误或者异常信息，编译时期则无法捕获得到；
                 2：框架中之所有能够触发该函数原因在于：框架中一定会有一个index.php文件，其余所有待执行的代码都会通过include引入到index.php中，只要index.php不出错，其他文件出错均属于引入文件时出错，属于运行时错误；
+        
+        对于thinkphp框架以及laravel框架，基本都会使用上述三个函数来捕获错误和异常信息，并且会将错误信息转换为异常信息统一交由register_shutdown_function自定义的错误处理函数来处理；
 
 错误处理：
 http://php.net/manual/en/ref.errorfunc.php
