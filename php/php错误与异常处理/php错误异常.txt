@@ -1,8 +1,19 @@
 1：php中的错误和异常：
     1：php中的错误和异常不同，内部php函数主要使用错误报告，只有现代面向对象的扩展使用异常；
 
-    2：php中的异常Exception继承自Throwable;在php5中Exception为所有Exceptions的基类；在php7中为所有用户异常类的基类；在php7之前，Exception并未实现Throwable;
-    3：php中Error的层次结构并不继承自Exception，而是同样继承自Throwable接口；
+    对于php7：
+        1：php7中修改了Error的继承结构：如下所示：
+            Throwable
+                Error
+                    ArithmeticError
+                        DivisionByZeroError
+                AssertionError
+                CompileError
+                    ParseError
+                TypeError
+                    ArgumentCountError
+        2：在php7中Error继承了Throwable接口，并有大部分Error均通过异常的方式报告，而非以php5中传统的方式报告错误；
+        3：在php7中Exception同样继承了Throwable接口；
 
 2：php中错误和异常的抛出：
     异常的抛出：
