@@ -1,7 +1,8 @@
 1：php中的错误和异常：
     1：php中的错误和异常不同，内部php函数主要使用错误报告，只有现代面向对象的扩展使用异常；
-    2：php中Error的层次结构并不继承自Exception，而是继承自Throwable接口，该接口中定义了相关错误信息处理方法；Error继承了Throwable接口并实现了相关方法；
-    3：php中的异常则全部继承自Exception;
+    2：php中的异常Exception继承自Throwable;在php5中Exception为所有Exceptions的基类；在php7中为所有用户异常类的基类；在php7之前，Exception并未实现Throwable;
+
+    2：php中Error的层次结构并不继承自Exception，而是同样继承自Throwable接口；
 
 2：php中错误和异常的抛出：
     1：php中的代码如果发生异常，是无法自动抛出的，需要依靠手动抛出；
