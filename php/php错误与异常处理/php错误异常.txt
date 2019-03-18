@@ -14,7 +14,23 @@
                     ArgumentCountError
         2：在php7中Error继承了Throwable接口，并有大部分Error均通过异常的方式报告，而非以php5中传统的方式报告错误；
         3：在php7中Exception同样继承了Throwable接口；但是在php7之前，Exception是没有继承Throwable接口的，并且在php5中Exception是所有Exceptions的基类；
-        4：php类不能直接实现Throwable接口，必须扩展Exception
+        4：Exception的继承结构：
+            Throwable
+                Exception
+                    LogicException（extends Exception）
+                        BadFunctionCallException
+                        BadMethodCallException
+                        DomainException
+                        InvalidArgumentException
+                        LengthException
+                        OutOfRangeException
+                    RuntimeException（extends Exception）
+                        OutOfBoundsException
+                        OverflowException
+                        RangeException
+                        UnderflowException
+                        UnexpectedValueException
+        4：php类不能直接实现Throwable接口，必须扩展Exception；
 
 2：php中错误和异常的抛出：
     异常的抛出：
