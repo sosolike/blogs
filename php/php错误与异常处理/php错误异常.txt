@@ -149,7 +149,8 @@ php中错误和异常的处理：
         
         备注：对于php7：由于部分Error和Exception均继承自Throwable，因此可以使用try...catch(Error $e)...的方式来捕获错误对象；
 
-    3：使用自定义函数来捕获处理未错误和异常信息：
+    3：使用自定义函数来捕获处理未错误和异常信息：在php.ini文件中对于错误处理的配置项并不会影响到自定义处理函数；
+        
         1：自定义错误处理函数：
             语法：set_error_handler("my_error_function_name",$type);
             参数：my_error_function_name：参自定义的错误处理函数名称；
