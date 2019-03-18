@@ -1,8 +1,7 @@
 1：php中的错误和异常：
     1：php中的错误和异常不同，内部php函数主要使用错误报告，只有现代面向对象的扩展使用异常；
     2：php中的异常Exception继承自Throwable;在php5中Exception为所有Exceptions的基类；在php7中为所有用户异常类的基类；在php7之前，Exception并未实现Throwable;
-
-    2：php中Error的层次结构并不继承自Exception，而是同样继承自Throwable接口；
+    3：php中Error的层次结构并不继承自Exception，而是同样继承自Throwable接口；
 
 2：php中错误和异常的抛出：
     1：php中的代码如果发生异常，是无法自动抛出的，需要依靠手动抛出；
@@ -33,6 +32,12 @@
     上述错误代号可以使用"|"、"~"、"!"、"^"和"&"来组合声明需要报告或者不需要报告的错误类型；
 
 php中错误和异常的处理：
+    错误处理原则：
+        一定要让PHP报告错误
+        在开发环境中要显示错误
+        在生产环境中不能显示错误
+        在开发环境和生产环境中都要记录错误
+
     1：设置相关配置来指导php的错误报告方式：
         是否报告错误信息：
             1：display_errors:
@@ -119,7 +124,8 @@ php中错误和异常的处理：
                     $file:发生错误时的文件
                     $line:发生错误时的行号
                     $trace:发生错误时的上下文信息
-            备注：该函数不能捕获E_ERROR,E_PARSE类型的错误
+            备注：1：该函数不能捕获E_ERROR,E_PARSE,E_CORE_ERROR,E_COMPILE_ERROR,E_CORE_WARNING,E_COMPILE_WARNING类型的错误
+                2：声明了该函数之后，error_reporting的配置将会失效，所有的错误将会全部交给该自定义错误处理函数处理；
 
         2：自定义异常处理函数：
             语法：set_exception_handler("my_exception_function_name",$type);
@@ -135,14 +141,15 @@ php中错误和异常的处理：
             语法：
                 register_shutdown_function("my_shutdown_func")
             功能：
-                捕获php的Fatal Error,Prase Error等；比如脚本错误，die(),exit(),异常，正常结束都会调用该函数；通过该函数可以判断脚本此次执行是否有错误产生；重点在于这个函数可以捕获E_ERROR和E_PARSE；
+                捕获php的Fatal Error,Prase Error等；是php脚本执行结束前最后一个调用的函数；比如脚本错误，die(),exit(),异常，正常结束都会调用该函数；通过该函数可以判断脚本此次执行是否有错误产生；
             获取本次脚本执行产生的所有错误：
             参数：my_shutdown_func自定义的处理函数名称
                     备注：在该自定义处理函数中需要调用：error_get_last();来获取错误异常信息；
                          error_get_list的返回值：返回一个数组，包含错误类型，错误消息，发生错误所在的文件，发生错误所在的行；
             备注：
                 1：该函数只能捕获运行时发生的错误或者异常信息，编译时期则无法捕获得到；
-                2：框架中之所有能够触发该函数原因在于：框架中一定会有一个index.php文件，其余所有待执行的代码都会通过include引入到index.php中，只要index.php不出错，其他文件出错均属于运行时出错；
+                2：框架中之所有能够触发该函数原因在于：框架中一定会有一个index.php文件，其余所有待执行的代码都会通过include引入到index.php中，只要index.php不出错，其他文件出错均属于引入文件时出错，属于运行时错误；
 
 错误处理：
 http://php.net/manual/en/ref.errorfunc.php
+https://segmentfault.com/a/1190000009504337
