@@ -232,12 +232,19 @@
 
 	5：子类内部调用父类方法：
 		对于实例属性以及实例方法：
+			$this->实例属性名
+			$this->实例方法名
+			或者：
 			parent::实例属性名
 			parent::实例方法名
+			(在方法重写时只能使用parent访问父类实例属性和实例方法)
 
 		对于静态方法和静态属性，
 			ParentClassName::属性名；
 			ParentClassName::方法名；
+			或者：
+			parent::实例属性名
+			parent::实例方法名
 
 	6：重写父类方法：
 		1：只能重写非private，非static,非final的方法；
