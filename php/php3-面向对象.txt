@@ -304,27 +304,28 @@
 	1：instanceof关键字：
 		1：用于检测一个对象是否是指定类的对象；
 		2：$a instanceof Class_name;
-	7:其他一些方法：
-		1：class_exists():检测类是否存在；
-		2：interface_exists():检测接口是否存在；
+	2:其他一些方法：
+		1：class_exists():检测类是否存在；class_exists('ClassName')
+		2：interface_exists():检测接口是否存在；interface_exists('ClassName)
 		3：get_class($obj):获取指定对象的类名；
 		4：get_parent_class($obj):获取指定对象所属类的父类名称；
-		5：get_class_method($class):获取一个类的所有方法名；
+		5：get_class_methods($class):获取一个类的所有方法名；只能获取public权限的实例方法以及静态方法；
 		6：get_class_vars($class):获取一个类的所有属性名；
-		7：__CLASS__:类名
-		8：__METHOD__:方法名
-其他规范：
-	克隆：
+	3:和类有关的常量：
+		1：__CLASS__:类名
+		2：__METHOD__:方法名
+	4:克隆：
 		1：$b = clone $a;
 		2：克隆之后两个对象一模一样；但是保持独立；这种复制只是浅复制；对于引用属性依然保持原来的引用；
 		3：如果希望克隆之后新的对象有自己特殊的属性或者方法，只需要在相应类里面重写clone方法：
 				private __clone(){
-				$this->ins = new_value;
+					$this->ins = new_value;
 				}
-	对象的遍历：
-		1：只能遍历实例属性（public修饰的）
+	5:对象的遍历：
+		1：只能遍历访问权限为public的实例属性；
 		2：foreach($a as $key => $value)
 		3：对于私有属性或者静态属性的遍历可以在类内部提供方法实现；
+
 	php标准类：
 			1：php内部有很多已经写好的类；
 			2：stdclass:内置标准类；
