@@ -1,0 +1,88 @@
+C语言中存储时间的数据类型:
+    1：time_t
+        定义:typedef long time_t;是一个长整型数据
+        功能：用来存储以秒为单位的时间戳
+    
+    2：timeval
+        定义：timeval是一个结构体，包含了时间戳秒数和微秒数：
+            结构：struct timeval{
+                     _time_t tv_sec;  /*秒*/
+                     _suseconds_t tv_usec; /*微秒*/
+                  } 
+            字段：tv_sec：时间戳秒数
+                 tv_usec：时间戳微秒数
+
+    3：tm
+        定义：tm是一个结构体，包含了年月日时分秒周等详细的时间信息
+            结构：struct tm{
+                    int tm_sec;  /*代表目前的秒数，正常范围是0-59*/
+                    int tm_min;  /*代表目前分数，范围0-59*/
+                    int tm_hour; /*从午夜算起的小时数，范围是0-23*/
+                    int tm_mon;  /*代表目前月份，从一月算起，范围是0-11*/
+                    int tm_year; /*代表1900年算起至今的年数*/
+                    int tm_wday; /*一星期的日数，从星期一算起，范围为0-6*/
+                    int tm_yday; /*0-365，表示一年中的那一天*/
+                 }
+C语言中获取日期时间信息：
+    /*常用--需要引入time.h*/
+    time():
+        原型 time_t time(time_t *timer)
+        功能：返回时间戳(以s为单位)
+        参数：time_t类型的指针，如果不为NULL那么time()获取到的时间戳数值会设置给该变量
+        返回值：返回time_t类型的时间戳数据
+        时间基准：本地时间
+        备注：需要引入time.h库文件
+    
+
+    localtime():
+        原型 struct tm *localtime(const time_t *clock)
+        功能：获取日期时间信息，并保存在tm结构体中，并转换为本地时间
+        参数：time_t类型的时间戳
+        返回值：从时间戳中解析出的本地日期时间，是tm结构体的指针；
+        时间基准：本地时间
+    
+    mktime()：
+        原型 time_t mktime(struct tm * timeptr)
+        功能：将tm结构体中的日期时间信息转换为时间戳；
+        参数：tm结构体的地址
+        返回值：返回以s为单位的时间戳
+
+    strftime():
+        原型：size_t strftime(char * strDest,size_t maxsize,const char * fromat,const struct tm *timeptr)
+        功能：可以根据format指向的字符串中的格式命令吧timeptr中的日期时间信息转换为字符串，并存储在strDest中，最多存储maxsize个字符
+        参数：strDest:存储转换之后字符串的字符数组
+             maxsize:限制strDest字符数的整数
+             format:格式命令("%Y-%m-%D %H:%M:%S",%w:星期几：0-6)
+    /*常用--需要引入sys/time.h*/
+    gettimeofday(struct timeval * timev,int tz_dsttime)
+        原型：int gettimeofday(struct timeval * timev,int tz_dsttime)
+        功能：获取当前时间的秒数和微秒数
+        参数：timev timeval结构体指针地址
+             tz_dsttime 时差处理方式
+        
+
+    /*不常用--需要引入time.h*/      
+    gmtime():
+        原型 struct tm *gmtime(const time_t *clock)
+        功能：获取日期时间信息，并保存在tm结构体中，并转换为标准时间
+        参数：time_t类型的时间戳
+        返回值：从时间戳中解析出的本地日期时间，是tm结构体的指针；
+        时间基准：标准时间
+    
+    asctime():
+        原型 char * asctime(const struct tm *block)
+        功能：将tm结构体中存储的日期时间信息转换为英文字符串
+        参数：tm类型的结构体地址
+        返回值：返回转换后的日期时间信息字符串
+    
+    ctime():
+        原型 char * ctime(const time_t *time)
+        功能：将时间戳转换为英文时间字符串
+        参数：时间戳time_t的指针
+        返回值：英文日期时间字符串
+    
+    
+    
+    
+
+        
