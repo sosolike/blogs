@@ -1,20 +1,20 @@
 python简介：
     语言类型：和系统编程语言不同,python是解释执行的脚本编程语言:
-                1：python是脚本编程语言即动态语言，而非系统编程语言，因此具备脚本语言的基本特征：
-                    1.1：脚本文件即为可执行文件，由解释器解释执行，在执行时需要先由解释器逐行读取，编译成机器指令，然后执行，因此执行速度比系统编程语言更慢；
-                    1.2：松散的数据类型，即变量的数据类型取决于变量所引用的数据，在执行时由解释器动态检查；松散类型保证编码效率更高，但是也会给代码的执行带来速度上的影响；甚至引起运行时错误；
-                    
-                2：python代码需要解释器解释执行；而不是由操作系统直接执行；常见的python解释器有:
-                    2.1：CPython:官方python解释器,在命令行下运行python指令就是启动CPython解释器；
+            1：python是脚本编程语言即动态语言，而非系统编程语言，因此具备脚本语言的基本特征：
+                1.1：脚本文件即为可执行文件，脚本文件也并非是直接运行的，而是由解释器解释执行；在执行时需要先由解释器逐行读取，编译成机器指令，然后执行，因此执行速度比系统编程语言(静态语言)更慢；
+                1.2：松散的数据类型，即变量的数据类型取决于程序运行时变量所引用的数据，在执行时由解释器动态检查；松散类型保证编码效率更高，但是也会给代码的执行带来速度上的影响；甚至引起运行时错误；
+                
+            2：python代码需要解释器解释执行；而不是由操作系统直接执行；常见的python解释器有:
+                2.1：CPython:官方python解释器,在命令行下运行python指令就是启动CPython解释器；
 
-                    2.2：IPython:IPython是基于Cpython之上的一个交互式解释器，即IPython只是在CPython的基础上增强了交互方式，但是执行python代码的解释器依旧是CPython；
+                2.2：IPython:IPython是基于Cpython之上的一个交互式解释器，即IPython只是在CPython的基础上增强了交互方式，但是执行python代码的解释器依旧是CPython；
 
-                    2.3：PyPy:和CPython完全不一样的解释器，PyPy采用JIT的技术对代码进行动态编译，尤其对于需要多次执行相同代码时，PyPy可以显著提高执行速度,CPython和PyPy的区别在：
-                    (https://pypy.readthedocs.io/en/latest/cpython_differences.html)；
+                2.3：PyPy:和CPython完全不一样的解释器，PyPy采用JIT的技术对代码进行动态编译，尤其对于需要多次执行相同代码时，PyPy可以显著提高执行速度,CPython和PyPy的区别在：
+                (https://pypy.readthedocs.io/en/latest/cpython_differences.html)；
 
-                    2.4：Jypthon:是运行在java平台的Python的解释器，可以直接把Python代码编译成java字节码执行；
+                2.4：Jypthon:是运行在java平台的Python的解释器，可以直接把Python代码编译成java字节码执行；
 
-                3：python不同的解释器由于对python代码的解释，执行，甚至设计思想不同，因此对于同一段python代码其执行结果有可能不同；
+            3：python不同的解释器由于对python代码的解释，执行，甚至设计思想不同，因此对于同一段python代码其执行结果有可能不同；
 
     编程方式：1：面向过程编程
              2：面向对象编程
