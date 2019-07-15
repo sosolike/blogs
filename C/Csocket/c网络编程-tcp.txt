@@ -136,5 +136,39 @@ c-tcp-socket编程流程：
             serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
             bind(sock,(struct sockaddr *)&serv_addr,sizeof(serv_addr))
 
-            
+监听端口：
+    1：为socket绑定号IP以及端口之后，还需要使socket处于被动监听状态；
+    2：c语言中使用listen()函数来让socket进入被动监听状态：
+        函数原型：int listen(int sock, int backlog)
+        功能：让socket处于被动监听状态
+        参数：
+            sock：需要进入被动监听状态的socket描述符
+            backlog：请求队列的最大长度，即服务端允许的客户端连接数；
+    3：对于请求队列的说明：
+        1：阻塞式的网络服务端，在处理当前请求的时候，是无法再继续接受其他客户端的连接请求，直至本次客户端的请求处理完毕；正在处理其他客户端请求时，如果有新的连接请求发来，新的请求将会被放入缓冲区，等当前请求处理完毕之后将会从缓冲区中取出等待的请求继续处理，该缓冲区就称为请求队列；
+        2：listen()函数的第二个参数就表示设置该请求队列的长度，当队列满员时，新的请求发来将直接被拒绝，客户端将会收到ECONNREFUSED错误；
+        3：请求队列的长度也可以设置为SOMAXCONN，此时请求队列的长度交由系统来决定；
 
+阻塞接收请求：
+    1：对于服务端而言，使socket处于被动监听状态之后，将开始阻塞，等待接收客户端发来的连接请求：
+    2：c语言中使用accept来接收客户端的连接请求：
+        函数原型：int accept(int sock,struct sockaddr *addr,socklen_t *addrlen);
+        功能：阻塞等待客户端连接；
+        参数：
+            sock：需要启用的服务端socket描述符；
+            addr：sockaddr结构体类型，存放着客户端的ip地址及端口号；在获取客户端ip地址和端口号时需要先转换成sockaddr_in类型的结构体或者sockaddr_in6类型的结构体；
+            addrlen：存放客户端IP地址和端口号的结构体长度，socklen_t指针类型；
+        返回值：返回客户端的socket描述符
+        备注：accept只能接收一次客户端的请求，本次连接需要处理的逻辑处理完成之后即断开连接；如果需要持续接收客户端连接则需要在死循环中连续阻塞等待；
+
+发送连接请求：
+    1：对于客户端而言，创建好服务端socket并绑定号服务端ip和端口之后，即可向服务端发送连接请求；
+    2：在c语言中，客户端向服务端发送连接请求使用connect()函数；
+        函数原型： int connect(int sock,struct sockaddr * server_addr,socklen_t addrlen)
+        功能： 向服务端发送连接请求；
+        参数：
+            sock：在客户端创建的服务端socket描述符；
+            server_addr：存放服务端ip地址和端口号的结构体，sockaddr类型；
+            addrlen：存放服务端ip地址和端口号的结构体长度；
+
+    
