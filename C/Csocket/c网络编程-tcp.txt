@@ -1,0 +1,140 @@
+c-tcp-socket编程流程：
+    服务端：
+        1：创建socket描述符；
+        2：绑定需要发送消息的网卡ip和端口；
+        3：阻塞接收客户端连接；
+        4：阻塞接收当前已连接的客户端发来的数据；
+        5：处理相关逻辑；
+        6：阻塞向当前已连接的客户端发送数据；
+    
+    客户端：
+        1：创建服务端socket描述符；
+        2：为服务端socket描述符绑定ip和端口；
+        2：阻塞向服务端发起连接；
+        3：阻塞向服务端发送的数据；
+        4：阻塞接收服务端发回的数据；
+        5：处理相关逻辑；
+
+创建socket描述符：
+    1：socket是操作系统向应用程序提供的网络编程接口，应用程序可以通过socket向网络中发送数据和从网络中接收数据；在linux中socket被映射为一个文件，向网络中发送数据类似于向该文件写入数据，从网络中读取数据类似于从该文件中读取数据；
+    2：应用程序需要向网络中写入数据或者需要从网络中读取数据时都需要创建一个属于该应用程序的socket，由于socket被映射为一个文件，因此创建socket的过程类似于创建并打开文件的过程，创建成功之后操作系统会返回一个int类型的数字作为该socket的标识，称之为描述符；
+    3：c中创建socket需要使用socket()函数，使用该函数时需要先导入 <sys/>socket.h> 预处理文件；
+        函数原型：
+            int socket(int af,int type,int protocol)
+        功能：    
+            该函数用来为应用程序创建socket，如果创建成功，返回socket描述符；如果创建失败返回-1；
+        参数：  
+            af：本次网络通信需要使用的IP协议类型(即：IPV4或IPV6),取值如下：
+                IPV4取值：AF_INET/PF_INET
+                IPV6取值：AF_INET6/PF_INET6
+            
+            type：数据传输方式(即：有连接或无连接)，取值如下：
+                SOCK_STREAM:面向具有连接的数据传输方式，一般用于TCP传输协议；
+                SOCK_DGRAM:面向不具有连接的数据传输方式，一般用于UDP传输协议；
+            
+            protocol：指定通信协议类型(即：TCP或UDP)，取值方式：
+                IPPRPTO_TCP:使用TCP协议
+                IPPROTO_UDP:使用UDP协议
+                一般情况下，根据type参数的值即可确定使用何种协议，因此一般情况下将protocol置0即可；
+        
+绑定ip和端口：
+    1：网络通信的本质是计算机上两个软件进行通信，但是通信数据的收发则是通过计算机网卡在进行，因此需要给当前应用程序的socket绑定本机的ip和端口，将当前应用程序的socket和计算机的网卡关联起来；
+    2：c中绑定ip和端口使用bind()函数
+        函数原型：
+            int bind(int sock,struct sockaddr *addr,socklen_t addrlen)
+        功能：
+            为应用程序创建的socket绑定ip和端口号
+        参数：
+            sock：需要被绑定的socket描述符；
+            addr：sockaddr类型的结构体，该结构体中存放着ip地址和端口号；
+            addrlen：sockaddr结构体的大小，可以由sizeof()计算出；
+        参数详细说明：
+            sockaddr：结构体，用来存储ip地址和端口号，具体结构体如下：
+                struct sockaddr{
+                    sa_family_t sin_family;     //地址族，即IP地址类型(IPV4或IPV6)
+                    char sa_data[14];           //字符数组，存储ip地址和端口号
+                }
+
+                备注：
+                    1：sockaddr结构体中的sin_family需要设置IP协议类型，即IPV4还是IPV6,取值为：
+                        IPV4取值：AF_INET/PF_INET
+                        IPV6取值：AF_INET6/PF_INET6
+                    2：c语言中并未提供方法将ip地址和端口号存储进sa_data字符数组中，但是c语言中根据不同的协议类型单独提供了更加明确的结构体来存放ip地址和端口号:sockaddr_in和sockaddr_in6
+
+            sockadr_in：结构体，c语言中针对IPV4协议提供的存放ip地址和端口号的结构体；结构如下：
+                struct sockaddr_in{
+                    sa_family_t     sin_family;     //协议类型，即IPV4协议还是IPV6协议；
+                    uint16_t        sin_port;       //16位(两个字节)端口号；
+                    struct in_addr  sin_addr;       //32位(四个字节)ip地址；
+                    char            sin_zero[8];    //不使用，一般用0填充；
+                }
+                备注：
+                    协议类型：
+                        1:设置方式：
+                            struct sockaddr_in serv_addr;
+                            serv_addr.sin_familly = AF_INET/PF_INET
+
+                    端口：
+                        1：使用uint16_t类型，16位，占2个字节；
+                        2：在网络传输中，数据以字节为单位进行传输,即以8个二进制位进行传输;但是不同的计算机之间采用不同的数据存储方式：
+                            大端序和小端序：
+                            对于大端序：高位字节放在低地址；
+                            对于小端序：高位字节放在高地址；
+                        会造成数据在不同的计算机之间解析出错；因此规定在网络传输中二进制位必须按照指定的方式存放，称之为网络字节序，目前以大端序作为网络字节序；
+                        3：由于网络字节序的原因，为了保险起见，端口号在传输之前务必先进行字节序的转换：
+                            unsigned short htons(unsigned short)
+                            unsigned short ntohs(unsigned short)
+                            unsigned short htonl(unsigned short)
+                            unsigned short ntohl(unsigned short)
+                            转换规则：
+                                1：h代表本地字节序，即当前主机的字节序，n代表网络字节序，to是转换的意思，s是short的意思，l是long型的意思；
+                                2：hton代表把当前主机的字节序转换为网络字节序，ntoh代表把网络字节序转换为当前主机的字节序；
+                                3：对于端口号使用htons进行转换；
+                        4：设置端口号的方式：
+                            struct sockadr_in serv_addr;
+                            serv_addr.htons(9999);
+
+                    IP地址：
+                        1：使用 in_addr 结构体来存放ip地址；该结构体被定义在<netinet/in.h>头文件中，结构：
+                            struct in_addr{
+                                in_addr_t s_addr;   //存放32为IP地址，in_addr_t等价于unsigned long；
+                            }
+
+                        2：在绑定IP地址时需要先将点分十进制表示的ip地址字符串转换为32位整数；转换方式如下：
+                            in_addr_t inet_addr(const char *string)
+                            该函数可以将点分十进制表示的IP地址转换为in_addr_t类型；并能够检测IP地址是否有效;
+
+                            int inet_aton(const char *string,struct in_addr * in_ddr)
+                            该函数可以将点分十进制表示的IP地址转换为32为整数，并存放在in_addr结构体中；
+                        
+                        3：除过将点分十进制表示的IP地址转换为32位整数以外，还可以使用INADDR_ANY，INADDR_ANY可以自动获取IP地址，因此在服务端推荐使用该值代替手动填写IP地址，在客户端则推荐手动填写IP地址；
+
+                        4：设置IP地址的方式：
+                            struct sockaddr_in serv_addr;
+                            serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1")
+                            或者
+                            serv_addr.sin_addr.s_addr = INADDR_ANY
+                            或者
+                            struct in_addr in_ddr
+                            inet_aton("127.0.0.1",&in_ddr)
+                            serv_addr.sin_addr = in_ddr
+
+            sockaddr_in6:结构体，c语言中针对IPV6协议提供的存放IP地址和端口号的结构体；结构体如下：
+                struct sockaddr_in6 { 
+                    sa_family_t sin6_family;  //(2)地址类型，取值为AF_INET6
+                    in_port_t sin6_port;  //(2)16位端口号
+                    uint32_t sin6_flowinfo;  //(4)IPv6流信息
+                    struct in6_addr sin6_addr;  //(4)具体的IPv6地址
+                    uint32_t sin6_scope_id;  //(4)接口范围ID
+                };
+            
+        绑定端口号：
+            struct sockaddr_in serv_addr;
+            memeset(&serv_addr,0,sizeof(serv_addr));
+            serv_addr.sin_familly = AF_INET;
+            serv_addr.sin_port = htons(6666);
+            serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+            bind(sock,(struct sockaddr *)&serv_addr,sizeof(serv_addr))
+
+            
+
