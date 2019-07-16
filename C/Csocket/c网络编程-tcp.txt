@@ -128,7 +128,7 @@ c-tcp-socket编程流程：
                     uint32_t sin6_scope_id;  //(4)接口范围ID
                 };
             
-        绑定端口号：
+        绑定端口号和ip地址：
             struct sockaddr_in serv_addr;
             memeset(&serv_addr,0,sizeof(serv_addr));
             serv_addr.sin_familly = AF_INET;
@@ -160,6 +160,7 @@ c-tcp-socket编程流程：
             addrlen：存放客户端IP地址和端口号的结构体长度，socklen_t指针类型；
         返回值：返回客户端的socket描述符
         备注：accept只能接收一次客户端的请求，本次连接需要处理的逻辑处理完成之后即断开连接；如果需要持续接收客户端连接则需要在死循环中连续阻塞等待；
+    3：accept默认为阻塞模式，即没有收到客户端发来的连接请求时，该函数会一直阻塞，直至收到连接请求；
 
 发送连接请求：
     1：对于客户端而言，创建好服务端socket并绑定号服务端ip和端口之后，即可向服务端发送连接请求；
@@ -170,5 +171,51 @@ c-tcp-socket编程流程：
             sock：在客户端创建的服务端socket描述符；
             server_addr：存放服务端ip地址和端口号的结构体，sockaddr类型；
             addrlen：存放服务端ip地址和端口号的结构体长度；
+    3：该函数默认是阻塞式的，如果没有和服务端连接成功，该函数会一直阻塞，直至成功连接服务端；
+
+数据的发送和接收：
+    linux上将socket映射为一个文件，因此发送数据等同于向文件写内容，接收数据等同于从文件读内容；
+    发送数据：
+        函数原型：ssize_t write(int sock, const void *buf,size_t nbytes)
+        功能：write函数将会把缓冲区buf中的nbytes个字节写入socket中;成功返回写入的字节数，失败返回-1
+        参数：sock，接收本次消息端的socket描述符，
+                    对于服务端该描述符为当前与服务端连接的客户端socket描述符；
+                    对于客户端，该描述符为当前所连接的服务端socket描述符；
+
+             buf：需要向网络中写入的数据，字符数组/字符串
+             nbytes：需要从buf向socket中写入的字节数
+        该函数默认是阻塞式的，即如果当前发送缓冲区已满，或者对向接收缓冲区已满，导致无法发送数据，那么write函数会一直阻塞，直至可以发送数据并且将数据发送完成之后才会返回；
+        
+        
+    读取消息：
+        ssize_t read(int sock, void *buf, size_t nbytes)
+        功能：该函数从socket中读取nbytes个字节并存放在buf中；
+        参数：
+            sock：需要读取数据的socket描述符；
+                  对于服务端该描述符为当前与服务端连接的客户端socket描述符；
+                  对于客户端，该描述符为当前所连接的服务端socket描述符；
+
+            buf：存放接收到的消息，为字符数组
+            nbytes：需要收取的字节个数
+        该函数默认是阻塞式的，即如果当前接收缓冲区为空，接收不到足够长度的数据时，该函数将会一直阻塞，直至可读取数据并且将数据读取完成之后才会返回；
+
+    关闭连接：
+    1：完全断开连接：close();
+        备注：
+            1：该函数意味着服务器和客户端将会完全断开连接，系统将会把socket套接字从内存中清除，之后将再无法使用该套接字，既不能发送数据也不能再接收数据；
+            2：close被调用之后会立即向对方发送FIN包，这将导致即便输出缓冲区中还有数据，接收方也不会再收到；
+
+    2：不完全断开：只断开一条数据通道，而保留另一条数据通道的方式：shutdown()函数；
+        原型：shutdown(int sock,int howto);
+            参数：sock,需要断开的socket标识，
+                 howto,需要断开的方式；
+            取值：sock：代表int类型的标识；
+                 howto：有以下取值方式：
+                    SHUT_RD：断开输入流，即套接字将无法接收数据（即使数据输入到缓冲区中也将会被抹去），关闭之后将无法调用输入相关函数(read/recv)；
+                    SHUT_WR：断开输出流，套接字无法发送数据，但是如果缓冲区中还有数据，这些数据将会被继续发送至网络；
+                    SHUT_RDWR:同时断开I/O流，相当于分两次调用shutdown();一次以SHUT_RD为参数，一次以SHUT_WR为参数；
+        备注：
+            1：shutdown只是用来关闭连接，而不是套接字，无论调用多少次shutdown套接字也还是在内存中保存着，并不会清除掉；直到调用close/closesocket()之后socket关键字才会清除；
+            2：无论是调用close还是closesocket还是shutdown都会向对方发送FIN包；但是shutdown将会在缓冲区中的数据发送完成之后才会发送FIN包； 
 
     
