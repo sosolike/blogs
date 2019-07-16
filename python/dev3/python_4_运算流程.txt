@@ -58,7 +58,8 @@
                 math中的方法(常用)：
                     math.ceil(x)：对x向上取整
                     math.floor(x)：对x向下取整
-                    math.fabs(x)：获取x的绝对值
+                    math.fabs(x)：获取x的绝对值(浮点数)
+                    math.abs(x)：获取x的绝对值(整数)
                     math.fsum([])：对迭代器中的每一个元素求和
 
                     sin(x)：求x的正弦
@@ -210,6 +211,9 @@
                 code...
             else:
                 code...
+        循环控制：
+            break：结束并跳出当前循环，执行循环之后的逻辑
+            continue：结束本次循环，并进行新的循环
 
 无处理逻辑的代码块：
     对于无任何处理逻辑的代码块中需要使用pass来标识
