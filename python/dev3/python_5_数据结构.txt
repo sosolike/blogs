@@ -100,7 +100,7 @@ python中的基本数据结构：
     字典：dict：存放键值对的数据结构
         1：字典的特征：
             1：字典中存储键值对，而非单个值；键名不可修改，可以为字符串、数字、元祖等不可变对象，并且键名不允许重复；键值可以为任何数据类型的数据；
-            2：字典中的键值对有序，默认按照添加顺序排序，从左向右，索引从0计数，从右向左，索引从-1开始计数；
+            2：字典中的键值对默认无序；
             3：字典中可以任意添加、删除键值对，以及修改键值；字典在python中是可变对象；
         
         2：创建字典：
@@ -220,6 +220,97 @@ collections--deque：
             dlist = deque()    #创建一个空deque
             dlist = deque([1,2],maxlen(n))    #第一个参数为list类型，即deque的元素，第二个参数maxlen指当前deque最大容纳的元素，超出之后将会从右侧溢出；
         
-    3：deque操作：和list操作完全相同；
+    3：deque操作：和list操作完全相同；在实际应用中，如果对list有大量的pop(0)或者insert(0,obj)操作，推荐使用deque；deque对于列表头部的增删时间复杂度是O(1)；list对于头部元素的增删时间复杂度是O(n)
 
+
+collections--Counter:
+    Counter：为hashable对象计数，是一个计数器，用来统计序列(str,list,tuple,dict)中元素出现的次数；继承自dict，是字典的子类；
+    1：Counter的特征：
+        1：Counter继承自dict,用来统计序列中元素的出现次数，元素作为key,次数作为值，因此Counter本质上任然是个字典；
+    
+    2：Counter的创建：
+        1：导入Counter类：
+            from collections import Counter
+
+        2：创建Counter实例对象：
+            1：创建一个空的Counter：counter = Counter()
+            2：从一组键值对创建Counter：counter = Counter(a=3,b=3)
+            3：从一个iterable对象创建Counter：counter = Counter(list/str/dict/tuple)
+        
+    3：Counter操作：
+        1：获取元素的个数：
+            counter = Counter(['a','a','s'])
+            counter['a']：2
+            特别注意：如果Counter中没有对应的键名，则返回0；而非KeyError异常；
+
+        2：更新Counter实例(向Counter中添加待统计内容)：
+            counter = Counter("aaass")
+            counter.update("as")
+            counter['a']：4
+        
+        3：键的删除：不能直接为键赋值为0，需要使用del来删除键：
+            counter = Counter("aaasss")
+            counter['a'] = 0 :['a':0,'s':3]
+            del counter['a'] :['s':3]
+        
+        4：相关转换：
+            dict(counter)   ：将counter转换为dict字典：键名为元素，键值为该元素出现的次数
+            list(counter)   ：将counter转换为list列表：键名为列表的元素
+            set(counter)    ：将counter转换为set集合：键名为集合的元素
+            
+            5：重置counter对象：该操作仅重置counter对象，并不会删除该counter
+                counter.clear()
+            
+            6：返回topN列表：most_common([n])，即取出计数排名前N个元素，如果没有参数N，则返回全部元素
+                counter = Counter("aaaadddwwe")
+                counter.most_common(2) :[('a',4),('d',3)]
+
+collections--OrderedDict:
+    OrderedDict：有序字典，python默认的dict中的键值对是无序的，但是OrderedDict会记录键值对的存储顺序，在遍历时按照存储顺序遍历；
+    1：OrderedDict特征：
+        1：同字典dict一样，只能存储键值对，而非单个值；键名不可修改，可以为字符串、数字、元祖等不可变对象，并且键名不允许重复；键值可以为任何数据类型的数据；
+        2：和字典dict不同的是，dict中键值对默认无序，OrderedDict中的键值对默认按照存储顺序排序；
+        3：同字典dict一样，OrderedDict可以任意添加、删除键值对，以及修改键值；OrderedDict在python中是可变对象；
+        
+    
+    2：OrderedDict的创建：
+        1：导入OrderDict：
+            from collections import OrderedDict
+
+        2：创建OrderedDict对象：
+            1：创建空的OrderedDict：OrderedDict()
+            2：通过dict创建基于key排序的OrderedDict：OrderedDict(sorted(list_name.items(),key=lambda t:t[0]))   
+            3：通过dict创建基于value排序的OrderedDict：OrderedDict(sorted(list_name.items(),key=lambda t:t[1]))
+        
+        3：OrderedDict操作：
+            1：OrderedDict基本操作同dict;
+            2：但是对于popitem()函数：默认返回最右边的key-value,如果将lase参数设置为False,则弹出最左边的key-value对；
+            3：move_to_end(key,last=True)函数：默认将指定的key-value对移动到最右边，如果last=False,则移至最左边；
+        
+collections--defaultdict:
+    defaultdict:带有默认值的dict字典，功能和dict完全相同，提供一个字典的数据结构，但是不同于dict的是，defaultdict在key不存在的时候不会报KeyError异常，而是返回一个默认值；继承自dict,是dict的子类；
+
+    1：defaultdict特征：
+        1：同字典dict一样，defaultdict只能存储键值对，而非单个值；键名不可修改，可以为字符串、数字、元祖等不可变对象，并且键名不允许重复；键值可以为任何数据类型的数据；
+        2：同字典dict一样，defaultdict中键值对默认无序；
+        3：同字典dict一样，defaultdict中可以任意添加、删除键值对，以及修改键值；defaultdict在python中是可变对象；
+        4：唯一和字典不同的是，defaultdict在访问键值对的时候，如果键名不存在，那么会返回默认值，dict中如果键名不存在，则会报KeyError异常;
+    
+    2：defaultdict的创建：
+        1：导入defaultdict：
+            from collections import defaultdict
+        
+        2：创建defaultdict实例对象：
+            1：创建一个defaultdict：defaultdict(default_factory);
+                说明： 1：其中default_factory默认是None;如果该值为None,在访问不存在的键名时将会报KeyError异常，此时和默认的dict行为一致；
+                      2：如果需要在访问不存在的键名时有默认值返回，则需要设置default_factory:
+                        如果设置为int：默认值为0；
+                            设置为str：默认值是空字符串；
+                            设置为list：默认值是空list；
+                            设置为dict：默认值是空dict；
+                            设置为set：默认值是空set；
+                        也可以设置为任意一个对象类型，将会执行该类的构造函数，并返回一个实例对象；
+            
+        3：defaultdict操作：
+            1：基本操作和默认的dict完全相同；
 
