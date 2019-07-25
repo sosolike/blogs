@@ -314,3 +314,12 @@ collections--defaultdict:
         3：defaultdict操作：
             1：基本操作和默认的dict完全相同；
 
+关于排序：sort和sorted：
+    1：sort()方法：
+        sort()只能在list上使用，并且是在原list上直接排序；
+        在python2上，sort()函数有三个参数，(均为可选参数)：sort(key,cmp,reverse)：key指定排序的方式，cmp：为自定义比较大小的函数，reverse：True正序，False：逆序；
+        在python3上，取消了cmp参数，只有key和reverse两个可选参数，key：只含有一个参数的方法；reverse：True：正序，False逆序；
+    
+    2：sorted(iterable, *, key=None, reverse=False)方法：   
+        sorted()可以对所有可迭代对象进行排序操作；而且不会改动原数据，而是返回排序后的新序列；
+        sorted接收三个参数：第一个参数为 待排序的序列，后面两个为命名关键字参数，key为只有一个参数的函数，reverse:True：正序排序；False：逆序排序；
