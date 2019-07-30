@@ -150,20 +150,26 @@ python面向对象基本语法：
 
         3：子类访问父类的属性和方法：
             在子类内部访问：
-                1：类属性
-                    ParentClassName.attr_name     #使用父类类名访问父类的类属性
-                
-                2：类方法：
-                    ParentClassName.func_name()     #使用父类类名访问父类的类方法
-                
-                3：静态方法：
-                    ParentClassName.func_name()     #使用父类类名访问静态方法
-                
-                4：实例方法：
-                    ParentClassName.func_name(self)    #使用父类类名访问父类的实例方法
-                
-                5：构造方法：
-                    ParentClassName.__init__(self)    #使用父类类名访问父类的构造方法
+                通过类名访问：
+                    1：类属性
+                        ParentClassName.attr_name     #使用父类类名访问父类的类属性
+                    
+                    2：类方法：
+                        ParentClassName.func_name()     #使用父类类名访问父类的类方法
+                    
+                    3：静态方法：
+                        ParentClassName.func_name()     #使用父类类名访问静态方法
+                    
+                    4：实例方法：
+                        ParentClassName.func_name(self)    #使用父类类名访问父类的实例方法
+                    
+                    5：构造方法：
+                        ParentClassName.__init__(self)    #使用父类类名访问父类的构造方法
+                        
+                通过super()函数访问：
+                    1：python2中使用super()函数：super(ClassName,self).func_name/attribute_name
+                    2：python3中使用super()函数：super().func_name/attribute_name
+                    3：super()函数在调用时，会根据mro的顺序来依次查找对像的属性和方法；并由继承链的最高点向下依次执行；
 
             在子类外部：
                 1：子类外部可以通过子类实例对象访问父类的实例属性和实例方法，
@@ -236,8 +242,8 @@ python中的魔术方法和特殊属性：
                 类调用时：返回类锁具有的所有属性(一些特殊属性和类属性)
                 对象调用时：返回对象的所有实例属性
             
-            7：__mro__：返回类的继承链：
-                访问时，只能以类名调用，返回一个元祖，内容为类的继承链；
+            7：__mro__：返回类的方法解析顺序表：
+                访问时，只能以类名调用，返回一个元祖，内容为类的方法解析顺序表；
     魔术方法：  
         1：python中以__作为前缀，且以__作为后缀命名的方法称之为魔术方法；魔术方法能够修改实例对象的特征，能够为实例对象添加某些特征；python语言本身也对魔术方法做了深度支持：即类中如果实现了特定的魔术方法后，某些标准库函数也能够支持该类的实例对象参与运算；
 
@@ -317,4 +323,5 @@ python中的魔术方法和特殊属性：
                     2：python中，一切接对象，因此，python中调用函数的过程等价于调用__call__方法:func()等价于func.__call__()
         
         4：除过上出魔术方法以外还有：比较运算符重载的魔术函数、算数运算符重载的魔术函数、赋值运算符重载的魔术函数；如果有针对对象的大量运算，可以通过定义这些运算类有关的魔术方法，以方便对象之间参与运算；
-
+    
+python中的继承链：python中一切接对象：
