@@ -63,12 +63,17 @@
                 #销毁资源、善后操作
                 print("destory resource")
 
-
             with func() as resource:
                 #处理具体逻辑
-                
-
-
-
-            
-            
+    
+    4：多个上下文管理器的嵌套：nested()函数；
+        1：多上下文管理器嵌套：
+            with A() as X:
+                with B() as Y:
+                 with C() as Z:
+                    #do something
+        
+        2：使用nested()函数：
+            with nested(A(),B(),C()) as X,Y,Z:
+                #do something
+        
