@@ -69,9 +69,9 @@
                         1：yield from后跟一个生成器对象，用来将当前程序的执行权转交给后面所跟的生成器；实现生成器的串联；
                         2：使用yield from 语句的函数称为委托生成器，yield from后跟的生成器称之为子生成器，子生成器中也可以使用yield from 来串联另一个生成器；
                         3：在委托生成器中，函数执行至yield from处时，会将执行权交给yield from后的生成器，此时委托生成器类似于一个调用者和子生成器之间的管道；调用者通过send()函数可以将参数发送至子生成器，子生成器yield出的值也会直接返回给调用者；
-                        4：子生成器中的return值将会作为StopIteration的第一个参数作为yield from 的返回值返回，其余异常将会一直向上冒泡；
-                        
-                        1：使用了yield from 的函数称之为生成器函数，
+                        4：子生成器中的return值将会作为StopIteration的第一个参数作为yield from 的返回值返回，并且需要调用者自行处理StopIteration异常；
+                        5：子生成器返回之后，委托生成器将重新具有执行权，继续执行yield from之后的语句；
+                    
 
 
 
