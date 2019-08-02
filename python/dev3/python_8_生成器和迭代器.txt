@@ -91,4 +91,13 @@
     4：可以通过iter()函数将一个可迭代对象转换为一个迭代器；
 
 可迭代对象的切片操作：
-    对于可迭代对象如：list、tuple、dict、str均支持通过key的方式访问其组成元素，称之为切片操作，对于自定义的可迭代对象必须实现__getitem__()方法，才能够支持切片操作；
+    1：对于可迭代对象如：list、tuple、dict、str均支持通过key的方式访问其组成元素，称之为切片操作，对于自定义的可迭代对象必须实现__getitem__()方法，才能够支持切片操作；
+
+    2：切片操作语法：
+        iterable_obj[n]
+        iterable_obj[n:]
+        iterable_obj[n:m]
+        iterable_obj[:m]
+        iterable_obj[n:m:step]
+    
+    3：对于切片操作，n和m均代表索引位置(index)，索引位置从左向右由0开始计数，从右向左从-1开始计数；step代表步长；
