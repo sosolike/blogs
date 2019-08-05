@@ -13,7 +13,7 @@ python中错误异常类继承树：
                     |--OverflowError：数值运算超出最大限制
                     |--ZeroDivisionError：除(或取模)零 (所有数据类型)
                 |--AssertionError
-                |--AttributeError：对象无此属性
+                |--AttributeError：对象无此属性(错误，需及时处理)
                 |--EnvironmentError：文件、操作系统错误类基类
                 |    |--IOError：输入/输出操作失败
                 |    |--OSError：操作系统错误
@@ -24,18 +24,18 @@ python中错误异常类继承树：
                 |--LookupError：无效数据查询的基类
                 |    |--IndexError ：无此索引
                 |    |--KeyError：无此键名
-                |--MemoryError：内存溢出错误
-                |--NameError
-                |    |--UnboundLocalError
+                |--MemoryError：内存溢出错误(错误，需及时处理)
+                |--NameError：使用一个还未定义的变量(错误，需及时处理)
+                |    |--UnboundLocalError：在函数内部调用外部的全局变量导致出错；(错误，需及时处理)
                 |--ReferenceError：弱引用(Weak reference)试图访问已经垃圾回收了的对象
-                |--RuntimeError
-                |    |--NotImplementedError：尚未实现的方法
-                |--SyntaxError：语法错误
-                |    |--IndentationError：缩进错误
-                |         |--TabError：Tab和空格混用
-                |--SystemError：解释器系统错误
+                |--RuntimeError(错误，需及时处理)
+                |    |--NotImplementedError：尚未实现的方法(错误，需及时处理)
+                |--SyntaxError：语法错误(错误，需及时处理)
+                |    |--IndentationError：缩进错误(错误，需及时处理)
+                |         |--TabError：Tab和空格混用(错误，需及时处理)
+                |--SystemError：解释器系统错误(错误，需及时处理)
                 |--TypeError：数据类型错误
-                |--ValueError：无效参数的基类
+                |--ValueError：无效参数的基类(错误，需及时处理)
                      |--UnicodeError：Unicode 相关的错误
                           |--UnicodeDecodeError：Unicode 解码时的错误
                           |--UnicodeEncodeError：Unicode 编码时错误
@@ -50,6 +50,14 @@ python中错误异常类继承树：
        |--ImportWarning
        |--UnicodeWarning
        |--BytesWarning 
+
+python中常见的错误异常类型：
+    对于文件操作：OSError、IOError、EOFError
+    对于列表、tuple：IndexError
+    对于字典：KeyError
+    对于迭代器：StopIteration
+    对于类型转换：TypeError
+    对于对象的属性：AttributeError
 
 python中对于错误异常的处理：
     如果程序中使用了try...except对异常进行了捕获并处理，那么错误异常将按照try...except预定的方式处理；
@@ -101,3 +109,26 @@ python中对于错误异常的处理：
     1：python中内置了常见的错误异常类型，可以直接使用；也可根据需要自定义错误异常类型，自定义的错误异常类型必须直接或者间接继承自BaseException，一般继承自Exception即可；
     2：自定义的错误异常类，使用时需要先使用import导入，并在需要抛出的地方使用raise ExceptionClass()抛出错误异常类实例对象；
 
+避免使用过多的try块处理错误异常：
+    1：对于dict而言，取值时尽量使用get()函数取值，如果key不存在时将会返回默认值，而不是直接报告KeyError异常；
+
+    2：使用上下文管理器代替众多try块：
+        class RaiseError():
+        def __init__(self,exception_type,exception_reason):
+            #exception_type指需要捕获的异常类型
+            #exception_reason指需要向客户端返回的错误异常信息，可以自定义成json数据返回
+            self.exception_type = exception_type
+            self.exception_reason = exception_reason
+        
+        def __enter__(self):
+            return self
+
+        def __exit__(self,exc_type,exc_val,exc_tb):
+            if exc_type == self.exception_type:
+                print({'ok':False,'reason':self.exception_reason,'data':None})
+            return True
+
+        with RaiseError(ZeroDivisionError,"除数为0"):
+            1/0
+        
+        将会直接打印：{'ok':False,'reason':self.exception_reason,'data':None}
