@@ -13,7 +13,7 @@ python中错误异常类继承树：
                     |--OverflowError：数值运算超出最大限制
                     |--ZeroDivisionError：除(或取模)零 (所有数据类型)
                 |--AssertionError
-                |--AttributeError：对象无此属性(错误，需及时处理)
+                |--AttributeError：对象无此属性
                 |--EnvironmentError：文件、操作系统错误类基类
                 |    |--IOError：输入/输出操作失败
                 |    |--OSError：操作系统错误
@@ -24,40 +24,34 @@ python中错误异常类继承树：
                 |--LookupError：无效数据查询的基类
                 |    |--IndexError ：无此索引
                 |    |--KeyError：无此键名
-                |--MemoryError：内存溢出错误(错误，需及时处理)
-                |--NameError：使用一个还未定义的变量(错误，需及时处理)
-                |    |--UnboundLocalError：在函数内部调用外部的全局变量导致出错；(错误，需及时处理)
+                |--MemoryError：内存溢出错误
+                |--NameError：使用一个还未定义的变量
+                |    |--UnboundLocalError：在函数内部调用外部的全局变量导致出错；
                 |--ReferenceError：弱引用(Weak reference)试图访问已经垃圾回收了的对象
-                |--RuntimeError(错误，需及时处理)
-                |    |--NotImplementedError：尚未实现的方法(错误，需及时处理)
-                |--SyntaxError：语法错误(错误，需及时处理)
-                |    |--IndentationError：缩进错误(错误，需及时处理)
-                |         |--TabError：Tab和空格混用(错误，需及时处理)
-                |--SystemError：解释器系统错误(错误，需及时处理)
+                |--RuntimeError
+                |    |--NotImplementedError：尚未实现的方法
+                |--SyntaxError：语法错误
+                |    |--IndentationError：缩进错误
+                |         |--TabError：Tab和空格混用
+                |--SystemError：解释器系统错误
                 |--TypeError：数据类型错误
-                |--ValueError：无效参数的基类(错误，需及时处理)
+                |--ValueError：无效参数的基类
                      |--UnicodeError：Unicode 相关的错误
                           |--UnicodeDecodeError：Unicode 解码时的错误
                           |--UnicodeEncodeError：Unicode 编码时错误
                           |--UnicodeTranslateError：Unicode 转换时错误
-        |--Warning
-           |--DeprecationWarning
-           |--PendingDeprecationWarning
-           |--RuntimeWarning
-           |--SyntaxWarning
-           |--UserWarning
-           |--FutureWarning
-       |--ImportWarning
-       |--UnicodeWarning
-       |--BytesWarning 
-
-python中常见的错误异常类型：
-    对于文件操作：OSError、IOError、EOFError
-    对于列表、tuple：IndexError
-    对于字典：KeyError
-    对于迭代器：StopIteration
-    对于类型转换：TypeError
-    对于对象的属性：AttributeError
+    
+    对于这些错误异常，其中有的错误异常一旦出现应该立即处理，有的则是在某些特殊情况下产生的异常，需要捕获并处理；
+    常见的需要捕获并处理的有：
+        对于文件及文件内容的操作常见的有：OSError、IOError、EOFError
+        对于列表、tuple操作元素时：IndexError
+        对于字典操作元素时：KeyError
+        对于迭代器和生成器：StopIteration
+        对于数据类型转换：TypeError
+        对于对象的属性访问时：AttributeError
+        数据编码转换时：ValueError、UnicodeError、UnicodeDecodeError、UnicodeEncodeError、UnicodeTranslateError
+    常见的需要立刻处理的错误异常：
+        SyntaxError、IndentationError、TabError、SystemError、RuntimeError、NotImplementedError、GeneratorExit、ReferenceError、ValueError
 
 python中对于错误异常的处理：
     如果程序中使用了try...except对异常进行了捕获并处理，那么错误异常将按照try...except预定的方式处理；
