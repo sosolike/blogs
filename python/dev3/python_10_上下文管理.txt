@@ -76,4 +76,7 @@
         2：使用nested()函数：
             with nested(A(),B(),C()) as X,Y,Z:
                 #do something
+    
+    5：with语句和try...except:
+        1：使用with语句发生异常时，仅仅是会保证__exit__函数一定得到执行，但是所发生的错误异常仍然会向上抛出，直至被捕获或者打印至控制台；因此with语句代替不了try...except;在使用with语句来进行上下文管理时，如果对可能抛出的错误异常需要进行处理，仍然需要使用try...except进行捕获并处理；
         
