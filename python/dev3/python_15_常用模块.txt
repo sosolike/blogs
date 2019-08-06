@@ -1,0 +1,137 @@
+1：url字符串的编码与解码：
+    #导入urllib模块
+    import urllib
+
+    #对url进行编码
+    urllib.parse.urlencode("url") 
+
+    #对url进行解码  
+    urllib.parse.urldecode("url")   
+
+2：对html标签进行转换：
+    对于python2可以使用如下方式：
+        #将HTML实体转换为HTML标签:html_str = '&lt;div&gt;'
+        import HTMLParser
+        html_parser = HTMLParser.HTMLParser()
+        html = html_parser.unescape(html_str)   #'&lt;div&gt;' => '<div>'
+
+        #将HTML标签转换为HTML实体：html_str = "<div>"
+        import cgi
+        txt = cgi.escape(html_str)   #  '<div>' => '&lt;div&gt;'
+
+    对于python3则统一使用以下方式：html_str = '&lt;div&gt;'
+        #将HTML实体转换为HTML标签：
+        import html
+        html.escape(html_str)    #"<div>"
+
+        #将HTML标签转换为HTML实体：
+        import html
+        html.unescape(html_str)    #"&lt;div&gt;"
+
+3：base编码函数(base64,base32,base16)使用：
+    1：base64是一种基于64个可打印字符来表示二进制数据的方法；可打印字符包括A-Za-z0-9(62个可打印字符)以及+和/两个可打印字符；
+    2：编码时会将三字节二进制数据转换成四字节的文本数据，因此转换之后的内容比原先的内容要长，为原来的4/3；且真实内容不可见，但是可以逆向解码获取真实内容；
+    3：python中使用base64模块来实现base64编码解码；
+    4：python中对字符串进行base64编码和解码：
+        #导入base64模块
+        import base64
+
+        #对字符串进行编码，b64encode()中必须是二进制对象，如果是字符串必须先进行encode()编码成二进制序列：
+            base64_str = base64.b64encode(bytes_object)
+            或者：
+            base64_str = base64.b64emcode(str.encode("utf-8))
+
+        #对字符串进行解码：
+            origin_str = base64.b64decode(str) 
+
+    5：对url进行base64编码解码：
+        b64_url = base64.urlsafe_b64encode(url_str.encode('utf-8'))
+        url_str = base64.urlsafe_b64decode(b64_url)
+        备注： 
+            1：由于base64编码之后+和/有可能出现在字符中，所以通过urlsafe方法把+转换为-，/转换为_；
+    
+    6：对于base16和base32的使用方式和base64相同；均是通过base64模块调用；
+
+4：hash函数(SHA1,SHA224,SHA256,SHA384,SHA512,MD5)的使用：
+    python中需要通过hashlib模块来调用相关的hash函数；使用方式都一样；以下为MD5函数的使用方式：
+        #导入hashlib模块：
+            import hashlib
+        #获取md5值：
+            1:
+                md = hashlib.md5()
+                md.update(arg)
+                md5_res = md.hexdigest()
+            2:
+                md = hashlib.md5(arg)
+                md5_res = md.hexdigest()
+            3： 
+                md = hashlib.new("md5",arg)
+                md5_res = md.hexdigest()
+            4：
+                md = hashlib.new("md5")
+                md.update(arg)
+                md5_res = md.hexdigest()
+        
+        #注意事项：
+            1：hashlib中的函数进行hash运算时，要求参数必须是二进制类型的数据；对于非二进制数据务必先使用encode()编码为二进制类型，hash运算结果根据编码方式的不同而不同；
+            2：上述四种计算hash值的方式推荐使用非update()的方式，因为update()计算hash值时如果连续使用多次将会是多个值叠加之后进行运算，会导致hash运算出错；
+
+    添加salt的hash加密：
+        1：随机生成salt然后和需要计算的内容一起计算hash值；
+        2：通过hmac模块计算添加salt之后的hash值；
+            import hmac
+            h=hmac.new(key,message,digestmod="md5")
+            h.hexdigest()
+            备注：key,message必须是二进制类型的数据，如果是str类型的则必须先使用encode()函数进行编码；
+
+5：configparser模块：
+    改模块用来操作ini文件的节点；
+    1：ini文件格式：
+        [SECTION_NAME1]
+        keyname1 = value
+        keyname2 = value
+
+        [SECTION_NAME2]
+        keyname1 = value
+        keyname2 = value
+    
+    2：使用configparser来处理ini文件:
+        1：导入configparser：
+            python2中：
+                import ConfigParser
+                cf = ConfigParser.SafeConfigParser()
+            python3中：
+                import configparser
+                cf = configparser.ConfigParser()
+                
+        2：读取ini文件：
+            cf.read(init文件路径)
+        
+        3：获取ini文件相关节点信息：
+            #获取ini文件所有节点名称(即所有[]中的名称)
+                cf.sections()
+            
+            #获取某个节点的所有key名：
+                cf.options(sections_name)
+            
+            #获取某个节点的所有键值对：
+                cf.items(sections_name)
+            
+            #获取指定节点指定key名的值：
+                cf.get(section_name,option_name)
+            
+            #获取指定节点指定key名并限定值的数据类型：
+                cf.getint(section_name,option_name)
+                cf.getfloat(section_name,option_name)
+                cf.getboolean(section_name,option_name)
+        
+        4：设置配置文件
+            #添加一个新的section
+                cf.add_section(section_name)
+            #设置一个section下的option:
+                cf.set(section.option,value)
+            #移除某个section
+                cf.remove_section(section)
+            #移除某个section下的某个option
+                cf.remove_option(section,option)
+        
