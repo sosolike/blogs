@@ -1,0 +1,73 @@
+使用os模块操作目录：
+    导入os模块：import os
+
+    相关目录操作：
+        1：创建目录:
+            #在指定位置创建一个目录,要求路径从倒数第二级之前的路径必须存在，否则将报FileNotFoundError异常；
+            os.mkdir(path)：
+
+            #创建多级目录，多级目录如果不存在将会自动创建，不会报告FileNotFoundError
+            os.makedirs():创建多级目录
+
+        2：删除目录：
+            #删除指定目录，并且该目录必须是空目录,如果待删除目录非空将会报告OSError异常；如果待删除目录不存在将会报告FileNotFoundError异常；
+            os.rmdir(path)
+
+            #删除非空目录，需要使用shutil模块的rmtree方法；如果待删除目录不存在将会报告FileNotFoundError异常；
+            import shutil
+            shutil.rmtree(path)
+
+        3：重命名当前目录
+            #重命名目录，如果原始目录不存在将会报告FileNotFoundError异常；
+            os.rename("oldpath","newpath")
+
+        4：读取目录：
+            #读取目录中文件/子目录列表，并返回一个list对应相关名称；
+            os.listdir(path)
+
+        5：获取当前的工作目录：
+            #获取当前脚本的目录路径；不包含文件名，仅为当前脚本的目录；
+            os.getcwd()
+
+路径相关操作：
+    路径相关操作需要使用os.path模块
+    1：连接路径：
+        #由于不同操作系统的路径分隔符不同，尽量避免使用路径分割符直接拼接路径，而是使用系统函数来拼接：
+        os.path.join(path1,path2)
+
+    2：拆分路径：
+        #将文件路径拆分为目录+文件名称.扩展名,返回一个tuple(目录路径,文件名.扩展名)
+        os.path.split(path)
+
+    3：获取文件扩展名：
+        #返回文件的扩展名
+        os.path.splitext(path)：
+
+    4：获取路径名：
+        os.path.dirname()
+        
+    5：获取文件名：
+        os.path.basename()
+    
+文件操作：
+    检测类：
+    os.path.isfile()    检测是否是文件
+    os.path.isdir()     检测是否是目录
+    os.path.isabs()     检测目录或者文件是否是绝对路径
+    os.path.exists()    检测文件或者目录是否存在
+    文件信息获取类：
+    os.path.getsize()   获取文件大小
+    os.path.stat()      获取文件属性
+    os.path.getatime(filePath)  :获取文件访问时间
+    os.path.getctime(filePath)  :获取文件创建时间
+    os.path.getmtime(filePath)  :获取文件修改时间
+    
+    1：删除文件：
+        os.remove(path)：删除文件
+    2：重命名文件：
+        os.rename(from,to)重命名文件；
+    3：移动文件
+        import shutil 
+        shutil.move("oldpath","newpath")
+    4：复制文件：
+        shutil.copy("oldpath","newpath")
