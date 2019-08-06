@@ -105,6 +105,36 @@ python中对于错误异常的处理：
     1：python中内置了常见的错误异常类型，可以直接使用；也可根据需要自定义错误异常类型，自定义的错误异常类型必须直接或者间接继承自BaseException，一般继承自Exception即可；
     2：自定义的错误异常类，使用时需要先使用import导入，并在需要抛出的地方使用raise ExceptionClass()抛出错误异常类实例对象；
 
+使用sys.excepthook来捕获全局错误异常：
+    1：如果异常被try...except块捕获，那么将会按照预定的方式来处理捕获到的错误异常，如果错误异常未被捕获而上抛至解释器，那么解释最终会调用sys.excepthook这个函数来处理，默认情况下会将错误异常信息打印至控制台；
+    2：该函数支持重写，因此想要以自定义的方式来处理未捕获的错误异常，可以通过重写该函数实现；
+    3：sys.excepthook重写时，需要指向一个自定义的错误处理函数，该函数接收三个参数，分别为：exc_type(错误类型)、exc_value(错误值)、tb(错误栈);如：
+        def my_excepthook(exc_type,exc_val,tb):
+            """托管全局错误异常"""
+            try:
+                currentTime = datetime.datetime.now()
+                exc_time = currentTime.strftime("%Y-%m-%d %H:%M:%S")
+            except:
+                pass
+
+            tracback = ""
+            while tb:
+                filename = tb.tb_frame.f_code.co_filename
+                function = tb.tb_frame.f_code.co_name
+                fileline = tb.tb_lineno
+                tracback += '   File "%.500s", line %d, in %.500s\n' % (filename, fileline, function)
+                tb = tb.tb_next
+
+            print({
+                "exception datetime":format(exc_time),
+                "exception type":format(exc_type),
+                "exception reason":format(exc_value),
+                "exception tracback":format(tracback),
+            })
+        
+        sys.excepthook = my_excepthook()
+
+
 避免使用过多的try块处理错误异常：
     1：对于dict而言，取值时尽量使用get()函数取值，如果key不存在时将会返回默认值，而不是直接报告KeyError异常；
 
