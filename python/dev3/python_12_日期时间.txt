@@ -1,0 +1,102 @@
+python操作日期时间有三个模块：time,datetime,Calendar
+1:time模块：
+    1：time模块中可以获取三种格式的时间：
+        时间戳,带毫秒：time.time()：如：
+                1565058359.4225092
+
+        本地时间元祖：time.localtime()：如：
+            time.struct_time(tm_year=2018, tm_mon=8, tm_mday=6, tm_hour=10, tm_min=26, tm_sec=22, tm_wday=1, tm_yday=218, tm_isdst=0)
+            该元组是一个namedtuple，存储当前日期时间信息(本地日期时间)；获取时按照索引位置获取；
+
+        世界标准时间元祖：time.gmtime()
+            time.struct_time(tm_year=2018, tm_mon=8, tm_mday=6, tm_hour=10, tm_min=26, tm_sec=22, tm_wday=1, tm_yday=218, tm_isdst=0)
+            该元组是一个namedtuple，存储当前日期时间信息(标准日期时间)；获取时按照索引位置获取；
+        
+        备注：一般情况下，均使用本地日期时间而非标准日期时间；
+
+    2：解析时间戳为元祖
+        将时间戳解析成本地时间元祖：
+            time.localtime(time_stamp)
+            
+        将时间戳解析成标准时间元祖：
+            time.gmtime(time_stamp)
+
+    3:时间信息和字符串之间的转换
+        将时间戳转换为英文格式字符串（本地时间字符串）
+            time.ctime(time_stamp)  
+
+        本地时间信息元祖转英文字符串：
+            time.asctime(localtime) 
+
+        本地时间信息元祖转格式化字符串：
+            time.strftime("%Y-%m-%d, %H:%M:%S, %w", time.localtime())
+    
+    4：程序休眠：
+        time.sleep(seconds) ：程序将会休眠sencods秒
+    
+
+2:datetime模块：
+    1：datetime.date类(日期相关操作类)：
+        创建date对象：
+            date_obj = datetime.date.today()    #获取当前日期
+            date_obj = datetime.date.fromtimestamp(time_stamp)      #从时间戳获取日期
+        date对象属性：
+            date_obj.day
+            date_obj.month
+            date_obj.year
+        date对象的方法：
+            date_obj.isoweekday():返回日期是星期几[1-7]
+            date_obj.isoformat()：返回‘YYYY-MM-DD'格式的日期字符串
+            date_obj.strftime(format,struct_time);格式化日期时间信息
+    
+    2：datetime.time类(时间相关操作类)：    
+        time对象的创建：
+            time_obj = datetime.time(hour, [minute[, second, [microsecond]]])   :小时是必须的，其余是可选参数
+        time对象的属性：
+            time_obj.hour
+            time_obj.minute
+            time_obj.second
+            time_obj.microsecond
+        time对象的方法
+            time_obj.strftime(format,struct_time)：时间信息格式化
+            time_obj.isoformat()：返回一个‘HH:MM:SS.%f'格式的时间字符串
+
+    3：datetime.datetime类(日期时间相关操作类):
+        datetime类对象的创建：
+            datetime_obj = datetime.datetime.today()    #获取当前日期时间信息
+            datetime_obj = datetime.datetime.now()      #获取当前日期时间信息
+            datetime_obj = datetime.datetime.fromtimestamp(time_stamp)    #从时间戳获取日期时间信息
+            datetime_obj = datetime.datetime.combine(date,time)     #将date对象和time对象整合成一个datetime对象
+        datetime属性：
+            datetime_obj.year
+            datetime_obj.month
+            datetime_obj.day
+            datetime_obj.hour
+            datetime_obj.minute
+            datetime_obj.second
+            datetime_obj.microsecond
+        datetime方法：
+            datetime_obj.date()：获取一个date对象
+            datetime_obj.time()：获取一个time对象
+            datetime_obj.timetuple()：返回一个tuple
+            datetime_obj.isoweekday():返回星期几
+            datetime_obj.strftime(format)：格式化日期时间信息
+
+3：根据日期时间差获取日期时间信息：
+        使用方式：
+                #获取相对于datetime_obj的前3天/后3天的日期时间
+                    datetime_obj + datetime.timedelta(days=3/days=-3) 
+
+                #获取相对于datetime_obj的前3小时/后3小时的日期时间
+                    datetime_obj + datetime.timedelta(housr=3/hours=-3)
+
+                #获取相对于datetime_obj的前3分钟/后3分钟的日期时间
+                    datetime_obj + datetime.timedelta(minutes=3/minutes=-3)
+
+                #获取相对于datetime_obj的前3秒/后3秒的日期时间   
+                    datetime_obj + datetime.timedelta(seconds=3/seconds=-3)
+
+                1:仅支持：days/hours/minutes/seconds
+                2:正数代表未来时间，负数代表过去时间；
+
+4：对于日期时间信息务必在函数中或者类中动态获取，勿在全局变量中赋值使用；否则系统只加载一次，会导致日期时间信息无法更新；
