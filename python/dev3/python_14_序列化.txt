@@ -1,0 +1,49 @@
+json格式的序列化：
+    python自带有json模块，可以实现对json数据的序列化：
+        1：需要引入json模块：
+            import json
+        2：将数据编码为json格式的字符串：
+            #编码为json格式的字符串并存储在文件中
+                json.dump(data,fp)
+            #编码为json格式的字符串并返回
+                json.dumps(data)
+
+        3：将json格式字符串解码：
+            #从文件中读取json格式的字符串并解码
+                json.load(fp)
+            #将json格式的字符串解码
+                json.loads(str)
+
+        4：备注：
+            1：python支持多种数据类型转换为json;
+                    list/tuple  ===json.dumps()>>>  str格式的list/tuple   ===json.loads()>>>   list
+                    number/str  ===json.dumps()>>>  str格式的number/str   ===json.loads()>>>   number/str
+                    dict        ===json.dumps()>>>  json格式的字符串       ===json.loads()>>>   dict
+                    
+            2：推荐实际应用中只转换dict字典，其他转换为json并无任何实际意义；
+        
+pickle格式的序列化：
+    pickle格式的字符串仅在python项目之间进行数据交换；
+        1：需要引入pickle模块
+            import pickle
+        2：将数据编码为pickle格式：
+            #编码为pickle格式的字符串并存储在文件中
+                pickle.dump(data,fp)
+            #编码为pickle格式的字符串并返回
+                pickle.dumps(data)
+        3：将pickle格式的字符串解码：
+            #从文件中读取pickle格式的字符串并解码
+                pickle.load(fp)
+            #将pickle格式的字符串解码
+                pickle.loads(str)
+
+phpserialize格式的序列化：
+    php中的序列化方式在python中的实现，第三方模块，需要先安装，然后导入使用；
+        1：导入phpserialize模块：
+            import phpserialize
+        
+        2：将数据编码为phpserialize格式的字符串：
+            phpserialize.dumps(data)
+        
+        3：将数据解码为phpserialize格式的字符串：
+            phpserialize.loads(data)
