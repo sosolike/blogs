@@ -111,6 +111,22 @@
         f.writelines([str1,str2,str3])
             1：将一个列表中的内容写入文件，默认不换行，换行须自行添加\r\n;
 
+    4：文件锁：
+        在多个进程同时向文件写入内容时需要对文件上锁，否则文件内容将会混乱；对文件上锁需要使用fcntl模块：
+        #导入fcntl模块
+            import fcntl
+        #在对文件内容操作之前上锁
+            fcntl.flock(f,lock_type)
+        
+        #在对文件内容操作完毕之后删除锁，或者在进程结束之后文件锁失效，以及在调用文件标识符的close()函数关闭文件之后失效：
+            fcntl.flock(f,lock_type)
+        
+        #锁类型：
+            fcntl.LOCK_SH：创建一个共享锁，在读文件时使用；
+            fcntl.LOCK_EX：创建一个排他锁，在写文件时使用；
+            fcntl.LOCK_UN：删除该进程创建的锁；
+
+
     4：文件指针操作：
         f.tell()：返回当前文件指针所指位置，即文件开头到指针当前位置处的字节数；
         f.seek(offset, from_what)：改变当前文件指针位置；
