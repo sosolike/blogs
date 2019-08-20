@@ -163,7 +163,7 @@ python中的字符编码:
                 sys.setdefaultencoding('utf-8')  # 不是必须设置为utf-8，如果使用unicode作为解释器的字符集，并且使用utf-8作为编码规则，那么设置为utf-8即可，否则可以设置为其他需要的编码类型；
                 通过上述设置，python程序对于需要处理的数据也采用unicode字符集，并使用utf-8作为字符编码规则；
 
-            1.5：在将python文件以及python程序对于数据的处理设置为unicode字符集并以utf-8作为字符编码之后，在使用其他字符编码的时候均需要以unicode作为中间转换桥梁，即先转换为unicode字符编号，再对unicode字符编号按照指定规则进行编码；
+            1.5：在将python文件以及python解释器对于数据的处理设置为unicode字符集并以utf-8作为字符编码之后，在使用其他字符编码的时候均需要以unicode作为中间转换桥梁，即先转换为unicode字符编号，再对unicode字符编号按照指定规则进行编码；
 
         对于python3.x版本：
             1.1：python3以后的版本默认使用unicode字符集，无需再像python2.x一样修改字符编码配置；
