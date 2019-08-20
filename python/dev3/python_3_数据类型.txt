@@ -153,7 +153,7 @@ python中的数据类型：
             1：python中一切皆对象，每一个字符串都是str类的一个实例对象；因此使用 type(str_var) 获取字符串类型时得到的将是str(<class 'str'>)类型；使用isinstance(str_var,str)将会得到True;
             2：python3中使用unicode字符集，因此在内存中实际存储的是字符所对应的unicode编码，而在网络传输或者磁盘中保存时则一般会转换成utf-8编码格式，也就是二进制串；
         字符串的相关操作：
-            1：字符串str实例具备序列特征，字符串中的序列从右向左由0开始计数，从左向右由-1开始计数；
+            1：字符串str实例具备序列特征，字符串中的序列从左向右由0开始计数，从右向左由-1开始计数；
 
             2：字符串基本操作：
                 1：长度的获取：len(str_var)
@@ -187,11 +187,11 @@ python中的数据类型：
                 parent_str.find(children_str,start_postion,stop_position)  
 
             5：字符串替换操作：
-                #替换str_var中的指定字符串，如果替换成功返回替换之后的字符串，原字符串保持不变；
-                str_var.str_replace("old_str","new_str")    
+                #替换str_var中的指定字符串，如果替换成功返回替换之后的字符串，原字符串保持不变,替换模式为全部替换；
+                new_replace_str = str_var.str_replace("old_str","new_str")    
 
                 #替换str_var中指定的字符串，并指定替换次数，如果替换成功返回替换之后的字符串，原字符串保持不变；
-                str_var.str_replace("old_str","new_str",maxReplaceTimes)
+                new_replace_str = str_var.str_replace("old_str","new_str",maxReplaceTimes)
 
             6：处理字符串两侧空格：
                 #去除字符串左侧空格
@@ -205,7 +205,7 @@ python中的数据类型：
             
             7：分割字符串：
                 #使用指定字符串分割目标字符串，得到list
-                str_var.split('split_str')
+                split_list = str_var.split('split_str')
             
             8：字符串格式化：
                 优先推荐使用format()方法来格式化字符串,使用format()格式化方法有以下优势：
@@ -213,7 +213,7 @@ python中的数据类型：
                     2：单个参数也可以多次输出，
                     3：填充方式灵活；
                 基本语法：
-                    "模板字符串".format(格式化参数)
+                    "待替换字符串".format(格式化参数)  #待替换字符串由自定义字符串和模板字符串组成，自定义字符串会被原样打印，模板字符串会被替换;
 
                 模板字符串--{<参数填充位>:<格式控制符>}：
                     模板字符串：参数填充位：
@@ -230,8 +230,8 @@ python中的数据类型：
                             python_info = {'ia':'has','ib','object'}
                             "python {info[ia]} str {info[ib]}".format(info=python_info)
                     
-                    模板字符串：控制字符：
-                        1：模板字符串中除过使用{}来设置一个标识位置以外，还可以针对该标识位置的内容进行格式控制，格式控制符需要以 : 和参数填充位的标识分隔开；如{1:.2f}、{fa:.2f}
+                    模板字符串：控制字符：用来对填充位填充的内容进行格式化
+                        1：控制字符用来对填充位填充的内容进行格式化，格式控制符需要以 : 和参数填充位的标识分隔开；如{1:.2f}、{:.2f}
 
                         2：格式控制符功能：
                             <填充> ：指用何种字符填充空白位置
