@@ -1,12 +1,12 @@
 python中的基本数据结构：
-    列表：list: 如：[1,2,3,4]，在数据结构层面，python中的list就是一个可以存储任意数据类型数据的线性表；
+    列表：python中的list就是一个可以存储任意数据类型数据的线性表；类型为list:符号为[]； 如：[1,2,3,4]；
         1：列表特征：
             1：列表中的元素可以是任意数据类型的数据，但只能是值本身，不能存储k-v键值对；
             2：列表中的元素默认按照存储顺序排序；从左向右序号从0开始计数，从右向左序号从-1开始计数；
             3：列表中的元素个数可以任意增加、修改或者删除，list在python中是可变对象；
         2：列表支持的操作：
             创建列表：
-                1：lista = []   #创建空列表
+                1：lista = []或者[1,2,3]   #创建空列表或者有元素的列表
                 2：lista = [表达式 for 变量 in 列表]    #列表生成式生成列表，如：[i+1 for i in range(10)]
                 3：lista = [表达式 for 变量 in 列表 if 表达式]    #带条件的列表生成式生成列表，如：[i*2 for i in range(5) if i%2==0 ]
                 4：lista = list(tuple)    #将tuple类型的数据转换为list类型，如：list((1,2,3,4))
@@ -38,31 +38,33 @@ python中的基本数据结构：
                     #如：list_name = [1,2,3]  len(list_name):3
                 2：反向列表中的元素：list_name.reverse()  
                     #如：list_name = [1,2,3]  list_name.reverse(list_name):[3,2,1]
-                3：对列表中的元素进行排序：list_name.sort(cmp=None,key=None,reverse=None) 
-                    #cmp：指定比较元素大小的方法，reverse指定排序规则True为降序，False为升序；该方法无返回值，会对原列表进行排序；
-                4：合并两个list：list1+list2    
+                3：合并两个list：list1+list2(避免使用list1+=list2)
                     #如：list1=[1,2]  list2=[3,4] list1+list2:[1,2,3,4]
-                5：重复list:list1*n,n是重复次数
+                4：重复list:list1*n,n是重复次数
                     #如：list1 = [1,2]  list1*2:[1,2,1,2]
-                6：检测元素是否在列表中：in
+                5：检测元素是否在列表中：in
                     #如：list1=[1,2]  1 in list1:True
-                7：检测元素是否不在列表中：not in
+                6：检测元素是否不在列表中：not in
                     #如：list1=[1,2]  1 not in list1:False
-                8：使用连接符连接list中的元素：join(list_name) ;使用join()函数连接list时，list中的元素必须都为str类型，否则将会有TypeError异常；
+                7：使用连接符连接list中的元素：join(list_name) ;使用join()函数连接list时，list中的元素必须都为str类型，否则将会有TypeError异常；
                     #如：list_name = ['a','b','c']  "-".join(list_name):"a-b-c"
 
             列表的迭代：
                 for x in list_name:
                     #x为列表中的元素
+                或者：
+                for (index,i) in enumerate(list_name):
+                    #index为索引，i为列表中的值
+            
 
-    元祖：tuple:(1,2,3),python中tuple在数据结构层面仍然是一个可以存储任意数据类型数据的线性表；
+    元祖：仍然是一个可以存储任意数据类型数据的线性表；类型为tuple,符号为()；如:(1,2,3)；
         1：元祖的特征：
             1：列表中的元素可以是任意数据类型的数据，但只能是值本身，不能存储k-v键值对；
             2：列表中的元素默认按照存储顺序排序；从左向右序号从0开始计数，从右向左序号从-1开始计数；
-            3：和list不同之处在于，tuple中的元素一旦确定，将不能再增加、删除、修改元素(元素本身是可变对象时可以修改)
+            3：tuple仍然是一个线性表，和list不同之处在于，tuple中的元素一旦确定，将不能再增加、删除、修改元素(元素本身是可变对象时可以修改)，tuple在python中是不可变对象；
         
         2：元祖的创建：
-            1：tuplea = (,)    #创建一个空的元祖或者只有一个元素的元祖时，必须在()中加一个 ',' ；否则将会把()当做运算符号来对待:(1,)或者(,)
+            1：tuplea = (,) 或者(1,2)   #创建一个空元祖或者只有一个元素的元祖时，必须在()中加一个 ',' ；否则将会把()当做运算符号来对待;如:(1,)或者(,)
             2：tuplea = tuple([])    #将一个list转换为tuple,tuple([1,2]):(1,2)；
             3：tuplea = tuple(表达式 for 变量 in 列表)    #使用list表达式创建tuple；
             4：tuplea = tuple(表达式 for 变量 in 列表 if 表达式)    #使用list表达式创建tuple；
@@ -78,6 +80,7 @@ python中的基本数据结构：
                 #如：tuplea = (1,2,3)  max(tuplea):3
             5：返回元祖中的最小值：min(tuplea)    
                 #如：tuplea = (1,2,3)  min(tuplea):1
+            6：tuple中不能修改元素，除非元素本身是可变对象；
         
         4：元祖其他操作：
             1：获取元祖长度：len(tuplea)    
@@ -96,10 +99,14 @@ python中的基本数据结构：
         5：元祖的迭代：
             for x in tuple_name:
                 #x为元祖中的元素
+
+            for (index,i) in tuple_name:
+                #index为元祖中的索引
+                #i为元祖中的值
                 
-    字典：dict：存放键值对的数据结构
+    字典：类似于hash表，用来存放键值对的数据结构；类型为dict,符号为{};如：{'name':'tom','age':23}
         1：字典的特征：
-            1：字典中存储键值对，而非单个值；键名不可修改，可以为字符串、数字、元祖等不可变对象，并且键名不允许重复；键值可以为任何数据类型的数据；
+            1：字典中存储键值对，而非单个值；键名不可修改，不可重复，可以为字符串、数字、元祖等不可变对象，键值可以为任何数据类型的数据；
             2：字典中的键值对默认无序；
             3：字典中可以任意添加、删除键值对，以及修改键值；字典在python中是可变对象；
         
@@ -108,23 +115,23 @@ python中的基本数据结构：
             2：dicta = {'key':value}    #创建有值的字典；
 
         3：字典的相关操作：
-            1：返回指定键的值，如果不在则返回默认值：dict_name.get(key,default=None)
-            2：检测键名是否在字典中：dict_name.has(key)，除此之外还可使用 in  或者 not in；
-            3：返回字典中所有的键名：dict_name.keys()
-            4：返回字典中所有的键值：dict_name.values()
-            5：返回字典中所有的键值对：dict_name.items()
-            6：删除字典中的key,并把key的值返回,如果未给定key则返回default：dict_name.pop(key,default)
-            7：随机返回字典中的键值对：dict_name.popitem()
-            8：删除字典内所有元素：dict_name.clear()
+            1：获取键值：dict_name['key']，键名不存在将会报KeyError，使用该方式时务必处理KeyError异常；
+            2：获取键的值，不在则返回默认值：dict_name.get(key,default=None)或者使用；因此获取键值时推荐使用get方法，无需处理KeyError异常；
+            3：检测键名是否在字典中：dict_name.has(key)，除此之外还可使用 in  或者 not in；
+            4：返回字典中所有的键名：dict_name.keys()
+            5：返回字典中所有的键值：dict_name.values()
+            6：返回字典中所有的键值对：dict_name.items()
+            7：删除字典中的key,并把key的值返回,如果未给定key则返回default：dict_name.pop(key,default)
+            8：随机删除并返回字典中的键值对：dict_name.popitem()
+            9：删除字典内所有元素：dict_name.clear()
         
         4：字典本身相关操作：
             1：获取字典键值对个数：len(dict_name)
 
-    集合：set：存放值本身，无序且不可重复;
+    集合：类型：set;可以存放多种不同数据类型的数据，存放值本身，无序且不可重复;
         1：集合的特征：
-            1：集合中的元素无序，且不可重复，具备自动去重的能力；
-            2：集合中可以存放任意数据类型的数据；
-            3：集合可以任意添加、删除元素；
+            1：集合中可以存储任意数据类型的数据，且数据无序，不可重复，具备自动去重的能力；
+            2：集合可以任意添加、删除元素；
         
         2：集合的创建：
             1：创建空集合：set()    #空集合只能使用set()函数来创建  如：set()
@@ -135,10 +142,10 @@ python中的基本数据结构：
                 #如：s.add(1)
             
             2：移除元素：remove(obj)
-                #如：s.remove(1)，如果被移除的元素不在集合中将会报异常；
+                #如：s.remove(1)，如果被移除的元素不在集合中将会报异常KeyError；
             
             3：移除一个元素：discard(obj)
-                #如s.discard(1),和remove不同，被移除元素不在集合中时不会报告异常；
+                #如s.discard(1),和remove不同，被移除元素不在集合中时不会报告异常,不做任何处理；
             
             4：随机移除元素：pop()
                 #如：s.pop()
@@ -152,8 +159,8 @@ python中的基本数据结构：
             7：返回x集合和其他集合的交集：intersection()
                 #如：x.intersection(set1,set2,...)
             
-            8：返回x集合和y集合的差集：deference()
-                #如：x.deference(y)  返回x集合中有，但是y集合中没有的元素
+            8：返回x集合和y集合的差集：difference()
+                #如：x.difference(y)  返回x集合中有，但是y集合中没有的元素
             
             9：检测两个集合是否包含相同的元素，如果有返回True,否则返回False:isdisjoint(set)
                 #如：s.isdisjoint(set)
@@ -168,7 +175,14 @@ python中的基本数据结构：
                     x = {"f", "e", "d", "c", "b", "a"}
                     y = {"a", "b", "c"}
                     x.issuperset(y)  返回True
-
+            12：获取集合中的元素个数：
+                len(set_name)
+            
+            13：检测元素是否在集合中:
+                data in set_name
+                或者:
+                data not in set_name
+                
 除过上述python本身自带的四种数据结构以外，python还提供了一个模块：collections，该模块又在上述四种数据结构的基础上丰富了功能；
 collections--namedtuple:
     namedtuple：可以为元中的每一个元素设置名称，并且可以通过名称来访问元素值，因此称之为具名元祖；
