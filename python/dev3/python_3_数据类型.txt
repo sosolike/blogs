@@ -276,6 +276,40 @@ python中的数据类型：
                 str.capitalize()   #整个字符串的首字母大写
             
             11：url字符串的编码与解码：
+                1：将dict转为查询字符串：
+                    对于python2:可以使用urllib中的urlencode()函数：
+                        from urllib import urlencode
+                        encode_res = urlencode({'name':'tom','age':23})
+                        print encode_res    #age=23&name=tom
+                    对于python3：可以使用urllib模块下的parse模块中的urlencode()函数
+                        from urllib import parse
+                        encode_res = parse.urlencode({'name':'tom','age':23})
+                        print(encode_res)    #age=23&name=tom
+                
+                2：对URL进行编码与解码
+                    编码：
+                        对于python2：可以使用urllib模块下的quote()函数编码；
+                            from urllib import quote
+                            encode_url = quote("http://abc.domain.com/中?姓=测试_姓")
+                            print(encode_url)   #http%3A//abc.domain.com/%E4%B8%AD%3F%E5%A7%93%3D%E6%B5%8B%E8%AF%95_%E5%A7%93
+
+                        对于python3：可以使用urllib模块下的parse模块的quote()函数编码；
+                            from urllib import parse
+                            encode_url = parse.quote("http://abc.domain.com/中?姓=测试_姓")
+                            print(encode_url)   #http%3A//abc.domain.com/%E4%B8%AD%3F%E5%A7%93%3D%E6%B5%8B%E8%AF%95_%E5%A7%93
+
+                    解码：
+                        对于python2：可以使用urllib模块下的unquote()函数解码；
+                            from urllib import quote
+                            encode_url = quote("http%3A//abc.domain.com/%E4%B8%AD%3F%E5%A7%93%3D%E6%B5%8B%E8%AF%95_%E5%A7%93")
+                            print(encode_url)   #http://abc.domain.com/中?姓=测试_姓
+
+                        对于python3：可以使用urllib模块下的parse模块的unquote()函数解码；
+                            from urllib import parse
+                            decode_url = parse.unquote("http%3A//abc.domain.com/%E4%B8%AD%3F%E5%A7%93%3D%E6%B5%8B%E8%AF%95_%E5%A7%93")
+                            print(decode_url)   #http://abc.domain.com/中?姓=测试_姓
+
+
                 import urllib
                 urllib.parse.urlencode("url")   #对url进行编码
                 urllib.parse.urldecode("url")   #对url进行解码
