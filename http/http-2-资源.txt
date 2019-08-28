@@ -56,4 +56,4 @@ HTTP协议中的资源：
                 decodeURIComponent()函数：对encodeURIComponent()函数编码过的内容进行解码；
 
 统一资源名
-
+    即根据资源的名称即可唯一确定一个网络资源，并且无需关注网络资源所在的位置；
