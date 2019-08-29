@@ -91,10 +91,145 @@ WEB服务器与客户端的交互模式：
         空行：响应头部和响应实体之间需要使用空行隔开，空行必须填写回车符换行符，即:\r\n
 
         响应实体：本次请求的响应结果，可以是任意形式的数据也可以是空值；
-
-
     
 HTTP首部字段及取值：
-    1：HTTP首部字段分为：通用首部字段(请求头和响应头均可使用)、请求首部字段、响应首部字段、实体首部字段
+    1：HTTP首部字段分为：通用首部字段(请求头和响应头均可使用)、请求首部字段、响应首部字段、实体首部字段;
+    通用首部字段：
+        Cache-Control：控制缓存的行为,指定客户端是否需要缓存服务端的资源，
+            请求时常见取值如下：
+                no-cache：  
+                    表示缓存服务器返回缓存的内容时必须向源服务器进行有效性确认；使用方式为：Cache-Control:no-cache
+                no-store：
+                    指示服务器不允许缓存任何请求的内容；使用方式：Cache-Control:no-store
+                max-age=[秒]：
+                    表示客户端只接受有效期在max-age设置范围内的(即未过期)的资源；如果max-age为0，那么缓存服务器就必须将请求转发给源服务器获取最新的资源；使用方式：Cache-Control:max-age=有效期秒数
+                max-stale(=[秒])
+                    表示客户端允许接收有效期已经超过max-age参数设置时间，但是未超过max-stale指定时间的消息；如果设置了max-stale这个参数，但是未指定具体的时间参数，那么无论过期多久都会接收；
+                min-fresh=[秒]：
+                    表示要求缓存服务器返回还未过指定时间的资源；
+                no-transform：
+                    表示在请求过程中，缓存服务器不允许改变主体的媒体类型；
+                only-if-cached：
+                    表示如果缓存服务器如果有缓存的资源就返回资源，如果没有不必向源服务器请求新的资源，直接返回504状态码；
+                cache-extension：
+                    新指令标记，可以扩展Cache-Control的值，如果缓存服务器能够理解扩展的标记需要进行处理，如果理解不了忽略即可；
+            响应时的取值：
+                public:
+                    指示缓存服务器可以向任意用户返回所请求的资源；
+                private:
+                    指示缓存服务器只向特定用户返回该资源；
+                no-cache:
+                    指示缓存服务器不允许缓存该资源，并且之后也不会再对缓存服务器请求中提出的资源有效性进行确认；
+                no-store:
+                    指示客户端不允许对本次的请求做出任何缓存；
+                no-transform:
+                    指示缓存服务器在响应中不允许更改相应主体的媒体类型；
+                must-revalidate:
+                    指示缓存服务器向客户端返回资源时必须向源服务器进行验证，如果连接源服务器失败，必须向客户端返回504状态码；
+                proxy-revalidate:
+                    指示代理缓存服务器在向客户端返回资源时必须向源服务器进行验证缓存的有效性；
+                max-age=[秒]:
+                    指示缓存服务器对该资源进行缓存，有效期为指定的秒数；HTTP/1.1版本的缓存服务器遇到同时存在Expire首部字段的情况时会优先处理max-age的指定，而忽略Expires；但是HTTP/1.0却相反，会忽略max-age字段；
+                s-maxage=[秒]:
+                cache-extension:
+                    新指令标记，可以扩展Cache-Control的值，如果缓存服务器能够理解扩展的标记需要进行处理，如果理解不了忽略即可；
+
+        Connection：控制客户端和服务端连接方式:主要有两个作用：控制不再转发给代理的首部字段和管理持久连接：
+            1：控制不再转发给代理的首部字段，操作方式是将不再转发给代理的首部字段删除掉之后再转发：
+                Connection:Upgrade    #不再转发Upgrade首部字段；
+            
+            2：管理持久连接：
+                Close：
+                    1：短连接；本次请求响应完成之后即关闭连接，下次请求资源将会重新发起连接；
+                Keep-Alive：
+                    1：持久连接；HTTP/1.1版本默认都是持久连接，即Connection首部字段的取值默认为Keep-Alive,当通信一方明确想断开连接时设置为Close即可；持久连接下，本次响应完成之后并不会断开连接，下次再请求资源时将会复用该连接；
+                    2：Keep-Alive模式下还可以设置超时时间以及可以复用的连接次数：Keep-Alive:timeout=10,max=100;即表示该连接的有效期为10秒，10秒内没有使用该连接发起请求将会断开连接，并且最多复用100次，超过100次也将被短开连接；
+
+        Date：创建报文的日期时间
+            HTTP/1.0版本使用RFC850中的格式：
+                Date:Tue,29 Aug 2018 07:16:28 GMT
+            HTTP/1.1版本使用RFC1123中的格式：
+                Thu, 29 Aug 2018 07:16:28 GMT
+
+        Pragma：报文指令，仅用在客户端发送的请求中；客户端会要求所有中间服务器不反回缓存的资源；
+            1：取值：Pragma：no-cache
+            2：备注：该字段是HTTP/1.1之前版本的遗留字段，为了向HTTP/1.0兼容而存在；一般在使用HTTP/1.1版本时，会同时包含：
+                Pragma: no-cache
+                Cache-Control: no-cache
+            
+        Trailer：该字段可以说明在请求或者响应主体之后又记录了哪些字段，主要用于HTTP/1.1版本分块传输编码时；
+
+        Transfer-Encoding：指定请求或者响应主体的传输编码方式吗，HTTP/1.1的传输编码方式仅对分块传输编码有效；一般取值为chunked；
+
+        Upgrade：升级为其他协议，
+            1：该首部字段用来协商是否能够升级为Upgrade指定的协议
+            2：Upgrade对象仅限于客户端和邻接服务器之间，在转发时需要去掉该字段，因此使用Upgrade时还需要使用Connection: Upgrade首部字段；对于附有Upgrade子弹的请求，服务端可以使用101状态码作为响应；
+
+        Via：代理服务器相关信息
+        Warning：警告通知，一般用来告知用户一些与缓存相关的警告；
+            1：格式：Warning:[警告码][发起警告的主机:端口号]"[警告内容]"
+            2：常见的有以下几种警告：
+                110    Response is stale       响应的资源已经过期
+                111    Revalidation failed     代理在验证资源有效性时失败
+                112    Disconnection operation 代理网络连接被切断
+                113    Heuristic expiration    响应的使用超过有效缓存的设置时间
+                199    Miscellaneous warning   任意的警告内容
+                214    Transformation applied  代理对内容编码或者媒体类型执行了某些处理
+                299    Miscellaneous persistent warning   任意的警告内容
+                
+    请求首部字段：
+        Accept：用户代理(客户端)可以处理的媒体类型
+        Accept-Charset：客户端允许接受的字符集
+        Accept-Encoding：客户端允许接受的字符编码
+        Accept-Language：客户端允许接受的语言(自然语言)
+        Authorization：Web认证信息
+        Except：期待服务器的特定行为
+        From：用户的电子邮箱地址
+        Host：请求资源所在的服务器地址，域名或者ip
+        If-Modified-Since：比较资源的更新时间
+        If-None-Match：比较实体标记
+        If-Range：资源未更新时发送实体Byte的范围请求
+        If-Unmodified-Since:比较资源的更新时间，和If-Modified-Since相反
+        Max-Forwards：最大传输逐跳数
+        Proxy-Authorization：代理服务器要求客户端的认证信息
+        Range：实体的字节范围请求
+        Refer：对请求中URI的原始获取方
+        TE：传输编码的优先级
+        User-Agent：HTTP客户端程序的信息
+    
+    响应首部字段：
+        Accept-Ranges：是否接受字节范围请求；
+        Age：推算资源创建经过时间
+        ETage：资源的匹配信息
+        Location：令客户端重定向至指定的URI；
+        Proxy-Authenticate：代理服务器读客户端的认证信息
+        Retry-After：对再次发起请求的时机要求；
+        Server：HTTP服务器的信息
+        Vary：代理服务器缓存的管理信息
+        WWW-Authenticate：服务器对客户端的认证信息
+    
+    实体首部字段：
+        Allow：资源可支持的HTTP方法
+        Content-Encoding：实体主体适用的编码方式；
+        Contnt-Language：实体主体的自然语言类型；
+        Content-Length：实体主体的大小(单位为字节)
+        Content-Location：替代对于资源的URI；
+        Content-MD5：实体主体的报文摘要
+        Content-Range：实体主体的位置范围；
+        Content-Type：实体主体的媒体类型
+        Expires：实体主体过期的日期时间
+        Last-Modified：资源最后的修改日期时间
+
+端到端首部以及逐跳首部：
+    1：HTTP首部字段将定义成缓存代理和非缓存代理的行为：分成2中类型，即为：端到端首部和逐跳首部；
+    2：端到端首部：在次类别中，首部会转发给请求/响应的最终接收目标，且必须保存在由缓存生成的响应中，另外规定它必须被转发
+    3：逐跳首部：该类型的首部会因通过缓存或者代理而不再转发，HTTP/1.1之后的版本，如果需要使用此首部，需要提供Connection首部字段；
+                http协议中的首部字段有以下8个，除过以下8个以外，其余都为端到端首部：
+                    Connection、Keep-Alive、Proxy-Authenticate、Proxy-Authorization、Trailer、TE、Transfer-Encoding、Upgrade
+    
+
+
+
+
 
 
