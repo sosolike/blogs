@@ -80,9 +80,9 @@ HTTP协议中的请求方法：
                 4：POST方法通过请求实体发送数据时，不会显示在浏览器地址栏，因此数据的隐私性更好一些；
                     [无论是何种请求方法，发送数据并没有安全与不安全的区别，都是完全一样的，仅仅是POST方法的请求实体不会显示在地址栏，隐私性更好]
                 
-                5：POST方法发送请求时，请求实体如果为表单时必须选用：
-                    multiple/form-data
-                    application/x-www-form-urlencode编码格式,如果没有文件上传时，两种编码格式都可以，如果有文件上传时，只能使用multiple/form-data;
+                5：POST方法发送请求时，请求实体如果为表单时必须选用：multiple/form-data
+                    multiple/form-data和application/x-www-form-urlencode编码格式,如果没有文件上传时，两种编码格式都可以;
+                    如果有文件上传时，只能使用multiple/form-data;
                     如果是发送字符串作为请求实体，则编码必须为:raw;
                     请求实体也可以是文件；
                 
