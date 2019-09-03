@@ -132,6 +132,7 @@ python函数：
                              key指需要用来排序的元素
                              reverse如果为True则逆序排序，如果为False则顺序排序；
                         python3中取消了cmp自定义函数对序列进行排序，但是可以通过functools模块将自定义函数转为key：functools.cmp_to_key(cmp_fun);
+                        
     6：返回函数(闭包)：
         1：python中可以将一个函数作为另一个函数的返回值返回；如：
             def outfunc():
