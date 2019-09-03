@@ -27,7 +27,7 @@
     random.uniform(0,9) #获取随机大于0，小于9的小数
     random.randint(1,5) #获取随机大于1，小于5的整数
     random.choice(['l1','l2','l3','l4']) #随机从list中返回一项
-    random.choice(['l1','l2','l3','l4'],n) #随机从list中返回n项
+    random.choices(['l1','l2','l3','l4'],n) #随机从list中返回n项
     random.shuffle(['l1','l2','l3','l4'])  #随机打乱list中的顺序；
 
 

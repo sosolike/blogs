@@ -33,8 +33,8 @@ python操作日期时间有三个模块：time,datetime,Calendar
 
     3：datetime.datetime类:
         datetime类对象的创建：
-            datetime.today()/datetime.now()/datetime.fromtimestamp(time_stamp)
-            datetime.combine(date,time)：将date对象和time对象整合成一个datetime对象
+            datetime.datetime.today()/datetime.datetime.now()/datetime.datetime.fromtimestamp(time_stamp)
+            datetime.datetime.combine(date,time)：将date对象和time对象整合成一个datetime对象
         datetime属性：
             year,month,day,hour,minute,second,microsecond
         datetime方法：

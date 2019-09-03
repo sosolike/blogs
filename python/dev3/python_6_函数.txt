@@ -236,4 +236,4 @@ python装饰器：
             def funca():
                 print("func")
 
-            系统会先使用decb装饰器装饰函数funca,然后再使用deca装饰器装饰decb装饰完之后的函数；
+            系统会先使用decb装饰器装饰函数funca,然后再使用deca装饰器装饰decb装饰完之后的函数；数funca,然后再使用deca装饰器装饰decb装饰完之后的函数；

@@ -106,7 +106,7 @@ python面向对象编程:
         1：类属性：ParentClassName.abbrName;
            实例属性：self.abbrName;
         2：类方法/静态方法：ParentClassName.funName;
-            实例方法：self.funName
+            实例方法：ParentClassName.funName(self)
         3：由于python支持多继承，因此如果多个父类中有同名实例方法或者实例属性，此时通过self或者子类实例调用父类方法时，将默认调用第一个父类中的属性及方法；
     5：通过子类实例访问父类中的方法或者属性：
         如果子类中有该父类同名属性或者方法，则直接调用子类中的该方法

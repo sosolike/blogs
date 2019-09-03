@@ -1,4 +1,4 @@
-1：python中原生提供了两个模块来提供多线程服务：_thread 和 threading;_thread时低级模块，threading时高级模块，是对thread的封装，因此推荐使用threading模块
+1：python中原生提供了两个模块来提供多线程服务：_thread 和 threading;_thread是低级模块，threading时高级模块，是对thread的封装，因此推荐使用threading模块
 2：python中使用多线程流程：
     1：引入threading模块：import threading
     2：创建线程对象：

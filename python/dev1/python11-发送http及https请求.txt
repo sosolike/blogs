@@ -21,7 +21,8 @@
                 获取响应头信息：responce.info()
                 获取http状态码：responce.getcode()
                 获取发起请求的url：responce.geturl()
-                获取请求头信息：responce.getheader()：获取某个具体的请求头信息、responce.getheaders():返回请求头信息列表
+                获取某个具体的请求头信息：responce.getheader()
+                返回请求头信息列表：responce.getheaders()
             6：对于数据操作的几个方法的区别：
                 对于读取json格式的数据:read()/readline()/readlines()/fileno()完全一样;
                 对于字符串： read()返回所有的字符串
